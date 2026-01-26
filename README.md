@@ -1,16 +1,49 @@
-# React + Vite
+# Users CRUD – React + Vite + Ant Design
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Modern frontend mimarisiyle geliştirilmiş, servis katmanı ayrıştırılmış, local-first yaklaşımı bulunan bir **Users CRUD** uygulaması.  
+Proje JSONPlaceholder API kullanılarak oluşturulmuştur ve gerçek backend entegrasyonuna hazır yapıdadır.
 
-Currently, two official plugins are available:
+---
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## 🚀 Features
 
-## React Compiler
+- Users listesi görüntüleme  
+- User detay sayfası  
+- User’a ait:
+  - Posts
+  - Todos
+  - Albums  
+- Create / Update / Delete (modal yapılarıyla)
+- Arama & tablo yönetimi
+- LocalStorage destekli repository katmanı
+- i18n altyapısı
+- Modüler SCSS + Tailwind mimarisi
+- Ant Design tabanlı profesyonel UI
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+---
 
-## Expanding the ESLint configuration
+## 🧱 Tech Stack
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+- **React**
+- **Vite**
+- **Ant Design**
+- **Tailwind CSS**
+- **SCSS architecture**
+- **i18next**
+- **Axios**
+- **JSONPlaceholder API**
+
+---
+
+## 🏗️ Project Architecture
+
+```txt
+src/
+ ├─ api/            # API endpoints & request layers
+ ├─ app/            # App setup, providers, router
+ ├─ assets/styles/  # Global SCSS, variables, mixins
+ ├─ components/     # Reusable UI components
+ ├─ i18n/           # Language configuration
+ ├─ pages/          # Page-based routing structure
+ ├─ storage/        # LocalStorage & repo pattern
+ ├─ theme/          # Theme & dark-mode tokens
