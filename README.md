@@ -11,8 +11,7 @@ Proje JSONPlaceholder API kullanılarak oluşturulmuştur ve gerçek backend ent
 - User detay sayfası  
 - User’a ait:
   - Posts
-  - Todos
-  - Albums  
+  - Todos 
 - Create / Update / Delete (modal yapılarıyla)
 - Arama & tablo yönetimi
 - LocalStorage destekli repository katmanı
