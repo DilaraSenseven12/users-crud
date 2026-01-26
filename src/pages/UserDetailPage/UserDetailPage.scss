@@ -1,0 +1,37 @@
+@use "../../assets/styles/variables" as *;
+
+.user-detail-page {
+  display: grid;
+  gap: 12px;
+  color: var(--text);
+
+  &__card {
+    margin-bottom: 0;
+  }
+  .btn-primary-soft.ant-btn {
+    height: 34px !important;
+    padding: 0 14px !important;
+    border-radius: var(--radius-sm, 10px) !important;
+
+    background: var(--primary) !important;
+    border-color: var(--primary) !important;
+    color: #fff !important;
+
+    font-weight: 700 !important;
+    box-shadow: none !important;
+
+    &:hover {
+      background: var(--primary-hover) !important;
+      border-color: var(--primary-hover) !important;
+      color: #fff !important;
+    }
+
+    &:active {
+      transform: translateY(0.5px);
+    }
+
+    &:focus-visible {
+      box-shadow: var(--focus-ring) !important;
+    }
+  }
+}

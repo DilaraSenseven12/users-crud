@@ -1,0 +1,38 @@
+@use "./variables" as *;
+
+.app-shell {
+  min-height: 100vh;
+  background: var(--bg);
+  color: var(--text);
+  transition: background-color 180ms ease, color 180ms ease;
+}
+
+.app-main {
+  padding: 24px 0 56px;
+}
+
+.app-container {
+  width: min(1160px, calc(100% - 48px));
+  margin: 0 auto;
+}
+
+.app-page {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+@media (max-width: 720px) {
+  .app-main {
+    padding: 18px 0 44px;
+  }
+  .app-container {
+    width: calc(100% - 28px);
+  }
+}
+
+@media (max-width: 420px) {
+  .app-container {
+    width: calc(100% - 20px);
+  }
+}

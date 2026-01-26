@@ -1,0 +1,199 @@
+@use "../../assets/styles/variables" as *;
+
+$app-header-h: 56px;
+
+:root {
+  --app-header-h: #{$app-header-h};
+}
+
+.app-header {
+  position: sticky;
+  top: 0;
+  z-index: 60;
+
+  height: var(--app-header-h);
+  display: flex;
+  align-items: center;
+
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  box-shadow: var(--shadow-sm);
+
+  .ant-typography {
+    color: var(--text);
+  }
+
+  &__inner {
+    width: min(1160px, calc(100% - 48px));
+    margin: 0 auto;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+  }
+
+  &__title.ant-typography {
+    margin: 0 !important;
+    font-weight: 800;
+    letter-spacing: 0.2px;
+    color: var(--text);
+
+    max-width: 60%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  &__right {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+
+    padding: 0;
+    border: 0;
+    background: transparent;
+  }
+
+  &__themeLabel {
+    font-size: 13px;
+    color: var(--muted);
+    user-select: none;
+  }
+
+  &__lang {
+    width: 72px;
+
+    &.ant-select-single:not(.ant-select-customize-input) .ant-select-selector {
+      height: 30px !important;
+      padding: 0 10px !important;
+      border-radius: 10px !important;
+
+      background: var(--surface) !important;
+      border: 1px solid var(--border) !important;
+      box-shadow: none !important;
+
+      display: flex !important;
+      align-items: center !important;
+    }
+
+    .ant-select-selection-item {
+      color: var(--text) !important;
+      font-weight: 700;
+      font-size: 12px !important;
+      line-height: 1 !important;
+      padding: 0 !important;
+    }
+
+    .ant-select-selection-placeholder {
+      color: var(--muted) !important;
+    }
+
+    .ant-select-arrow {
+      color: var(--muted) !important;
+      inset-inline-end: 8px;
+    }
+
+    &:hover .ant-select-selector {
+      border-color: var(--primary) !important;
+    }
+
+    &.ant-select-focused .ant-select-selector {
+      border-color: var(--primary) !important;
+      box-shadow: var(--focus-ring) !important;
+    }
+  }
+
+  &__themeSwitch.ant-switch.ant-switch-small {
+    box-shadow: none !important;
+    background: var(--soft-bg-hover) !important;
+  }
+
+  &__themeSwitch.ant-switch-checked {
+    background: var(--primary) !important;
+  }
+
+  @media (max-width: 720px) {
+    &__inner {
+      width: calc(100% - 28px);
+    }
+
+    &__title.ant-typography {
+      max-width: 50%;
+    }
+
+    &__lang {
+      width: 66px;
+    }
+
+    &__themeLabel {
+      display: none;
+    }
+  }
+}
+
+.ant-select-dropdown.app-header__langDropdown {
+  background: var(--surface) !important;
+  border: 1px solid var(--border) !important;
+  box-shadow: var(--shadow-md) !important;
+
+  .ant-select-item {
+    color: var(--text) !important;
+  }
+
+  .ant-select-item-option-active:not(.ant-select-item-option-disabled) {
+    background: var(--soft-bg) !important;
+  }
+
+  .ant-select-item-option-selected:not(.ant-select-item-option-disabled) {
+    background: var(--soft-bg-hover) !important;
+  }
+}
+
+:root[data-theme="dark"] {
+  .app-header {
+    box-shadow: var(--shadow-md);
+
+    .app-header__lang {
+      &.ant-select-single:not(.ant-select-customize-input) .ant-select-selector {
+        background: #0b0f18 !important;
+        border-color: rgba(255, 255, 255, 0.14) !important;
+        box-shadow: none !important;
+      }
+
+      .ant-select-selection-item {
+        color: #e5e7eb !important;
+      }
+
+      .ant-select-arrow {
+        color: rgba(255, 255, 255, 0.65) !important;
+      }
+
+      &:hover .ant-select-selector {
+        border-color: rgba(255, 255, 255, 0.22) !important;
+      }
+
+      &.ant-select-focused .ant-select-selector {
+        border-color: var(--primary) !important;
+        box-shadow: none !important;
+      }
+    }
+  }
+
+  .ant-select-dropdown.app-header__langDropdown {
+    background: #0b0f18 !important;
+    border: 1px solid rgba(255, 255, 255, 0.12) !important;
+
+    .ant-select-item {
+      color: #e5e7eb !important;
+    }
+
+    .ant-select-item-option-active:not(.ant-select-item-option-disabled) {
+      background: rgba(255, 255, 255, 0.06) !important;
+    }
+
+    .ant-select-item-option-selected:not(.ant-select-item-option-disabled) {
+      background: rgba(255, 255, 255, 0.10) !important;
+    }
+  }
+}

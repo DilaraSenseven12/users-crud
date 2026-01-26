@@ -1,0 +1,130 @@
+@use "./variables" as *;
+
+:root {
+  --btn-radius: 10px;
+  --btn-h: 34px;
+  --btn-h-sm: 30px;
+  --btn-px: 14px;
+}
+
+.ant-btn {
+  border-radius: var(--btn-radius) !important;
+  height: var(--btn-h) !important;
+  padding: 0 var(--btn-px) !important;
+  font-weight: 650 !important;
+}
+
+.ant-btn:focus-visible {
+  box-shadow: var(--focus-ring) !important;
+}
+
+.ant-btn-primary {
+  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.10) !important;
+
+  &:hover {
+    box-shadow: 0 10px 22px rgba(0, 0, 0, 0.14) !important;
+  }
+
+  &:active {
+    transform: translateY(0.5px);
+  }
+}
+
+.btn-soft {
+  background: var(--soft-bg) !important;
+  border: 1px solid var(--border) !important;
+
+  &:hover {
+    background: var(--soft-bg-hover) !important;
+    border-color: var(--border) !important;
+  }
+}
+
+.btn-danger-text.ant-btn-text.ant-btn-dangerous {
+  &:hover {
+    background: rgba(255, 0, 0, 0.08) !important;
+  }
+}
+
+.table-actions {
+  .ant-btn {
+    height: 32px !important;
+    padding: 0 10px !important;
+    border-radius: var(--btn-radius) !important;
+  }
+
+  .ant-btn-link {
+    padding: 0 6px !important;
+    height: auto !important;
+  }
+
+  .ant-btn-text {
+    padding: 0 8px !important;
+  }
+}
+
+.icon-btn.ant-btn {
+  width: 34px !important;
+  height: 34px !important;
+  min-width: 34px !important;
+
+  padding: 0 !important;
+  border-radius: 999px !important;
+
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+
+  line-height: 0 !important;
+
+  background: var(--surface-2) !important;
+  border: 1px solid var(--border) !important;
+
+  box-shadow: none !important;
+  transition: background 140ms ease, border-color 140ms ease, transform 140ms ease, filter 140ms ease;
+}
+
+.icon-btn.ant-btn:hover {
+  transform: translateY(-1px);
+}
+
+.icon-btn .ant-btn-icon,
+.icon-btn .anticon,
+.icon-btn svg {
+  width: 16px;
+  height: 16px;
+  color: currentColor !important;
+  fill: currentColor !important;
+  stroke: currentColor !important;
+}
+
+.icon-btn--primary.ant-btn {
+  background: var(--primary) !important;
+  border-color: var(--primary) !important;
+  color: #fff !important;
+}
+.icon-btn--primary.ant-btn:hover {
+  background: var(--primary-hover) !important;
+  border-color: var(--primary-hover) !important;
+  filter: brightness(1.02);
+}
+
+.icon-btn--purple.ant-btn {
+  background: var(--purple) !important;
+  border-color: var(--purple) !important;
+  color: #fff !important;
+}
+.icon-btn--purple.ant-btn:hover {
+  background: var(--purple-hover) !important;
+  border-color: var(--purple-hover) !important;
+  filter: brightness(1.02);
+}
+
+.icon-btn--danger.ant-btn {
+  background: var(--error) !important;
+  border-color: var(--error) !important;
+  color: #fff !important;
+}
+.icon-btn--danger.ant-btn:hover {
+  filter: brightness(1.02);
+}

@@ -1,0 +1,32 @@
+
+@use "./variables" as *;
+
+.table-card {
+  background: var(--surface) !important;
+  border: 1px solid var(--border) !important;
+  border-radius: 16px !important;
+  overflow: hidden !important;
+  box-shadow: var(--shadow-sm) !important;
+}
+
+.table-card.ant-table-wrapper {
+  background: transparent !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  overflow: hidden !important;
+  box-shadow: none !important;
+}
+
+.table-card .ant-table {
+  background: transparent !important;
+}
+
+.table-card .ant-table-thead > tr > th {
+  background: var(--surface) !important;
+}
+
+.table-card .ant-table-wrapper .ant-pagination,
+.table-card .ant-pagination {
+  background: var(--surface) !important;
+  border-top: 1px solid var(--border) !important;
+}

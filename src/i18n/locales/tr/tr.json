@@ -1,0 +1,215 @@
+{
+  "App": {
+    "title": "CRUD"
+  },
+  "Common": {
+    "light": "Açık",
+    "dark": "Koyu",
+    "cancel" : "İptal"
+  },
+  "UserPostsSection": {
+    "title": "Kullanıcı Postları",
+    "searchPlaceholder": "Başlık veya içeriğe göre post ara",
+    "empty": {
+      "noPosts": "Henüz post yok."
+    },
+    "columns": {
+      "title": "Başlık",
+      "body": "İçerik",
+      "actions": "İşlemler"
+    },
+    "actions": {
+      "newPost": "Yeni Post",
+      "edit": "Düzenle",
+      "delete": "Sil"
+    },
+    "confirm": {
+      "deleteTitle": "Bu postu silmek istediğine emin misin?",
+      "ok": "Sil",
+      "cancel": "İptal"
+    },
+    "modal": {
+      "newTitle": "Yeni Post",
+      "editTitle": "Postu Düzenle",
+      "add": "Ekle",
+      "save": "Kaydet"
+    },
+    "form": {
+      "title": "Başlık",
+      "body": "İçerik",
+      "required": "Bu alan zorunludur."
+    },
+    "success": {
+      "created": "Post başarıyla oluşturuldu.",
+      "updated": "Post başarıyla güncellendi.",
+      "deleted": "Post başarıyla silindi."
+    },
+    "warnings": {
+      "createFailedLocal": "API isteği başarısız oldu. Post yerelde kaydedildi.",
+      "updateFailedLocal": "API isteği başarısız oldu. Post yerelde güncellendi.",
+      "deleteFailedLocal": "API isteği başarısız oldu. Post yerelde silindi."
+    },
+    "errors": {
+      "fetchPosts": "Postlar yüklenemedi."
+    }
+  },
+  "UserDetailPage": {
+    "titles": {
+      "user": "Kullanıcı"
+    },
+    "tabs": {
+      "posts": "Posts",
+      "todos": "Todo'lar"
+    },
+    "fields": {
+      "name": "Ad Soyad",
+      "username": "Kullanıcı adı",
+      "email": "E-posta"
+    },
+    "empty": {
+      "userNotFound": "Kullanıcı bulunamadı.",
+      "noPosts": "Henüz post yok."
+    },
+    "actions": {
+      "backUsers": "← Kullanıcılara Dön",
+      "newPost": "Yeni Post",
+      "edit": "Düzenle",
+      "delete": "Sil"
+    },
+    "userCardTitle": "Kullanıcı Detayları",
+    "postsCardTitle": "Postlar",
+    "searchPlaceholder": "Başlık veya içeriğe göre post ara",
+    "columns": {
+      "title": "Başlık",
+      "body": "İçerik",
+      "actions": "İşlemler"
+    },
+    "confirm": {
+      "deleteTitle": "Bu postu silmek istediğine emin misin?",
+      "ok": "Sil",
+      "cancel": "İptal"
+    },
+    "modal": {
+      "newTitle": "Yeni Post",
+      "editTitle": "Postu Düzenle",
+      "add": "Ekle",
+      "save": "Kaydet"
+    },
+    "form": {
+      "title": "Başlık",
+      "body": "İçerik",
+      "required": "Bu alan zorunludur."
+    },
+    "success": {
+      "postCreated": "Post başarıyla oluşturuldu.",
+      "postUpdated": "Post başarıyla güncellendi.",
+      "postDeleted": "Post başarıyla silindi."
+    },
+    "errors": {
+      "userFetch": "Kullanıcı detayları yüklenemedi.",
+      "postsFetch": "Postlar yüklenemedi."
+    }
+  },
+ "UserTodosSection": {
+  "title": "Görevler",
+  "searchPlaceholder": "Görev ara...",
+  "filters": {
+    "all": "Tümü",
+    "active": "Aktif",
+    "completed": "Tamamlanan"
+  },
+  "counters": {
+    "total": "Toplam",
+    "active": "Aktif",
+    "completed": "Tamamlanan"
+  },
+  "labels": {
+    "active": "Aktif",
+    "done": "Bitti",
+    "completed": "Tamamlandı",
+    "markDone": "Tamamlandı yap",
+    "markActive": "Aktife al"
+  },
+  "actions": {
+    "newTodo": "Yeni Görev",
+    "delete": "Sil",
+    "clearCompleted": "Tamamlananları temizle"
+  },
+  "columns": {
+    "done": "Durum",
+    "title": "Başlık",
+    "actions": "İşlemler"
+  },
+  "modal": {
+    "newTitle": "Yeni Görev",
+    "add": "Ekle"
+  },
+  "form": {
+    "title": "Başlık",
+    "required": "Bu alan zorunludur."
+  },
+  "confirm": {
+    "deleteTitle": "Bu görev silinsin mi?",
+    "ok": "Sil",
+    "cancel": "İptal"
+  },
+  "empty": {
+    "noTodos": "Henüz görev yok."
+  },
+  "success": {
+    "created": "Görev eklendi.",
+    "deleted": "Görev silindi.",
+    "clearedCompleted": "Tamamlanan görevler temizlendi."
+  },
+  "warnings": {
+    "createLocal": "API başarısız; yerelde eklendi.",
+    "updateLocal": "API başarısız; yerelde güncellendi.",
+    "deleteLocal": "API başarısız; yerelde silindi."
+  },
+  "errors": {
+    "fetch": "Görevler alınamadı."
+  }
+},
+  "UsersPage": {
+    "title": "Kullanıcılar",
+    "searchPlaceholder": "Ad, kullanıcı adı veya e-posta ile ara",
+    "columns": {
+      "name": "Ad Soyad",
+      "username": "Kullanıcı adı",
+      "email": "E-posta",
+      "actions": "İşlemler"
+    },
+    "actions": {
+      "detailPosts": "Detayları görüntüle",
+      "edit": "Düzenle",
+      "delete": "Sil",
+      "newUser": "Yeni Kullanıcı"
+    },
+    "confirm": {
+      "deleteTitle": "Bu kullanıcıyı silmek istediğine emin misin?",
+      "ok": "Sil",
+      "cancel": "İptal"
+    },
+    "modal": {
+      "newTitle": "Yeni Kullanıcı",
+      "editTitle": "Kullanıcıyı Düzenle",
+      "add": "Ekle",
+      "save": "Kaydet"
+    },
+    "form": {
+      "name": "Ad Soyad",
+      "username": "Kullanıcı adı",
+      "email": "E-posta",
+      "required": "Bu alan zorunludur.",
+      "emailInvalid": "Lütfen geçerli bir e-posta adresi girin."
+    },
+    "success": {
+      "userCreated": "Kullanıcı başarıyla oluşturuldu.",
+      "userUpdated": "Kullanıcı başarıyla güncellendi.",
+      "userDeleted": "Kullanıcı başarıyla silindi."
+    },
+    "errors": {
+      "fetchUsers": "Kullanıcılar yüklenemedi."
+    }
+  }
+}

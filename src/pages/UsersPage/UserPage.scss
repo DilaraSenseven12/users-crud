@@ -1,0 +1,34 @@
+@use "../../assets/styles/variables" as *;
+@use "../../assets/styles/mixins" as *;
+
+.users-page {
+  color: var(--text);
+
+  .ant-table-cell-fix-left::after,
+  .ant-table-cell-fix-right::after,
+  .ant-table-ping-left .ant-table-cell-fix-left-last::after,
+  .ant-table-ping-right .ant-table-cell-fix-right-first::after,
+  .ant-table-container::before,
+  .ant-table-container::after {
+    display: none !important;
+  }
+
+  &__tableActions {
+    display: inline-flex !important;
+    align-items: center;
+    justify-content: flex-end;
+    width: 100%;
+    gap: 10px !important;
+    flex-wrap: nowrap !important;
+
+    @media (max-width: 520px) {
+      justify-content: flex-start;
+    }
+  }
+
+  .ant-table-thead > tr > th:last-child,
+  .ant-table-tbody > tr > td:last-child {
+    text-align: right;
+    white-space: nowrap;
+  }
+}

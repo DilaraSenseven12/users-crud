@@ -1,0 +1,215 @@
+{
+  "App": {
+    "title": "CRUD"
+  },
+  "Common": {
+    "light": "Light",
+    "dark": "Dark",
+    "cancel": "Cancel"
+  },
+  "UserPostsSection": {
+    "title": "User Posts",
+    "searchPlaceholder": "Search posts by title or content",
+    "empty": {
+      "noPosts": "No posts yet."
+    },
+    "columns": {
+      "title": "Title",
+      "body": "Content",
+      "actions": "Actions"
+    },
+    "actions": {
+      "newPost": "New Post",
+      "edit": "Edit",
+      "delete": "Delete"
+    },
+    "confirm": {
+      "deleteTitle": "Are you sure you want to delete this post?",
+      "ok": "Delete",
+      "cancel": "Cancel"
+    },
+    "modal": {
+      "newTitle": "New Post",
+      "editTitle": "Edit Post",
+      "add": "Add",
+      "save": "Save"
+    },
+    "form": {
+      "title": "Title",
+      "body": "Content",
+      "required": "This field is required."
+    },
+    "success": {
+      "created": "Post created successfully.",
+      "updated": "Post updated successfully.",
+      "deleted": "Post deleted successfully."
+    },
+    "warnings": {
+      "createFailedLocal": "The API request failed. The post was saved locally.",
+      "updateFailedLocal": "The API request failed. The post was updated locally.",
+      "deleteFailedLocal": "The API request failed. The post was deleted locally."
+    },
+    "errors": {
+      "fetchPosts": "Unable to load posts."
+    }
+  },
+  "UserDetailPage": {
+    "titles": {
+      "user": "User"
+    },
+    "tabs": {
+      "posts": "Posts",
+      "todos": "Todos"
+    },
+    "fields": {
+      "name": "Name",
+      "username": "Username",
+      "email": "Email"
+    },
+    "empty": {
+      "userNotFound": "User not found.",
+      "noPosts": "No posts yet."
+    },
+    "actions": {
+      "backUsers": "← Back to Users",
+      "newPost": "New Post",
+      "edit": "Edit",
+      "delete": "Delete"
+    },
+    "userCardTitle": "User Details",
+    "postsCardTitle": "Posts",
+    "searchPlaceholder": "Search posts by title or content",
+    "columns": {
+      "title": "Title",
+      "body": "Content",
+      "actions": "Actions"
+    },
+    "confirm": {
+      "deleteTitle": "Are you sure you want to delete this post?",
+      "ok": "Delete",
+      "cancel": "Cancel"
+    },
+    "modal": {
+      "newTitle": "New Post",
+      "editTitle": "Edit Post",
+      "add": "Add",
+      "save": "Save"
+    },
+    "form": {
+      "title": "Title",
+      "body": "Content",
+      "required": "This field is required."
+    },
+    "success": {
+      "postCreated": "Post created successfully.",
+      "postUpdated": "Post updated successfully.",
+      "postDeleted": "Post deleted successfully."
+    },
+    "errors": {
+      "userFetch": "Unable to load user details.",
+      "postsFetch": "Unable to load posts."
+    }
+  },
+  "UserTodosSection": {
+  "title": "Todos",
+  "searchPlaceholder": "Search todos...",
+  "filters": {
+    "all": "All",
+    "active": "Active",
+    "completed": "Completed"
+  },
+  "counters": {
+    "total": "Total",
+    "active": "Active",
+    "completed": "Completed"
+  },
+  "labels": {
+    "active": "Active",
+    "done": "Done",
+    "completed": "Completed",
+    "markDone": "Mark as done",
+    "markActive": "Mark as active"
+  },
+  "actions": {
+    "newTodo": "New Todo",
+    "delete": "Delete",
+    "clearCompleted": "Clear completed"
+  },
+  "columns": {
+    "done": "Done",
+    "title": "Title",
+    "actions": "Actions"
+  },
+  "modal": {
+    "newTitle": "New Todo",
+    "add": "Add"
+  },
+  "form": {
+    "title": "Title",
+    "required": "This field is required."
+  },
+  "confirm": {
+    "deleteTitle": "Delete this todo?",
+    "ok": "Delete",
+    "cancel": "Cancel"
+  },
+  "empty": {
+    "noTodos": "No todos yet."
+  },
+  "success": {
+    "created": "Todo created.",
+    "deleted": "Todo deleted.",
+    "clearedCompleted": "Completed todos cleared."
+  },
+  "warnings": {
+    "createLocal": "API failed; created locally.",
+    "updateLocal": "API failed; updated locally.",
+    "deleteLocal": "API failed; deleted locally."
+  },
+  "errors": {
+    "fetch": "Failed to fetch todos."
+  }
+},
+  "UsersPage": {
+    "title": "Users",
+    "searchPlaceholder": "Search by name, username, or email",
+    "columns": {
+      "name": "Name",
+      "username": "Username",
+      "email": "Email",
+      "actions": "Actions"
+    },
+    "actions": {
+      "detailPosts": "View details",
+      "edit": "Edit",
+      "delete": "Delete",
+      "newUser": "New User"
+    },
+    "confirm": {
+      "deleteTitle": "Are you sure you want to delete this user?",
+      "ok": "Delete",
+      "cancel": "Cancel"
+    },
+    "modal": {
+      "newTitle": "New User",
+      "editTitle": "Edit User",
+      "add": "Add",
+      "save": "Save"
+    },
+    "form": {
+      "name": "Name",
+      "username": "Username",
+      "email": "Email",
+      "required": "This field is required.",
+      "emailInvalid": "Please enter a valid email address."
+    },
+    "success": {
+      "userCreated": "User created successfully.",
+      "userUpdated": "User updated successfully.",
+      "userDeleted": "User deleted successfully."
+    },
+    "errors": {
+      "fetchUsers": "Unable to load users."
+    }
+  }
+}
