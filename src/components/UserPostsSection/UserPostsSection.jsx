@@ -1,10 +1,12 @@
 import { useEffect, useMemo, useState } from "react";
 import {Button,Card,Form,Input,Modal,Popconfirm,Space,Table,Tooltip,message,Empty,} from "antd";
-import { PlusOutlined } from "@ant-design/icons";
 import { useTranslation } from "react-i18next";
 import { postsService } from "../../api/jp/posts.service.jp";
 import { loadPosts, savePosts, nextId } from "../../storage/jpDb";
-import { EditOutlined, DeleteOutlined } from "@ant-design/icons";
+import { FiPlus } from "react-icons/fi";
+import { BiEditAlt } from "react-icons/bi";
+import { AiOutlineDelete } from "react-icons/ai";
+
 import "./UserPostsSection.scss";
 
 export default function UserPostsSection({ userId }) {
@@ -189,16 +191,16 @@ export default function UserPostsSection({ userId }) {
                     <Space size={10}>
                         <Tooltip title={t("UserPostsSection.actions.edit")}>
                             <Button
-                                type="primary"
-                                shape="circle"
-                                className="ant-btn-icon-circle ant-btn-icon-circle--edit"
-                                icon={<EditOutlined />}
+                                type="text"
+                                className="icon-btn icon-btn--edit"
+                                icon={<BiEditAlt />}
                                 onClick={() => openEdit(record)}
                                 aria-label={t("UserPostsSection.actions.edit")}
                             />
                         </Tooltip>
 
                         <Popconfirm
+                            overlayClassName="posts-popconfirm"
                             title={t("UserPostsSection.confirm.deleteTitle")}
                             okText={t("UserPostsSection.confirm.ok")}
                             cancelText={t("UserPostsSection.confirm.cancel")}
@@ -206,17 +208,16 @@ export default function UserPostsSection({ userId }) {
                         >
                             <Tooltip title={t("UserPostsSection.actions.delete")}>
                                 <Button
-                                    danger
-                                    shape="circle"
-                                    className="ant-btn-icon-circle ant-btn-icon-circle--delete"
-                                    icon={<DeleteOutlined />}
+                                    type="text"
+                                    className="icon-btn icon-btn--danger"
+                                    icon={<AiOutlineDelete />}
                                     aria-label={t("UserPostsSection.actions.delete")}
                                 />
                             </Tooltip>
                         </Popconfirm>
                     </Space>
-                ),
 
+                ),
 
             },
         ],
@@ -244,7 +245,7 @@ export default function UserPostsSection({ userId }) {
 
                             <Button
                                 type="primary"
-                                icon={<PlusOutlined />}
+                                icon={<FiPlus />}
                                 className="section-header__primary btn-blue"
                                 onClick={openCreate}
                             >
@@ -269,7 +270,7 @@ export default function UserPostsSection({ userId }) {
             </Card>
 
             <Modal
-                className="post-modal post-modal--scoped"
+                rootClassName="post-modal--scoped"
                 closeIcon={null}
                 title={
                     <div className="post-modal__titleRow">
@@ -293,9 +294,7 @@ export default function UserPostsSection({ userId }) {
                 onCancel={closeModal}
                 onOk={onSubmit}
                 confirmLoading={saving}
-                okText={
-                    editing ? t("UserPostsSection.modal.save") : t("UserPostsSection.modal.add")
-                }
+                okText={editing ? t("UserPostsSection.modal.save") : t("UserPostsSection.modal.add")}
                 cancelText={t("Common.cancel")}
                 destroyOnClose
                 centered
@@ -303,6 +302,7 @@ export default function UserPostsSection({ userId }) {
                 okButtonProps={{ className: "post-modal__ok" }}
                 cancelButtonProps={{ className: "post-modal__cancel" }}
             >
+
                 <Form form={form} layout="vertical" className="post-modal__form">
                     <Form.Item
                         name="title"

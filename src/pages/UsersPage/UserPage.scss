@@ -1,17 +1,9 @@
 @use "../../assets/styles/variables" as *;
 @use "../../assets/styles/mixins" as *;
+@use "../../assets/styles/pagination" as p;
 
 .users-page {
   color: var(--text);
-
-  .ant-table-cell-fix-left::after,
-  .ant-table-cell-fix-right::after,
-  .ant-table-ping-left .ant-table-cell-fix-left-last::after,
-  .ant-table-ping-right .ant-table-cell-fix-right-first::after,
-  .ant-table-container::before,
-  .ant-table-container::after {
-    display: none !important;
-  }
 
   &__tableActions {
     display: inline-flex !important;
@@ -28,7 +20,160 @@
 
   .ant-table-thead > tr > th:last-child,
   .ant-table-tbody > tr > td:last-child {
-    text-align: right;
+    text-align: left !important;
     white-space: nowrap;
+  }
+
+  .ant-table-cell {
+    min-width: 0;
+  }
+
+  &__username {
+    color: var(--muted);
+  }
+
+  &__email {
+    color: var(--warning, #fbbf24) !important;
+    text-decoration: none;
+    max-width: 100%;
+    display: inline-block;
+
+    &:hover {
+      color: var(--warning-hover, #f59e0b) !important;
+      text-decoration: underline;
+    }
+  }
+
+  &__emailText {
+    color: inherit !important;
+  }
+
+  &__emailIcon {
+    color: inherit !important;
+    width: 16px;
+    height: 16px;
+    flex: 0 0 16px;
+    display: block;
+    opacity: 0.9;
+    transform: translateY(1px);
+  }
+
+  @include p.pagination-sm(10px, 28px, 12px);
+}
+
+.users-edit-modal--scoped {
+  .ant-modal-content {
+    background: var(--surface) !important;
+    color: var(--text) !important;
+    border: 1px solid var(--border) !important;
+    border-radius: 16px !important;
+    overflow: hidden;
+  }
+
+  .ant-modal-header {
+    background: var(--surface) !important;
+    border-bottom: 1px solid var(--border) !important;
+    margin: 0 !important;
+  }
+
+  .ant-modal-title {
+    color: var(--text) !important;
+    font-weight: 800 !important;
+    letter-spacing: 0.2px;
+  }
+
+  .ant-modal-body {
+    background: var(--surface) !important;
+    color: var(--text) !important;
+  }
+
+  .ant-modal-footer {
+    background: var(--surface) !important;
+    border-top: 0 !important;
+    box-shadow: none !important;
+  }
+
+  .ant-modal-close,
+  .ant-modal-close-x {
+    color: var(--muted) !important;
+  }
+
+  .ant-form-css-var {
+    --ant-form-label-color: var(--text);
+    --ant-form-label-required-mark-color: var(--error);
+  }
+
+  .ant-form-item-label > label {
+    color: var(--text) !important;
+    font-weight: 650 !important;
+  }
+
+  .ant-input,
+  .ant-input-affix-wrapper,
+  textarea.ant-input {
+    background: var(--surface-2, rgba(0, 0, 0, 0.03)) !important;
+    color: var(--text) !important;
+    border-color: var(--border) !important;
+    border-radius: 12px !important;
+  }
+
+  .ant-input::placeholder,
+  textarea::placeholder {
+    color: var(--muted) !important;
+    opacity: 0.7;
+  }
+}
+
+.users-popconfirm {
+  --ant-color-bg-elevated: var(--surface) !important;
+  --ant-color-border: var(--border) !important;
+  --ant-box-shadow-secondary: var(
+    --shadow-md,
+    0 18px 60px rgba(0, 0, 0, 0.35)
+  ) !important;
+
+  .ant-popover-container,
+  .ant-popover-inner {
+    background: var(--surface) !important;
+  }
+
+  .ant-popover-inner {
+    border: 1px solid var(--border) !important;
+    border-radius: 14px !important;
+  }
+
+  .ant-popover-arrow::before {
+    background: var(--surface) !important;
+  }
+
+  .ant-popconfirm-message-icon {
+    color: var(--warning, #fbbf24) !important;
+  }
+
+  .ant-popconfirm-buttons .ant-btn {
+    border-radius: 10px !important;
+  }
+
+  .ant-popconfirm-buttons .ant-btn-default {
+    background: var(--surface) !important;
+    color: var(--text) !important;
+    border-color: var(--border) !important;
+  }
+
+  .ant-popconfirm-buttons .ant-btn-primary {
+    background: var(--primary) !important;
+    border-color: var(--primary) !important;
+  }
+}
+
+:root[data-theme="dark"] .users-popconfirm {
+  --ant-color-text-heading: #fff !important;
+  --ant-color-text: #fff !important;
+
+  .ant-popconfirm-title,
+  .ant-popover-inner-content,
+  .ant-popconfirm-title *,
+  .ant-popover-inner-content * {
+    color: #fff !important;
   }
 }

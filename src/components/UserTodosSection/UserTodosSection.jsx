@@ -1,9 +1,11 @@
 import { useEffect, useMemo, useState, useCallback } from "react";
-import {Button,Card,Form,Input,Modal,Segmented,Table,Tag,message,Empty,} from "antd";
+import {Button,Card,Empty,Form,Input,Modal,Popconfirm,Segmented,Space,Table,Tag,message} from "antd";
 import { useTranslation } from "react-i18next";
+import { FiCheckCircle, FiPlus, FiSearch } from "react-icons/fi";
+import { BiEditAlt } from "react-icons/bi";
+import { AiOutlineDelete } from "react-icons/ai";
 import { todosService } from "../../api/jp/todos.service.jp.js";
 import { loadTodos, saveTodos, nextId } from "../../storage/jpDb";
-import { FiTrash2, FiPlus, FiCheckCircle, FiSearch } from "react-icons/fi";
 import "./UserTodosSection.scss";
 
 const FILTERS = {
@@ -14,8 +16,9 @@ const FILTERS = {
 
 export default function UserTodosSection({ userId }) {
   const { t } = useTranslation();
-
   const [messageApi, contextHolder] = message.useMessage();
+
+  const uid = Number(userId);
 
   const [todos, setTodos] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -25,10 +28,21 @@ export default function UserTodosSection({ userId }) {
 
   const [open, setOpen] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [editing, setEditing] = useState(null);
+
   const [form] = Form.useForm();
 
+  const persistLocalTodosForUser = useCallback(
+    (nextUserTodos) => {
+      const all = loadTodos() || [];
+      const remaining = all.filter((x) => Number(x.userId) !== uid);
+      saveTodos([...remaining, ...nextUserTodos]);
+    },
+    [uid]
+  );
+
   useEffect(() => {
-    if (!Number.isFinite(userId)) return;
+    if (!Number.isFinite(uid)) return;
 
     const controller = new AbortController();
 
@@ -36,14 +50,14 @@ export default function UserTodosSection({ userId }) {
       setLoading(true);
       try {
         const allLocal = loadTodos() || [];
-        const localUserTodos = allLocal.filter((x) => Number(x.userId) === Number(userId));
+        const localUserTodos = allLocal.filter((x) => Number(x.userId) === uid);
 
         if (localUserTodos.length) {
           if (!controller.signal.aborted) setTodos(localUserTodos);
           return;
         }
 
-        const apiTodos = await todosService.getTodosByUserId(userId, {
+        const apiTodos = await todosService.getTodosByUserId(uid, {
           signal: controller.signal,
         });
 
@@ -65,7 +79,7 @@ export default function UserTodosSection({ userId }) {
     })();
 
     return () => controller.abort();
-  }, [userId, t, messageApi]);
+  }, [uid, t, messageApi]);
 
   const counts = useMemo(() => {
     const total = todos.length;
@@ -76,7 +90,6 @@ export default function UserTodosSection({ userId }) {
 
   const filteredTodos = useMemo(() => {
     const term = q.trim().toLowerCase();
-
     let list = todos;
 
     if (filter === FILTERS.active) list = list.filter((x) => !x.completed);
@@ -86,70 +99,97 @@ export default function UserTodosSection({ userId }) {
     return list.filter((x) => `${x.title}`.toLowerCase().includes(term));
   }, [todos, q, filter]);
 
-  const persistLocalTodosForUser = useCallback(
-    (nextUserTodos) => {
-      const all = loadTodos() || [];
-      const remaining = all.filter((x) => Number(x.userId) !== Number(userId));
-      saveTodos([...remaining, ...nextUserTodos]);
-    },
-    [userId]
-  );
-
   const openCreate = useCallback(() => {
+    setEditing(null);
     form.resetFields();
     setOpen(true);
   }, [form]);
 
+  const openEdit = useCallback(
+    (record) => {
+      setEditing(record);
+      form.setFieldsValue({ title: record?.title ?? "" });
+      setOpen(true);
+    },
+    [form]
+  );
+
   const closeModal = useCallback(() => {
     setOpen(false);
     setSaving(false);
+    setEditing(null);
     form.resetFields();
   }, [form]);
 
-  const onCreate = useCallback(async () => {
+  const onSubmit = useCallback(async () => {
     if (saving) return;
 
     try {
       setSaving(true);
-      const values = await form.validateFields();
 
-      try {
-        await todosService.createTodo({
-          userId,
-          title: values.title,
+      const values = await form.validateFields();
+      const title = `${values.title}`.trim();
+
+      if (!editing) {
+        try {
+          await todosService.createTodo({ userId: uid, title, completed: false });
+        } catch (err) {
+          messageApi.warning(err?.message || t("UserTodosSection.warnings.createLocal"));
+        }
+
+        const newTodo = {
+          id: nextId(todos),
+          userId: uid,
+          title,
           completed: false,
-        });
-      } catch (err) {
-        messageApi.warning(err?.message || t("UserTodosSection.warnings.createLocal"));
+        };
+
+        const nextUserTodos = [newTodo, ...todos];
+        setTodos(nextUserTodos);
+        persistLocalTodosForUser(nextUserTodos);
+
+        messageApi.success(t("UserTodosSection.success.created"));
+        closeModal();
+        return;
       }
 
-      const newTodo = {
-        id: nextId(todos),
-        userId,
-        title: values.title,
-        completed: false,
-      };
-      const nextUserTodos = [newTodo, ...todos];
+      const prev = editing;
+      const optimistic = todos.map((x) =>
+        Number(x.id) === Number(prev.id) ? { ...x, title } : x
+      );
 
-      setTodos(nextUserTodos);
-      persistLocalTodosForUser(nextUserTodos);
+      setTodos(optimistic);
+      persistLocalTodosForUser(optimistic);
 
-      messageApi.success(t("UserTodosSection.success.created"));
+      try {
+        await todosService.updateTodo(prev.id, { title });
+      } catch (err) {
+       
+        const rolledBack = todos.map((x) =>
+          Number(x.id) === Number(prev.id) ? { ...x, title: prev.title } : x
+        );
+        setTodos(rolledBack);
+        persistLocalTodosForUser(rolledBack);
+
+        messageApi.warning(err?.message || t("UserTodosSection.warnings.updateLocal"));
+      }
+
+      messageApi.success(t("UserTodosSection.success.updated"));
       closeModal();
     } finally {
       setSaving(false);
     }
-  }, [saving, form, userId, todos, persistLocalTodosForUser, t, messageApi, closeModal]);
+  }, [saving, form, editing, uid, todos, persistLocalTodosForUser, t, messageApi, closeModal]);
 
   const onToggleCompleted = useCallback(
     async (row) => {
       const nextValue = !row.completed;
 
-      const nextUserTodos = todos.map((x) =>
+      const optimistic = todos.map((x) =>
         Number(x.id) === Number(row.id) ? { ...x, completed: nextValue } : x
       );
-      setTodos(nextUserTodos);
-      persistLocalTodosForUser(nextUserTodos);
+      setTodos(optimistic);
+      persistLocalTodosForUser(optimistic);
 
       try {
         await todosService.updateTodo(row.id, { completed: nextValue });
@@ -170,9 +210,9 @@ export default function UserTodosSection({ userId }) {
     async (todoId) => {
       const normalizedId = Number(todoId);
 
-      const nextUserTodos = todos.filter((x) => Number(x.id) !== normalizedId);
-      setTodos(nextUserTodos);
-      persistLocalTodosForUser(nextUserTodos);
+      const optimistic = todos.filter((x) => Number(x.id) !== normalizedId);
+      setTodos(optimistic);
+      persistLocalTodosForUser(optimistic);
 
       try {
         await todosService.deleteTodo(todoId);
@@ -183,21 +223,6 @@ export default function UserTodosSection({ userId }) {
       messageApi.success(t("UserTodosSection.success.deleted"));
     },
     [todos, persistLocalTodosForUser, t, messageApi]
-  );
-
-  const confirmDelete = useCallback(
-    (record) => {
-      Modal.confirm({
-        title: t("UserTodosSection.confirm.deleteTitle"),
-        okText: t("UserTodosSection.confirm.ok"),
-        cancelText: t("UserTodosSection.confirm.cancel"),
-        okButtonProps: { danger: true },
-        onOk: async () => {
-          await onDelete(record.id);
-        },
-      });
-    },
-    [t, onDelete]
   );
 
   const clearCompleted = useCallback(() => {
@@ -217,9 +242,8 @@ export default function UserTodosSection({ userId }) {
         width: 120,
         render: (_, record) => (
           <Button
-            className={`todo-status ${
-              record.completed ? "todo-status--done" : "todo-status--active"
-            }`}
+            className={`todo-status ${record.completed ? "todo-status--done" : "todo-status--active"
+              }`}
             type="default"
             onClick={() => onToggleCompleted(record)}
           >
@@ -244,20 +268,38 @@ export default function UserTodosSection({ userId }) {
       {
         title: t("UserTodosSection.columns.actions"),
         key: "actions",
-        width: 120,
-        align: "right",
+        width: 140,
+        align: "left",
         render: (_, record) => (
-          <Button
-            className="icon-btn icon-btn--danger"
-            type="text"
-            icon={<FiTrash2 />}
-            aria-label={t("UserTodosSection.actions.delete")}
-            onClick={() => confirmDelete(record)}
-          />
+          <Space size={8}>
+            <Button
+              className="icon-btn icon-btn--edit"
+              type="text"
+              icon={<BiEditAlt />}
+              aria-label={t("UserTodosSection.actions.edit")}
+              onClick={() => openEdit(record)}
+            />
+
+            <Popconfirm
+              overlayClassName="todos-popconfirm"
+              title={t("UserTodosSection.confirm.deleteTitle")}
+              okText={t("UserTodosSection.confirm.ok")}
+              cancelText={t("UserTodosSection.confirm.cancel")}
+              okButtonProps={{ danger: true }}
+              onConfirm={() => onDelete(record.id)}
+            >
+              <Button
+                className="icon-btn icon-btn--danger"
+                type="text"
+                icon={<AiOutlineDelete />}
+                aria-label={t("UserTodosSection.actions.delete")}
+              />
+            </Popconfirm>
+          </Space>
         ),
       },
     ],
-    [t, onToggleCompleted, confirmDelete]
+    [t, onToggleCompleted, openEdit, onDelete]
   );
 
   return (
@@ -324,17 +366,21 @@ export default function UserTodosSection({ userId }) {
           columns={columns}
           dataSource={filteredTodos}
           pagination={{ pageSize: 8, showSizeChanger: false }}
-          locale={{ emptyText: <Empty description={t("UserTodosSection.empty.noTodos")} /> }}
+          locale={{
+            emptyText: <Empty description={t("UserTodosSection.empty.noTodos")} />,
+          }}
         />
       </Card>
 
       <Modal
-        title={t("UserTodosSection.modal.newTitle")}
+        rootClassName="todos-modal--scoped"
+        title={editing ? t("UserTodosSection.modal.editTitle") : t("UserTodosSection.modal.newTitle")}
         open={open}
         onCancel={closeModal}
-        onOk={onCreate}
+        onOk={onSubmit}
         confirmLoading={saving}
-        okText={t("UserTodosSection.modal.add")}
+        okText={editing ? t("UserTodosSection.modal.save") : t("UserTodosSection.modal.add")}
+        cancelText={t("Common.cancel")}
         destroyOnClose
       >
         <Form form={form} layout="vertical">

@@ -1,4 +1,6 @@
+
 @use "../../assets/styles/variables" as *;
+@use "../../assets/styles/pagination" as p;
 
 .user-detail-page {
   display: grid;
@@ -8,30 +10,45 @@
   &__card {
     margin-bottom: 0;
   }
-  .btn-primary-soft.ant-btn {
-    height: 34px !important;
-    padding: 0 14px !important;
-    border-radius: var(--radius-sm, 10px) !important;
 
-    background: var(--primary) !important;
-    border-color: var(--primary) !important;
-    color: #fff !important;
-
-    font-weight: 700 !important;
-    box-shadow: none !important;
-
-    &:hover {
-      background: var(--primary-hover) !important;
-      border-color: var(--primary-hover) !important;
-      color: #fff !important;
+  &__desc {
+    .ant-descriptions-bordered .ant-descriptions-view {
+      border-radius: 14px !important;
+      overflow: hidden !important;
+      border-color: var(--border) !important;
+      background: var(--surface) !important;
     }
 
-    &:active {
-      transform: translateY(0.5px);
+    .ant-descriptions-item-label {
+      background: var(--surface-2) !important;
+      color: var(--muted) !important;
+      font-weight: 650 !important;
+      width: 160px;
     }
 
-    &:focus-visible {
-      box-shadow: var(--focus-ring) !important;
+    .ant-descriptions-item-content {
+      color: var(--text) !important;
+      font-weight: 600 !important;
     }
   }
+
+  &__tabs {
+    .ant-tabs-nav::before {
+      border-bottom-color: var(--divider) !important;
+    }
+
+    .ant-tabs-tab {
+      color: var(--muted) !important;
+    }
+
+    .ant-tabs-tab.ant-tabs-tab-active .ant-tabs-tab-btn {
+      color: var(--text) !important;
+    }
+
+    .ant-tabs-ink-bar {
+      background: var(--primary) !important;
+    }
+  }
+
+  @include p.pagination-sm(10px, 28px, 12px);
 }

@@ -1,7 +1,6 @@
 @use "../../assets/styles/variables" as *;
 @use "../../assets/styles/mixins" as *;
 
-
 .user-posts {
   .section-header {
     display: flex;
@@ -31,9 +30,9 @@
   }
 
   .section-header__primary {
-    height: 34px;
-    border-radius: 10px;
-    padding: 0 14px;
+    height: var(--btn-h);
+    border-radius: var(--btn-radius);
+    padding: 0 var(--btn-px);
     font-weight: 700;
   }
 
@@ -58,17 +57,17 @@
   }
 }
 
-
 .post-modal--scoped {
+  --pm-surface: var(--surface);
+  --pm-text: var(--text);
+  --pm-muted: var(--muted);
+  --pm-border: var(--border);
+  --pm-surface-2: var(--surface-2, rgba(0, 0, 0, 0.03));
 
   .ant-modal-mask {
-    background: rgba(0, 0, 0, 0.78) !important;
-    backdrop-filter: blur(2px) !important;
-  }
-
-  .ant-modal-wrap,
-  .ant-modal-container {
-    background: transparent !important;
+    background: #0b0f1a !important;
+    opacity: 0.96 !important;
+    backdrop-filter: none !important;
   }
 
   .ant-modal {
@@ -76,31 +75,28 @@
   }
 
   .ant-modal-content {
-    background: var(--app-surface) !important;
-    color: var(--app-text) !important;
-
-    border: 1px solid rgba(255, 255, 255, 0.10) !important;
+    background: var(--pm-surface) !important;
+    color: var(--pm-text) !important;
+    border: 1px solid var(--pm-border) !important;
     border-radius: 16px !important;
-
     padding: 0 !important;
     overflow: hidden !important;
-
     box-shadow:
-      0 30px 90px rgba(0, 0, 0, 0.65),
-      0 10px 30px rgba(0, 0, 0, 0.45) !important;
+      0 30px 90px rgba(0, 0, 0, 0.35),
+      0 10px 30px rgba(0, 0, 0, 0.2) !important;
   }
 
   .ant-modal-header,
   .ant-modal-body,
   .ant-modal-footer {
-    background: var(--app-surface) !important;
-    color: var(--app-text) !important;
+    background: var(--pm-surface) !important;
+    color: var(--pm-text) !important;
   }
 
   .ant-modal-header {
     margin: 0 !important;
     padding: 16px 18px !important;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.12) !important;
+    border-bottom: 1px solid var(--pm-border) !important;
   }
 
   .ant-modal-body {
@@ -112,12 +108,18 @@
     margin: 0 !important;
     border-top: 0 !important;
     box-shadow: none !important;
+    background-image: none !important;
+  }
+
+  .ant-modal-footer::before,
+  .ant-modal-footer::after {
+    content: none !important;
+    display: none !important;
   }
 
   .ant-modal-close {
     display: none !important;
   }
-
 
   .post-modal__titleRow {
     display: flex;
@@ -131,7 +133,7 @@
   .post-modal__titleText {
     font-weight: 800;
     letter-spacing: 0.2px;
-    color: var(--app-text);
+    color: var(--pm-text) !important;
     min-width: 0;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -142,11 +144,10 @@
     width: 28px;
     height: 28px;
     border-radius: 8px;
+    border: 1px solid var(--pm-border);
+    background: var(--pm-surface-2);
+    color: var(--pm-muted);
 
-    border: 1px solid rgba(255, 255, 255, 0.10);
-    background: rgba(255, 255, 255, 0.06);
-
-    color: rgba(229, 231, 235, 0.85);
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -156,18 +157,15 @@
     font-size: 12px;
     flex: 0 0 auto;
 
-    transition: background 120ms ease, border-color 120ms ease, color 120ms ease;
-  }
+    transition: color 120ms ease, border-color 120ms ease, background 120ms ease;
 
-  .post-modal__x:hover {
-    background: rgba(255, 255, 255, 0.10);
-    border-color: rgba(255, 255, 255, 0.16);
-    color: var(--app-text);
+    &:hover {
+      color: var(--pm-text);
+    }
   }
-
 
   .ant-form-item-label > label {
-    color: rgba(229, 231, 235, 0.92) !important;
+    color: var(--pm-text) !important;
     font-weight: 650 !important;
   }
 
@@ -175,14 +173,71 @@
   .ant-input-affix-wrapper,
   .ant-input-textarea-affix-wrapper,
   textarea.ant-input {
-    background: rgba(255, 255, 255, 0.06) !important;
-    border: 1px solid var(--app-border) !important;
-    color: var(--app-text) !important;
+    background: var(--pm-surface-2) !important;
+    border: 1px solid var(--pm-border) !important;
+    color: var(--pm-text) !important;
     border-radius: 12px !important;
   }
 
   .ant-input::placeholder,
   textarea::placeholder {
-    color: rgba(229, 231, 235, 0.55) !important;
+    color: var(--pm-muted) !important;
+    opacity: 0.7;
+  }
+}
+
+.posts-popconfirm {
+  --ant-color-bg-elevated: var(--surface) !important;
+  --ant-color-border: var(--border) !important;
+  --ant-box-shadow-secondary: var(
+    --shadow-md,
+    0 18px 60px rgba(0, 0, 0, 0.35)
+  ) !important;
+
+  .ant-popover-container,
+  .ant-popover-inner {
+    background: var(--surface) !important;
+  }
+
+  .ant-popover-inner {
+    border: 1px solid var(--border) !important;
+    border-radius: 14px !important;
+  }
+
+  .ant-popover-arrow::before {
+    background: var(--surface) !important;
+  }
+
+  .ant-popconfirm-message-icon {
+    color: var(--warning, #fbbf24) !important;
+  }
+
+  .ant-popconfirm-buttons .ant-btn {
+    border-radius: 10px !important;
+  }
+
+  .ant-popconfirm-buttons .ant-btn-default {
+    background: var(--surface) !important;
+    color: var(--text) !important;
+    border-color: var(--border) !important;
+  }
+
+  .ant-popconfirm-buttons .ant-btn-primary {
+    background: var(--primary) !important;
+    border-color: var(--primary) !important;
+  }
+}
+
+:root[data-theme="dark"] .posts-popconfirm {
+  --ant-color-text-heading: #fff !important;
+  --ant-color-text: #fff !important;
+
+  .ant-popconfirm-title,
+  .ant-popconfirm-description,
+  .ant-popover-inner-content,
+  .ant-popconfirm-title *,
+  .ant-popconfirm-description *,
+  .ant-popover-inner-content * {
+    color: #fff !important;
   }
 }

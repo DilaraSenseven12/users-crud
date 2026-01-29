@@ -1,0 +1,48 @@
+
+@use "./variables" as *;
+
+@mixin pagination-sm($radius: 10px, $size: 28px, $font: 12px) {
+  :where(.ant-pagination) {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+
+    .ant-pagination-item,
+    .ant-pagination-prev,
+    .ant-pagination-next,
+    .ant-pagination-jump-prev,
+    .ant-pagination-jump-next {
+      min-width: $size !important;
+      height: $size !important;
+      line-height: ($size - 2px) !important;
+      border-radius: $radius !important;
+      font-size: $font !important;
+    }
+
+    .ant-pagination-item a {
+      line-height: ($size - 2px) !important;
+    }
+
+    .ant-pagination-prev .ant-pagination-item-link,
+    .ant-pagination-next .ant-pagination-item-link {
+      height: $size !important;
+      line-height: ($size - 2px) !important;
+      border-radius: $radius !important;
+    }
+
+    .ant-pagination-item:hover,
+    .ant-pagination-prev:hover,
+    .ant-pagination-next:hover {
+      border-color: var(--primary) !important;
+    }
+
+    .ant-pagination-item-active {
+      border-color: var(--primary) !important;
+    }
+
+    .ant-pagination-item-active a {
+      color: var(--primary) !important;
+      font-weight: 700 !important;
+    }
+  }
+}

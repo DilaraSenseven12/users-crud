@@ -9,9 +9,12 @@
 
 .ant-btn {
   border-radius: var(--btn-radius) !important;
+  font-weight: 650 !important;
+}
+
+.ant-btn:not(.ant-btn-circle):not(.ant-btn-icon-only) {
   height: var(--btn-h) !important;
   padding: 0 var(--btn-px) !important;
-  font-weight: 650 !important;
 }
 
 .ant-btn:focus-visible {
@@ -40,6 +43,62 @@
   }
 }
 
+.btn-primary-soft.ant-btn {
+  height: var(--btn-h) !important;
+  padding: 0 var(--btn-px) !important;
+  border-radius: var(--btn-radius) !important;
+  font-weight: 700 !important;
+
+  background: var(--soft-bg) !important;
+  border: 1px solid var(--border) !important;
+  color: var(--primary) !important;
+
+  &:hover {
+    background: var(--soft-bg-hover) !important;
+    border-color: var(--border) !important;
+    color: var(--primary-hover) !important;
+  }
+
+  &:active {
+    transform: translateY(0.5px);
+  }
+
+  &:focus-visible {
+    box-shadow: var(--focus-ring) !important;
+  }
+}
+
+.btn-blue.ant-btn:not(.icon-btn):not(.ant-btn-text):not(.ant-btn-link) {
+  background: var(--primary) !important;
+  border-color: var(--primary) !important;
+  color: #fff !important;
+}
+
+.btn-blue.ant-btn:not(.icon-btn):not(.ant-btn-text):not(.ant-btn-link):hover {
+  background: var(--primary-hover) !important;
+  border-color: var(--primary-hover) !important;
+  color: #fff !important;
+}
+
+.btn-blue.ant-btn:not(.icon-btn):not(.ant-btn-text):not(.ant-btn-link):active {
+  transform: translateY(0.5px);
+}
+
+.btn-blue.ant-btn:not(.icon-btn):not(.ant-btn-text):not(.ant-btn-link):focus-visible {
+  box-shadow: var(--focus-ring) !important;
+}
+
+.btn-blue.ant-btn.ant-btn-primary:not(.icon-btn) {
+  background: var(--primary) !important;
+  border-color: var(--primary) !important;
+  color: #fff !important;
+}
+.btn-blue.ant-btn.ant-btn-primary:not(.icon-btn):hover {
+  background: var(--primary-hover) !important;
+  border-color: var(--primary-hover) !important;
+  color: #fff !important;
+}
+
 .btn-danger-text.ant-btn-text.ant-btn-dangerous {
   &:hover {
     background: rgba(255, 0, 0, 0.08) !important;
@@ -64,9 +123,9 @@
 }
 
 .icon-btn.ant-btn {
-  width: 34px !important;
-  height: 34px !important;
-  min-width: 34px !important;
+  width: 32px !important;
+  height: 32px !important;
+  min-width: 32px !important;
 
   padding: 0 !important;
   border-radius: 999px !important;
@@ -77,54 +136,131 @@
 
   line-height: 0 !important;
 
-  background: var(--surface-2) !important;
+  background: transparent !important;
   border: 1px solid var(--border) !important;
 
-  box-shadow: none !important;
-  transition: background 140ms ease, border-color 140ms ease, transform 140ms ease, filter 140ms ease;
+  box-shadow:
+    0 1px 0 rgba(0, 0, 0, 0.04),
+    0 8px 18px rgba(0, 0, 0, 0.10) !important;
+
+  transition:
+    transform 140ms ease,
+    box-shadow 140ms ease,
+    background 140ms ease,
+    border-color 140ms ease,
+    color 140ms ease;
 }
 
 .icon-btn.ant-btn:hover {
   transform: translateY(-1px);
+  background: var(--soft-bg) !important;
+  box-shadow:
+    0 2px 0 rgba(0, 0, 0, 0.04),
+    0 12px 26px rgba(0, 0, 0, 0.14) !important;
+}
+
+.icon-btn.ant-btn:active {
+  transform: translateY(0);
+}
+
+.icon-btn.ant-btn:focus-visible {
+  outline: none !important;
+  box-shadow: var(--focus-ring) !important;
 }
 
 .icon-btn .ant-btn-icon,
 .icon-btn .anticon,
 .icon-btn svg {
-  width: 16px;
-  height: 16px;
+  width: 15px;
+  height: 15px;
+  display: block;
   color: currentColor !important;
   fill: currentColor !important;
   stroke: currentColor !important;
 }
 
 .icon-btn--primary.ant-btn {
-  background: var(--primary) !important;
   border-color: var(--primary) !important;
-  color: #fff !important;
+  color: var(--primary) !important;
 }
 .icon-btn--primary.ant-btn:hover {
-  background: var(--primary-hover) !important;
   border-color: var(--primary-hover) !important;
-  filter: brightness(1.02);
+  color: var(--primary-hover) !important;
 }
 
 .icon-btn--purple.ant-btn {
-  background: var(--purple) !important;
   border-color: var(--purple) !important;
-  color: #fff !important;
+  color: var(--purple) !important;
 }
 .icon-btn--purple.ant-btn:hover {
-  background: var(--purple-hover) !important;
   border-color: var(--purple-hover) !important;
-  filter: brightness(1.02);
+  color: var(--purple-hover) !important;
+}
+
+.icon-btn--edit.ant-btn {
+  border-color: var(--purple) !important;
+  color: var(--purple) !important;
+}
+.icon-btn--edit.ant-btn:hover {
+  border-color: var(--purple-hover) !important;
+  color: var(--purple-hover) !important;
+  background: var(--soft-bg) !important;
 }
 
 .icon-btn--danger.ant-btn {
-  background: var(--error) !important;
   border-color: var(--error) !important;
-  color: #fff !important;
+  color: var(--error) !important;
 }
 .icon-btn--danger.ant-btn:hover {
-  filter: brightness(1.02);
+  background: rgba(239, 68, 68, 0.10) !important;
+}
+
+.ant-btn-circle.ant-btn {
+  padding-inline: 0 !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  line-height: 0 !important;
+}
+
+.ant-btn-circle.ant-btn .ant-btn-icon {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  line-height: 0 !important;
+}
+
+.ant-btn-circle.ant-btn svg {
+  width: 16px !important;
+  height: 16px !important;
+  display: block !important;
+}
+
+:root[data-theme="dark"] .icon-btn.ant-btn {
+  border-width: 1.5px !important;
+  border-color: rgba(255, 255, 255, 0.28) !important;
+  box-shadow: none !important;
+}
+
+:root[data-theme="dark"] .icon-btn.ant-btn:hover {
+  background: rgba(255, 255, 255, 0.06) !important;
+  border-color: rgba(255, 255, 255, 0.42) !important;
+}
+
+:root[data-theme="dark"] .icon-btn svg {
+  opacity: 1;
+  stroke-width: 2.3 !important;
+}
+
+:root[data-theme="dark"] .icon-btn--primary.ant-btn:hover {
+  background: rgba(59, 130, 246, 0.14) !important;
+}
+:root[data-theme="dark"] .icon-btn--purple.ant-btn:hover {
+  background: rgba(139, 92, 246, 0.14) !important;
+}
+:root[data-theme="dark"] .icon-btn--edit.ant-btn:hover {
+  background: rgba(139, 92, 246, 0.14) !important;
+}
+:root[data-theme="dark"] .icon-btn--danger.ant-btn:hover {
+  background: rgba(239, 68, 68, 0.16) !important;
 }
