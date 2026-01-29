@@ -111,65 +111,63 @@
     }
   },
   "UserTodosSection": {
-  "title": "Todos",
-  "searchPlaceholder": "Search todos...",
-  "filters": {
-    "all": "All",
-    "active": "Active",
-    "completed": "Completed"
+    "title" : "User Todos",
+    
+    "modal": {
+      "newTitle": "New Todo",
+      "editTitle": "Edit Todo",
+      "add": "Add",
+      "save": "Save"
+    },
+    "form": {
+      "title": "Title",
+      "required": "Required"
+    },
+    "confirm": {
+      "deleteTitle": "Delete this todo?",
+      "ok": "Delete",
+      "cancel": "Cancel"
+    },
+    "success": {
+      "created": "Todo created",
+      "updated": "Todo updated",
+      "deleted": "Todo deleted",
+      "clearedCompleted": "Completed todos cleared"
+    },
+    "warnings": {
+      "createLocal": "Create failed, saved locally.",
+      "updateLocal": "Update failed, reverted locally.",
+      "deleteLocal": "Delete failed, removed locally."
+    },
+    "errors": {
+      "fetch": "Todos could not be loaded."
+    },
+    "actions": {
+      "newTodo": "New Todo",
+      "clearCompleted": "Clear Completed",
+      "edit": "Edit",
+      "delete": "Delete"
+    },
+    "columns": {
+      "done": "Status",
+      "title": "Title",
+      "actions": "Actions"
+    },
+    "labels": {
+      "done": "Done",
+      "active": "Active",
+      "completed": "Completed"
+    },
+    "filters": {
+      "all": "All",
+      "active": "Active",
+      "completed": "Completed"
+    },
+    "searchPlaceholder": "Search todos…",
+    "empty": {
+      "noTodos": "No todos"
+    }
   },
-  "counters": {
-    "total": "Total",
-    "active": "Active",
-    "completed": "Completed"
-  },
-  "labels": {
-    "active": "Active",
-    "done": "Done",
-    "completed": "Completed",
-    "markDone": "Mark as done",
-    "markActive": "Mark as active"
-  },
-  "actions": {
-    "newTodo": "New Todo",
-    "delete": "Delete",
-    "clearCompleted": "Clear completed"
-  },
-  "columns": {
-    "done": "Done",
-    "title": "Title",
-    "actions": "Actions"
-  },
-  "modal": {
-    "newTitle": "New Todo",
-    "add": "Add"
-  },
-  "form": {
-    "title": "Title",
-    "required": "This field is required."
-  },
-  "confirm": {
-    "deleteTitle": "Delete this todo?",
-    "ok": "Delete",
-    "cancel": "Cancel"
-  },
-  "empty": {
-    "noTodos": "No todos yet."
-  },
-  "success": {
-    "created": "Todo created.",
-    "deleted": "Todo deleted.",
-    "clearedCompleted": "Completed todos cleared."
-  },
-  "warnings": {
-    "createLocal": "API failed; created locally.",
-    "updateLocal": "API failed; updated locally.",
-    "deleteLocal": "API failed; deleted locally."
-  },
-  "errors": {
-    "fetch": "Failed to fetch todos."
-  }
-},
   "UsersPage": {
     "title": "Users",
     "searchPlaceholder": "Search by name, username, or email",

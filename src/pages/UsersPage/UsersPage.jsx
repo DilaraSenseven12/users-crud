@@ -1,15 +1,17 @@
 import { useEffect, useMemo, useState, useCallback } from "react";
-import { Button, Form, Input, Modal, Space, Table, message } from "antd";
+import {Button,Form,Input,Modal,Space,Table,message,Tooltip,Popconfirm,} from "antd";
 import { PlusOutlined } from "@ant-design/icons";
-import { FiArrowUpRight, FiEdit2, FiTrash2 } from "react-icons/fi";
+import { BiCommentDetail, BiEditAlt } from "react-icons/bi";
+import { AiOutlineDelete } from "react-icons/ai";
+import { MdOutlineEmail } from "react-icons/md";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { usersRepo } from "../../storage/repo/users.repo";
+import "../UsersPage/UserPage.scss";
 
 export default function UsersPage() {
   const { t } = useTranslation();
   const nav = useNavigate();
-
   const [messageApi, contextHolder] = message.useMessage();
 
   const [users, setUsers] = useState([]);
@@ -19,6 +21,7 @@ export default function UsersPage() {
   const [open, setOpen] = useState(false);
   const [editing, setEditing] = useState(null);
   const [saving, setSaving] = useState(false);
+
   const [form] = Form.useForm();
 
   useEffect(() => {
@@ -32,7 +35,7 @@ export default function UsersPage() {
       } catch {
         messageApi.error(t("UsersPage.errors.fetchUsers"));
       } finally {
-        setLoading(false);
+        if (!controller.signal.aborted) setLoading(false);
       }
     })();
 
@@ -42,6 +45,7 @@ export default function UsersPage() {
   const filteredUsers = useMemo(() => {
     const term = q.trim().toLowerCase();
     if (!term) return users;
+
     return users.filter((u) =>
       `${u.name} ${u.username} ${u.email}`.toLowerCase().includes(term)
     );
@@ -51,9 +55,9 @@ export default function UsersPage() {
     (record) => {
       setEditing(record);
       form.setFieldsValue({
-        name: record.name,
-        username: record.username,
-        email: record.email,
+        name: record?.name ?? "",
+        username: record?.username ?? "",
+        email: record?.email ?? "",
       });
       setOpen(true);
     },
@@ -86,21 +90,6 @@ export default function UsersPage() {
     [users, t, messageApi]
   );
 
-  const confirmDelete = useCallback(
-    (record) => {
-      Modal.confirm({
-        title: t("UsersPage.confirm.deleteTitle"),
-        okText: t("UsersPage.confirm.ok"),
-        cancelText: t("UsersPage.confirm.cancel"),
-        okButtonProps: { danger: true },
-        onOk: async () => {
-          await onDelete(record.id);
-        },
-      });
-    },
-    [t, onDelete]
-  );
-
   const onSubmit = useCallback(async () => {
     if (saving) return;
 
@@ -126,49 +115,83 @@ export default function UsersPage() {
 
   const columns = useMemo(
     () => [
-      { title: t("UsersPage.columns.name"), dataIndex: "name", width: 240, ellipsis: true },
-      { title: t("UsersPage.columns.username"), dataIndex: "username", width: 180, ellipsis: true },
+      {
+        title: t("UsersPage.columns.name"),
+        dataIndex: "name",
+        width: 260,
+        ellipsis: true,
+      },
+      {
+        title: t("UsersPage.columns.username"),
+        dataIndex: "username",
+        width: 220,
+        ellipsis: true,
+        render: (v) => <span className="users-page__username">@{v}</span>,
+      },
       {
         title: t("UsersPage.columns.email"),
         dataIndex: "email",
-        ellipsis: true,
-        render: (value) => <a href={`mailto:${value}`}>{value}</a>,
+        render: (value) => (
+          <a className="users-page__email" href={`mailto:${value}`}>
+            <span className="users-page__emailWrap">
+              <span className="users-page__emailText">{value}</span>
+              <MdOutlineEmail
+                className="users-page__emailIcon"
+                aria-hidden="true"
+              />
+            </span>
+          </a>
+        ),
       },
       {
         title: t("UsersPage.columns.actions"),
         key: "actions",
-        width: 160,
+        width: 180,
         align: "left",
         render: (_, record) => (
           <Space className="users-page__tableActions" size={10}>
-            <Button
-              className="icon-btn icon-btn--primary"
-              type="text"
-              icon={<FiArrowUpRight />}
-              onClick={() => nav(`/users/${record.id}`)}
-              aria-label={t("UsersPage.actions.detailPosts")}
-            />
+            <Tooltip title={t("UsersPage.actions.detailPosts")} placement="top">
+              <Button
+                className="icon-btn icon-btn--primary"
+                type="text"
+                icon={<BiCommentDetail />}
+                onClick={() => nav(`/users/${record.id}`)}
+                aria-label={t("UsersPage.actions.detailPosts")}
+              />
+            </Tooltip>
 
-            <Button
-              className="icon-btn icon-btn--purple"
-              type="text"
-              icon={<FiEdit2 />}
-              onClick={() => openEdit(record)}
-              aria-label={t("UsersPage.actions.edit")}
-            />
+            <Tooltip title={t("UsersPage.actions.edit")} placement="top">
+              <Button
+                className="icon-btn icon-btn--purple"
+                type="text"
+                icon={<BiEditAlt />}
+                onClick={() => openEdit(record)}
+                aria-label={t("UsersPage.actions.edit")}
+              />
+            </Tooltip>
 
-            <Button
-              className="icon-btn icon-btn--danger"
-              type="text"
-              icon={<FiTrash2 />}
-              onClick={() => confirmDelete(record)}
-              aria-label={t("UsersPage.actions.delete")}
-            />
+            <Popconfirm
+              overlayClassName="users-popconfirm"
+              title={t("UsersPage.confirm.deleteTitle")}
+              okText={t("UsersPage.confirm.ok")}
+              cancelText={t("UsersPage.confirm.cancel")}
+              okButtonProps={{ danger: true }}
+              onConfirm={() => onDelete(record.id)}
+            >
+              <Tooltip title={t("UsersPage.actions.delete")} placement="top">
+                <Button
+                  className="icon-btn icon-btn--danger"
+                  type="text"
+                  icon={<AiOutlineDelete />}
+                  aria-label={t("UsersPage.actions.delete")}
+                />
+              </Tooltip>
+            </Popconfirm>
           </Space>
         ),
       },
     ],
-    [t, nav, openEdit, confirmDelete]
+    [t, nav, openEdit, onDelete]
   );
 
   return (
@@ -187,7 +210,12 @@ export default function UsersPage() {
             allowClear
           />
 
-          <Button type="primary" icon={<PlusOutlined />} onClick={openCreate}>
+          <Button
+            type="primary"
+            className="btn-blue"
+            icon={<PlusOutlined />}
+            onClick={openCreate}
+          >
             {t("UsersPage.actions.newUser")}
           </Button>
         </div>
@@ -201,9 +229,14 @@ export default function UsersPage() {
         size="middle"
         pagination={{ pageSize: 8, showSizeChanger: false }}
       />
+
       <Modal
         rootClassName="users-edit-modal--scoped"
-        title={editing ? t("UsersPage.modal.editTitle") : t("UsersPage.modal.newTitle")}
+        title={
+          editing
+            ? t("UsersPage.modal.editTitle")
+            : t("UsersPage.modal.newTitle")
+        }
         open={open}
         onCancel={closeModal}
         onOk={onSubmit}
@@ -212,7 +245,6 @@ export default function UsersPage() {
         cancelText={t("UsersPage.confirm.cancel")}
         destroyOnClose
       >
-
         <Form form={form} layout="vertical">
           <Form.Item
             name="name"
