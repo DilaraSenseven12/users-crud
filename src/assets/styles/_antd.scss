@@ -1,4 +1,3 @@
-
 @use "./variables" as *;
 
 html,
@@ -99,7 +98,6 @@ body {
 :root[data-theme="dark"] .ant-popover-arrow:before {
   background: var(--surface) !important;
 }
-
 
 :root[data-theme="dark"] .ant-modal-confirm .ant-modal-content {
   background: var(--surface) !important;
@@ -264,7 +262,6 @@ body {
 .ant-switch {
   background: var(--soft-bg-hover) !important;
 }
-
 .ant-switch-checked {
   background: var(--primary) !important;
 }
@@ -383,10 +380,7 @@ body {
   border-bottom: 1px solid var(--border) !important;
 }
 
-:root[data-theme="dark"] .ant-table .ant-empty {
-  color: var(--muted) !important;
-}
-
+:root[data-theme="dark"] .ant-table .ant-empty,
 :root[data-theme="dark"] .ant-table .ant-empty-description {
   color: var(--muted) !important;
 }
@@ -469,16 +463,53 @@ body {
   color: #fff !important;
 }
 
-.ant-btn-icon-circle.ant-btn {
+.icon-btn.ant-btn {
   width: 34px !important;
   height: 34px !important;
   padding: 0 !important;
+
   display: inline-flex !important;
   align-items: center !important;
   justify-content: center !important;
+
   border-radius: 999px !important;
   border: none !important;
   box-shadow: none !important;
+
+  background: transparent !important;
+
+  &::after {
+    display: none !important;
+  }
+
+  .anticon,
+  svg {
+    font-size: 18px;
+  }
+}
+
+.icon-btn.ant-btn:hover {
+  background: var(--soft-bg) !important;
+}
+
+.icon-btn.ant-btn:active {
+  background: var(--soft-bg-hover) !important;
+}
+
+.icon-btn.ant-btn:focus-visible {
+  box-shadow: var(--focus-ring) !important;
+}
+
+.icon-btn--primary.ant-btn {
+  color: var(--primary) !important;
+}
+
+.icon-btn--purple.ant-btn {
+  color: var(--purple) !important;
+}
+
+.icon-btn--danger.ant-btn {
+  color: var(--error) !important;
 }
 
 .ant-table-cell-fix-left::after,
@@ -488,4 +519,14 @@ body {
 .ant-table-container::before,
 .ant-table-container::after {
   display: none !important;
+}
+
+:root[data-theme="dark"] .ant-modal label[for="title"] {
+  color: #fff !important;
+}
+
+:root[data-theme="dark"]
+  .ant-modal
+  label[for="title"].ant-form-item-required::before {
+  color: #ff4d4f !important;
 }

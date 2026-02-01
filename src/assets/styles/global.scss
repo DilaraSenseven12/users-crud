@@ -4,7 +4,8 @@
 @use "./buttons";
 @use "./antd";
 @use "./table-card";
-
+@use "./pagination";
+@use "/src/components/SectionHeader/SectionHeader.scss";
 *,
 *::before,
 *::after {

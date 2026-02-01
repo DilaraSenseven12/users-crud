@@ -82,7 +82,8 @@
     "columns": {
       "title": "Başlık",
       "body": "İçerik",
-      "actions": "İşlemler"
+      "actions": "İşlemler",
+      "createdAt": "Oluşturulma Tarihi"
     },
     "confirm": {
       "deleteTitle": "Bu gönderiyi silmek istediğine emin misin?",
@@ -175,7 +176,8 @@
       "name": "Ad",
       "username": "Kullanıcı Adı",
       "email": "E-posta",
-      "actions": "İşlemler"
+      "actions": "İşlemler",
+      "createdAt": "Oluşturulma Tarihi"
     },
     "actions": {
       "detailPosts": "Detayları gör",

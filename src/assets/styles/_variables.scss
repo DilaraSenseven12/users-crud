@@ -1,48 +1,49 @@
 
-$radius-md: 12px;
 $radius-sm: 10px;
+$radius-md: 12px;
 
 $space-2: 8px;
 $space-3: 12px;
 $space-4: 16px;
 $space-6: 24px;
 
-$blue: #060FD8;
-$dark-blue: #1D39C4;     
-$mid-blue: #4D64D2;     
-$purple: #8449D7;
-$light-purple: #B38EE6;
+$blue-600: #060fd8;
+$blue-700: #1d39c4;
+$blue-500: #4d64d2;
 
-$bgGray: #F3F4F6;
-$white: #fff;
+$purple-600: #8449d7;
+$purple-400: #b38ee6;
 
-$darkColor: rgb(35, 35, 41);
-$softDarkColor: rgb(42, 42, 49);
+$green-600: #68b547;
+$orange-500: #ffa940;
+$red-600: #f43c4a;
 
-$lightColor: #f1f1f1;
-$darkTextColor: #111;
+$white: #ffffff;
+$black: #000000;
 
-$green: #68B547;
-$orange: #ffa940;
-$apiSecDanger: #e5122f;
+$text-dark: #111111;
+$text-light: #f1f1f1;
 
-$borderColor: rgba(0, 0, 0, 0.05);
+$bg-light: #f3f4f6;
+$bg-dark: rgb(35 35 41);
+$surface-dark: rgb(42 42 49);
 
-$cardShadow: 0 6px 18px rgba(0, 0, 0, 0.06);
-$cardShadowMd: 0 10px 30px rgba(0, 0, 0, 0.08);
+$border-light: rgba(0, 0, 0, 0.05);
 
+$shadow-sm-light: rgba(0, 0, 0, 0.06) 0px 10px 30px 1px;
+$shadow-md-light: rgba(0, 0, 0, 0.06) 0px 0px 15px 3px;
 
 :root {
   color-scheme: light;
 
-  --primary: #{$blue};
-  --primary-hover: #{$dark-blue};
-
-  --purple: #{$purple};
-  --purple-hover: #{$light-purple};
+  --primary: #{$blue-600};
+  --primary-hover: #{$blue-700};
 
 
-  --bg: #{$bgGray};
+  --purple: #{$purple-600};
+  --purple-hover: #{$purple-400};
+
+  --bg: #{$bg-light};
   --surface: #{$white};
   --surface-2: rgba(0, 0, 0, 0.02);
 
@@ -50,23 +51,25 @@ $cardShadowMd: 0 10px 30px rgba(0, 0, 0, 0.08);
   --soft-bg-hover: rgba(0, 0, 0, 0.06);
   --soft-border: rgba(0, 0, 0, 0.10);
 
-  --text: #{$darkTextColor};
+  --text: #{$text-dark};
   --muted: rgba(0, 0, 0, 0.65);
 
-  --border: #{$borderColor};
+  --border: #{$border-light};
   --divider: rgba(0, 0, 0, 0.10);
 
-  --shadow-sm: #{$cardShadow};
-  --shadow-md: #{$cardShadowMd};
-
-  --success: #{$green};
-  --warning: #{$orange};
-  --error: #{$apiSecDanger};
-
+  --shadow-sm: #{$shadow-sm-light};
+  --shadow-md: #{$shadow-md-light};
   --focus-ring: 0 0 0 3px rgba(22, 119, 255, 0.20);
 
-  --radius-md: #{$radius-md};
+  --success: #{$green-600};
+  --warning: #{$orange-500};
+  --error: #{$red-600};
+
+  --edit: var(--purple);
+  --edit-hover: var(--purple-hover);
+
   --radius-sm: #{$radius-sm};
+  --radius-md: #{$radius-md};
 
   --space-2: #{$space-2};
   --space-3: #{$space-3};
@@ -80,40 +83,36 @@ $cardShadowMd: 0 10px 30px rgba(0, 0, 0, 0.08);
 :root[data-theme="dark"] {
   color-scheme: dark;
 
-  --primary: #{$blue};
-  --primary-hover: #{$mid-blue};
+  --primary: #{$blue-600};
+  --primary-hover: #{$blue-500};
 
+  --purple: #{$purple-600};
+  --purple-hover: #{$purple-400};
 
-  --purple: #{$purple};
-  --purple-hover: #{$light-purple};
-
-  --bg: #{$darkColor};
-  --surface: #{$softDarkColor};
+  --bg: #{$bg-dark};
+  --surface: #{$surface-dark};
   --surface-2: rgba(255, 255, 255, 0.05);
-
 
   --soft-bg: rgba(255, 255, 255, 0.06);
   --soft-bg-hover: rgba(255, 255, 255, 0.10);
   --soft-border: rgba(255, 255, 255, 0.14);
 
-  --text: #{$lightColor};
+  --text: #{$text-light};
   --muted: rgba(255, 255, 255, 0.70);
-
 
   --border: rgba(255, 255, 255, 0.14);
   --divider: rgba(255, 255, 255, 0.12);
 
-
   --shadow-sm: 0 10px 24px rgba(0, 0, 0, 0.28);
   --shadow-md: 0 14px 34px rgba(0, 0, 0, 0.34);
-
-
-  --success: #{$green};
-  --warning: #{$orange};
-  --error: #{$apiSecDanger};
-
-
   --focus-ring: 0 0 0 3px rgba(79, 107, 255, 0.28);
+
+  --success: #{$green-600};
+  --warning: #{$orange-500};
+  --error: #{$red-600};
+
+  --edit: var(--purple);
+  --edit-hover: var(--purple-hover);
 
   --app-bg: var(--bg);
   --app-surface: var(--surface);

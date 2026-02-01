@@ -2,7 +2,6 @@ const USERS_KEY = "jp_users";
 const POSTS_KEY = "jp_posts";
 const TODOS_KEY = "jp_todos_v1";
 
-
 const safeParse = (v, fallback) => {
   try {
     const parsed = JSON.parse(v);
@@ -40,4 +39,37 @@ export function nextId(items) {
   const list = Array.isArray(items) ? items : [];
   const max = list.reduce((m, x) => ((x?.id ?? 0) > m ? x.id : m), 0);
   return max + 1;
+}
+
+
+const toIsoSafe = (d) => {
+  try {
+    const dt = d instanceof Date ? d : new Date(d);
+    const t = dt.getTime();
+    return Number.isFinite(t) ? dt.toISOString() : null;
+  } catch {
+    return null;
+  }
+};
+
+
+export function ensureUsersCreatedAt(users) {
+  const list = Array.isArray(users) ? users : [];
+  let changed = false;
+
+  const normalized = list.map((u, idx) => {
+    if (u?.createdAt) return u;
+
+    changed = true;
+
+    const baseDays = Number.isFinite(Number(u?.id)) ? Number(u.id) : idx + 1;
+    const fallbackDate = new Date(Date.now() - baseDays * 24 * 60 * 60 * 1000);
+
+    return {
+      ...u,
+      createdAt: toIsoSafe(fallbackDate),
+    };
+  });
+
+  return { normalized, changed };
 }

@@ -1,19 +1,30 @@
 import { usersService } from "../../api/jp/users.service";
-import { loadUsers, saveUsers, loadPosts, savePosts, nextId } from "../jpDb";
+import {loadUsers,saveUsers,loadPosts,savePosts,nextId,ensureUsersCreatedAt,} from "../jpDb";
 
 const toNum = (v) => (typeof v === "number" ? v : Number(v));
 
 export const usersRepo = {
   async bootstrap(options = {}) {
     const local = loadUsers();
-    if (local?.length) return local;
+
+    if (Array.isArray(local) && local.length) {
+      const idNormalized = local.map((u) => ({ ...u, id: toNum(u?.id) }));
+      const { normalized, changed } = ensureUsersCreatedAt(idNormalized);
+
+      if (changed) saveUsers(normalized);
+      else saveUsers(normalized);
+
+      return normalized;
+    }
 
     const apiUsers = await usersService.getUsers(options);
 
-    const normalized = (apiUsers || []).map((u) => ({
+    const idNormalized = (apiUsers || []).map((u) => ({
       ...u,
-      id: toNum(u.id),
+      id: toNum(u?.id),
     }));
+
+    const { normalized } = ensureUsersCreatedAt(idNormalized);
 
     saveUsers(normalized);
     return normalized;
@@ -23,13 +34,18 @@ export const usersRepo = {
     try {
       await usersService.createUser(payload, options);
     } catch {
+      
     }
 
-    const newUser = { id: nextId(currentUsers), ...payload };
+    const newUser = {
+      id: nextId(currentUsers),
+      ...payload,
+      createdAt: new Date().toISOString(),
+    };
 
     const normalizedNewUser = { ...newUser, id: toNum(newUser.id) };
 
-    const next = [normalizedNewUser, ...currentUsers];
+    const next = [normalizedNewUser, ...(Array.isArray(currentUsers) ? currentUsers : [])];
     saveUsers(next);
     return next;
   },
@@ -40,12 +56,21 @@ export const usersRepo = {
     try {
       await usersService.updateUser(nid, payload, options);
     } catch {
-      
+   
     }
 
-    const next = currentUsers.map((u) =>
-      toNum(u.id) === nid ? { ...u, ...payload, id: nid } : u
-    );
+    const next = (Array.isArray(currentUsers) ? currentUsers : []).map((u) => {
+      if (toNum(u?.id) !== nid) return u;
+
+      const createdAt = u?.createdAt;
+
+      return {
+        ...u,
+        ...payload,
+        id: nid,
+        createdAt,
+      };
+    });
 
     saveUsers(next);
     return next;
@@ -60,11 +85,13 @@ export const usersRepo = {
     
     }
 
-    const nextUsers = currentUsers.filter((u) => toNum(u.id) !== nid);
+    const nextUsers = (Array.isArray(currentUsers) ? currentUsers : []).filter(
+      (u) => toNum(u?.id) !== nid
+    );
     saveUsers(nextUsers);
 
     const allPosts = loadPosts() || [];
-    const nextPosts = allPosts.filter((p) => toNum(p.userId) !== nid);
+    const nextPosts = allPosts.filter((p) => toNum(p?.userId) !== nid);
     savePosts(nextPosts);
 
     return nextUsers;
