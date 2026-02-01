@@ -1,5 +1,17 @@
 import { useEffect, useMemo, useState, useCallback } from "react";
-import {Button,Form,Input,Modal,Space,Table,message,Tooltip,Popconfirm,} from "antd";
+import {
+  Button,
+  Card,
+  Form,
+  Input,
+  Modal,
+  Space,
+  Table,
+  Pagination,
+  message,
+  Tooltip,
+  Popconfirm,
+} from "antd";
 import { PlusOutlined } from "@ant-design/icons";
 import { BiCommentDetail, BiEditAlt } from "react-icons/bi";
 import { AiOutlineDelete } from "react-icons/ai";
@@ -7,22 +19,29 @@ import { MdOutlineEmail } from "react-icons/md";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { usersRepo } from "../../storage/repo/users.repo";
-import "../UsersPage/UserPage.scss";
+import "./UserPage.scss";
+import PageHeader from "../../components/PageHeader/PageHeader";
+import { saveUsers, ensureUsersCreatedAt } from "../../storage/jpDb";
+
+const PAGE_SIZE = 8;
 
 export default function UsersPage() {
   const { t } = useTranslation();
   const nav = useNavigate();
+
   const [messageApi, contextHolder] = message.useMessage();
 
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
+
   const [q, setQ] = useState("");
 
   const [open, setOpen] = useState(false);
   const [editing, setEditing] = useState(null);
   const [saving, setSaving] = useState(false);
-
   const [form] = Form.useForm();
+
+  const [page, setPage] = useState(1);
 
   useEffect(() => {
     const controller = new AbortController();
@@ -31,7 +50,10 @@ export default function UsersPage() {
       setLoading(true);
       try {
         const data = await usersRepo.bootstrap({ signal: controller.signal });
-        setUsers(data);
+        const { normalized, changed } = ensureUsersCreatedAt(data);
+        if (changed) saveUsers(normalized);
+
+        setUsers(normalized);
       } catch {
         messageApi.error(t("UsersPage.errors.fetchUsers"));
       } finally {
@@ -50,6 +72,17 @@ export default function UsersPage() {
       `${u.name} ${u.username} ${u.email}`.toLowerCase().includes(term)
     );
   }, [users, q]);
+
+  useEffect(() => {
+    const maxPage = Math.max(1, Math.ceil(filteredUsers.length / PAGE_SIZE));
+    if (page > maxPage) setPage(1);
+
+  }, [filteredUsers.length]);
+
+  const pagedUsers = useMemo(() => {
+    const start = (page - 1) * PAGE_SIZE;
+    return filteredUsers.slice(start, start + PAGE_SIZE);
+  }, [filteredUsers, page]);
 
   const openEdit = useCallback(
     (record) => {
@@ -113,6 +146,21 @@ export default function UsersPage() {
     }
   }, [saving, form, editing, users, t, closeModal, messageApi]);
 
+  const fmtDateTime = useCallback((iso) => {
+    if (!iso) return "-";
+    const dt = new Date(iso);
+    const ms = dt.getTime();
+    if (!Number.isFinite(ms)) return "-";
+
+    return new Intl.DateTimeFormat("tr-TR", {
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+      hour: "2-digit",
+      minute: "2-digit",
+    }).format(dt);
+  }, []);
+
   const columns = useMemo(
     () => [
       {
@@ -144,10 +192,26 @@ export default function UsersPage() {
         ),
       },
       {
+        title: t("UsersPage.columns.createdAt"),
+        dataIndex: "createdAt",
+        key: "createdAt",
+        width: 190,
+        ellipsis: true,
+        render: (v) => (
+          <span className="users-page__createdAt">{fmtDateTime(v)}</span>
+        ),
+        sorter: (a, b) =>
+          new Date(a?.createdAt || 0).getTime() -
+          new Date(b?.createdAt || 0).getTime(),
+        sortDirections: ["descend", "ascend"],
+        defaultSortOrder: "descend",
+      },
+      {
         title: t("UsersPage.columns.actions"),
         key: "actions",
         width: 180,
         align: "left",
+        className: "col-actions",
         render: (_, record) => (
           <Space className="users-page__tableActions" size={10}>
             <Tooltip title={t("UsersPage.actions.detailPosts")} placement="top">
@@ -191,25 +255,28 @@ export default function UsersPage() {
         ),
       },
     ],
-    [t, nav, openEdit, onDelete]
+    [t, nav, openEdit, onDelete, fmtDateTime]
   );
 
   return (
     <div className="users-page app-page">
       {contextHolder}
 
-      <div className="page-header page-header--users">
-        <h2 className="page-header__title">{t("UsersPage.title")}</h2>
-
-        <div className="page-header__actions">
+      <PageHeader
+        className="page-header--users"
+        title={t("UsersPage.title")}
+        search={
           <Input
-            className="page-header__search"
             placeholder={t("UsersPage.searchPlaceholder")}
             value={q}
-            onChange={(e) => setQ(e.target.value)}
+            onChange={(e) => {
+              setQ(e.target.value);
+              setPage(1);  
+            }}
             allowClear
           />
-
+        }
+        actions={
           <Button
             type="primary"
             className="btn-blue"
@@ -218,24 +285,36 @@ export default function UsersPage() {
           >
             {t("UsersPage.actions.newUser")}
           </Button>
-        </div>
-      </div>
-
-      <Table
-        rowKey="id"
-        loading={loading}
-        columns={columns}
-        dataSource={filteredUsers}
-        size="middle"
-        pagination={{ pageSize: 8, showSizeChanger: false }}
+        }
       />
+      <Card className="users-tableCard" bordered={false}>
+        <div className="users-tableCard__table">
+          <Table
+            className="users-table"
+            rowKey="id"
+            loading={loading}
+            columns={columns}
+            dataSource={pagedUsers}
+            size="middle"
+            pagination={false}
+          />
+        </div>
+
+        <div className="users-tableCard__footer">
+          <Pagination
+            current={page}
+            pageSize={PAGE_SIZE}
+            total={filteredUsers.length}
+            onChange={setPage}
+            showSizeChanger={false}
+          />
+        </div>
+      </Card>
 
       <Modal
         rootClassName="users-edit-modal--scoped"
         title={
-          editing
-            ? t("UsersPage.modal.editTitle")
-            : t("UsersPage.modal.newTitle")
+          editing ? t("UsersPage.modal.editTitle") : t("UsersPage.modal.newTitle")
         }
         open={open}
         onCancel={closeModal}

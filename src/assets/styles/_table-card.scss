@@ -1,5 +1,5 @@
-
 @use "./variables" as *;
+
 
 .table-card {
   background: var(--surface) !important;
@@ -7,26 +7,73 @@
   border-radius: 16px !important;
   overflow: hidden !important;
   box-shadow: var(--shadow-sm) !important;
+
+  &.ant-table-wrapper {
+    background: transparent !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+  }
+
+  .ant-table {
+    background: transparent !important;
+  }
+
+  .ant-table-thead > tr > th {
+    background: var(--surface) !important;
+  }
+  .ant-table-wrapper .ant-pagination,
+  .ant-pagination {
+    background: var(--surface) !important;
+    border-top: 1px solid var(--border) !important;
+  }
 }
 
-.table-card.ant-table-wrapper {
-  background: transparent !important;
-  border: 0 !important;
-  border-radius: 0 !important;
-  overflow: hidden !important;
-  box-shadow: none !important;
+@mixin table-surface(
+  $hoverBg: var(--surface-2, var(--surface)),
+  $theadBg: var(--surface),
+  $tbodyBg: var(--surface)
+) {
+  .ant-table {
+    color: var(--text);
+  }
+
+  .ant-table-thead > tr > th {
+    background: $theadBg !important;
+    color: var(--text) !important;
+    border-bottom: 1px solid var(--border) !important;
+  }
+
+  .ant-table-tbody > tr > td {
+    background: $tbodyBg !important;
+    color: var(--text) !important;
+    border-bottom: 1px solid var(--border) !important;
+  }
+
+  .ant-table-tbody > tr.ant-table-row:hover > td {
+    background: $hoverBg !important;
+  }
+
+  .ant-table-cell {
+    min-width: 0;
+  }
 }
 
-.table-card .ant-table {
-  background: transparent !important;
-}
+@mixin table-no-extra-lines() {
+  .ant-table-wrapper {
+    .ant-table-footer,
+    .ant-table-summary,
+    .ant-table-summary > tr > td {
+      border-top: 0 !important;
+      background: transparent !important;
+    }
 
-.table-card .ant-table-thead > tr > th {
-  background: var(--surface) !important;
-}
+    .ant-table-container {
+      border-bottom: 0 !important;
+    }
 
-.table-card .ant-table-wrapper .ant-pagination,
-.table-card .ant-pagination {
-  background: var(--surface) !important;
-  border-top: 1px solid var(--border) !important;
+    .ant-table-tbody > tr:last-child > td {
+      border-bottom: 0 !important;
+    }
+  }
 }

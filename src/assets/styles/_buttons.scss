@@ -10,18 +10,18 @@
 .ant-btn {
   border-radius: var(--btn-radius) !important;
   font-weight: 650 !important;
+
+  &:focus-visible {
+    box-shadow: var(--focus-ring) !important;
+  }
 }
 
-.ant-btn:not(.ant-btn-circle):not(.ant-btn-icon-only) {
+.ant-btn:not(.ant-btn-circle):not(.ant-btn-icon-only):not(.ant-btn-text):not(.ant-btn-link) {
   height: var(--btn-h) !important;
   padding: 0 var(--btn-px) !important;
 }
 
-.ant-btn:focus-visible {
-  box-shadow: var(--focus-ring) !important;
-}
-
-.ant-btn-primary {
+.ant-btn.ant-btn-primary {
   box-shadow: 0 8px 18px rgba(0, 0, 0, 0.10) !important;
 
   &:hover {
@@ -72,31 +72,20 @@
   background: var(--primary) !important;
   border-color: var(--primary) !important;
   color: #fff !important;
-}
 
-.btn-blue.ant-btn:not(.icon-btn):not(.ant-btn-text):not(.ant-btn-link):hover {
-  background: var(--primary-hover) !important;
-  border-color: var(--primary-hover) !important;
-  color: #fff !important;
-}
+  &:hover {
+    background: var(--primary-hover) !important;
+    border-color: var(--primary-hover) !important;
+    color: #fff !important;
+  }
 
-.btn-blue.ant-btn:not(.icon-btn):not(.ant-btn-text):not(.ant-btn-link):active {
-  transform: translateY(0.5px);
-}
+  &:active {
+    transform: translateY(0.5px);
+  }
 
-.btn-blue.ant-btn:not(.icon-btn):not(.ant-btn-text):not(.ant-btn-link):focus-visible {
-  box-shadow: var(--focus-ring) !important;
-}
-
-.btn-blue.ant-btn.ant-btn-primary:not(.icon-btn) {
-  background: var(--primary) !important;
-  border-color: var(--primary) !important;
-  color: #fff !important;
-}
-.btn-blue.ant-btn.ant-btn-primary:not(.icon-btn):hover {
-  background: var(--primary-hover) !important;
-  border-color: var(--primary-hover) !important;
-  color: #fff !important;
+  &:focus-visible {
+    box-shadow: var(--focus-ring) !important;
+  }
 }
 
 .btn-danger-text.ant-btn-text.ant-btn-dangerous {
@@ -149,23 +138,23 @@
     background 140ms ease,
     border-color 140ms ease,
     color 140ms ease;
-}
 
-.icon-btn.ant-btn:hover {
-  transform: translateY(-1px);
-  background: var(--soft-bg) !important;
-  box-shadow:
-    0 2px 0 rgba(0, 0, 0, 0.04),
-    0 12px 26px rgba(0, 0, 0, 0.14) !important;
-}
+  &:hover {
+    transform: translateY(-1px);
+    background: var(--soft-bg) !important;
+    box-shadow:
+      0 2px 0 rgba(0, 0, 0, 0.04),
+      0 12px 26px rgba(0, 0, 0, 0.14) !important;
+  }
 
-.icon-btn.ant-btn:active {
-  transform: translateY(0);
-}
+  &:active {
+    transform: translateY(0);
+  }
 
-.icon-btn.ant-btn:focus-visible {
-  outline: none !important;
-  box-shadow: var(--focus-ring) !important;
+  &:focus-visible {
+    outline: none !important;
+    box-shadow: var(--focus-ring) !important;
+  }
 }
 
 .icon-btn .ant-btn-icon,
@@ -182,37 +171,32 @@
 .icon-btn--primary.ant-btn {
   border-color: var(--primary) !important;
   color: var(--primary) !important;
-}
-.icon-btn--primary.ant-btn:hover {
-  border-color: var(--primary-hover) !important;
-  color: var(--primary-hover) !important;
+
+  &:hover {
+    border-color: var(--primary-hover) !important;
+    color: var(--primary-hover) !important;
+  }
 }
 
-.icon-btn--purple.ant-btn {
-  border-color: var(--purple) !important;
-  color: var(--purple) !important;
-}
-.icon-btn--purple.ant-btn:hover {
-  border-color: var(--purple-hover) !important;
-  color: var(--purple-hover) !important;
-}
-
+.icon-btn--purple.ant-btn,
 .icon-btn--edit.ant-btn {
   border-color: var(--purple) !important;
   color: var(--purple) !important;
-}
-.icon-btn--edit.ant-btn:hover {
-  border-color: var(--purple-hover) !important;
-  color: var(--purple-hover) !important;
-  background: var(--soft-bg) !important;
+
+  &:hover {
+    border-color: var(--purple-hover) !important;
+    color: var(--purple-hover) !important;
+    background: var(--soft-bg) !important;
+  }
 }
 
 .icon-btn--danger.ant-btn {
   border-color: var(--error) !important;
   color: var(--error) !important;
-}
-.icon-btn--danger.ant-btn:hover {
-  background: rgba(239, 68, 68, 0.10) !important;
+
+  &:hover {
+    background: rgba(239, 68, 68, 0.10) !important;
+  }
 }
 
 .ant-btn-circle.ant-btn {
@@ -236,31 +220,104 @@
   display: block !important;
 }
 
-:root[data-theme="dark"] .icon-btn.ant-btn {
-  border-width: 1.5px !important;
-  border-color: rgba(255, 255, 255, 0.28) !important;
-  box-shadow: none !important;
+:root[data-theme="dark"] {
+  .icon-btn.ant-btn {
+    border-width: 1.5px !important;
+    border-color: rgba(255, 255, 255, 0.28) !important;
+    box-shadow: none !important;
+
+    &:hover {
+      background: rgba(255, 255, 255, 0.06) !important;
+      border-color: rgba(255, 255, 255, 0.42) !important;
+    }
+  }
+
+  .icon-btn svg {
+    opacity: 1;
+    stroke-width: 2.3 !important;
+  }
+
+  .icon-btn--primary.ant-btn:hover {
+    background: rgba(59, 130, 246, 0.14) !important;
+  }
+  .icon-btn--purple.ant-btn:hover,
+  .icon-btn--edit.ant-btn:hover {
+    background: rgba(139, 92, 246, 0.14) !important;
+  }
+  .icon-btn--danger.ant-btn:hover {
+    background: rgba(239, 68, 68, 0.16) !important;
+  }
 }
 
-:root[data-theme="dark"] .icon-btn.ant-btn:hover {
-  background: rgba(255, 255, 255, 0.06) !important;
-  border-color: rgba(255, 255, 255, 0.42) !important;
+@mixin header-action-buttons($h: 34px, $radius: 12px, $px: 14px) {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 10px !important;
+
+  .ant-space-item {
+    display: inline-flex;
+  }
+
+  .ant-btn {
+    height: $h !important;
+    padding: 0 $px !important;
+    border-radius: $radius !important;
+
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 8px !important;
+
+    font-weight: 750 !important;
+    letter-spacing: 0.2px;
+    box-shadow: none !important;
+
+    &,
+    &:hover,
+    &:active,
+    &:focus,
+    &:focus-visible {
+      outline: none !important;
+    }
+
+    &:focus-visible {
+      box-shadow: var(--focus-ring) !important;
+    }
+
+    &::after {
+      display: none !important;
+    }
+
+    .anticon,
+    .ui-icon {
+      font-size: 14px;
+      line-height: 1;
+      color: inherit !important;
+    }
+  }
 }
 
-:root[data-theme="dark"] .icon-btn svg {
-  opacity: 1;
-  stroke-width: 2.3 !important;
+@mixin header-secondary-outline() {
+  .ant-btn:not(.ant-btn-primary) {
+    background: rgba(255, 255, 255, 0.04) !important;
+    border: 1px solid rgba(255, 255, 255, 0.12) !important;
+    color: var(--text) !important;
+
+    &:hover {
+      background: rgba(255, 255, 255, 0.07) !important;
+      border-color: rgba(255, 255, 255, 0.2) !important;
+    }
+  }
 }
 
-:root[data-theme="dark"] .icon-btn--primary.ant-btn:hover {
-  background: rgba(59, 130, 246, 0.14) !important;
-}
-:root[data-theme="dark"] .icon-btn--purple.ant-btn:hover {
-  background: rgba(139, 92, 246, 0.14) !important;
-}
-:root[data-theme="dark"] .icon-btn--edit.ant-btn:hover {
-  background: rgba(139, 92, 246, 0.14) !important;
-}
-:root[data-theme="dark"] .icon-btn--danger.ant-btn:hover {
-  background: rgba(239, 68, 68, 0.16) !important;
+@mixin header-secondary-last-stronger() {
+  .ant-space-item:last-child .ant-btn:not(.ant-btn-primary) {
+    background: rgba(255, 255, 255, 0.06) !important;
+    border-color: rgba(255, 255, 255, 0.16) !important;
+
+    &:hover {
+      background: rgba(255, 255, 255, 0.09) !important;
+      border-color: rgba(255, 255, 255, 0.24) !important;
+    }
+  }
 }

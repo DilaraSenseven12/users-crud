@@ -112,7 +112,7 @@
   },
   "UserTodosSection": {
     "title" : "User Todos",
-    
+
     "modal": {
       "newTitle": "New Todo",
       "editTitle": "Edit Todo",
@@ -151,7 +151,8 @@
     "columns": {
       "done": "Status",
       "title": "Title",
-      "actions": "Actions"
+      "actions": "Actions",
+      "createdAt": " Created Date"
     },
     "labels": {
       "done": "Done",
@@ -175,7 +176,8 @@
       "name": "Name",
       "username": "Username",
       "email": "Email",
-      "actions": "Actions"
+      "actions": "Actions",
+      "createdAt": "Created Date"
     },
     "actions": {
       "detailPosts": "View details",

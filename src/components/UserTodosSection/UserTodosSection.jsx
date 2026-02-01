@@ -1,11 +1,26 @@
 import { useEffect, useMemo, useState, useCallback } from "react";
-import {Button,Card,Empty,Form,Input,Modal,Popconfirm,Segmented,Space,Table,Tag,message} from "antd";
+import {
+  Button,
+  Card,
+  Empty,
+  Form,
+  Input,
+  Modal,
+  Popconfirm,
+  Segmented,
+  Space,
+  Table,
+  Tag,
+  message,
+} from "antd";
+
 import { useTranslation } from "react-i18next";
 import { FiCheckCircle, FiPlus, FiSearch } from "react-icons/fi";
 import { BiEditAlt } from "react-icons/bi";
 import { AiOutlineDelete } from "react-icons/ai";
 import { todosService } from "../../api/jp/todos.service.jp.js";
 import { loadTodos, saveTodos, nextId } from "../../storage/jpDb";
+import SectionHeader from "../SectionHeader/SectionHeader";
 import "./UserTodosSection.scss";
 
 const FILTERS = {
@@ -18,7 +33,7 @@ export default function UserTodosSection({ userId }) {
   const { t } = useTranslation();
   const [messageApi, contextHolder] = message.useMessage();
 
-  const uid = Number(userId);
+  const uid = useMemo(() => Number(userId), [userId]);
 
   const [todos, setTodos] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -42,7 +57,11 @@ export default function UserTodosSection({ userId }) {
   );
 
   useEffect(() => {
-    if (!Number.isFinite(uid)) return;
+    if (!Number.isFinite(uid)) {
+      setTodos([]);
+      setLoading(false);
+      return;
+    }
 
     const controller = new AbortController();
 
@@ -154,17 +173,16 @@ export default function UserTodosSection({ userId }) {
       }
 
       const prev = editing;
+
       const optimistic = todos.map((x) =>
         Number(x.id) === Number(prev.id) ? { ...x, title } : x
       );
-
       setTodos(optimistic);
       persistLocalTodosForUser(optimistic);
 
       try {
         await todosService.updateTodo(prev.id, { title });
       } catch (err) {
-       
         const rolledBack = todos.map((x) =>
           Number(x.id) === Number(prev.id) ? { ...x, title: prev.title } : x
         );
@@ -179,7 +197,17 @@ export default function UserTodosSection({ userId }) {
     } finally {
       setSaving(false);
     }
-  }, [saving, form, editing, uid, todos, persistLocalTodosForUser, t, messageApi, closeModal]);
+  }, [
+    saving,
+    form,
+    editing,
+    uid,
+    todos,
+    persistLocalTodosForUser,
+    t,
+    messageApi,
+    closeModal,
+  ]);
 
   const onToggleCompleted = useCallback(
     async (row) => {
@@ -242,8 +270,9 @@ export default function UserTodosSection({ userId }) {
         width: 120,
         render: (_, record) => (
           <Button
-            className={`todo-status ${record.completed ? "todo-status--done" : "todo-status--active"
-              }`}
+            className={`todo-status ${
+              record.completed ? "todo-status--done" : "todo-status--active"
+            }`}
             type="default"
             onClick={() => onToggleCompleted(record)}
           >
@@ -309,55 +338,52 @@ export default function UserTodosSection({ userId }) {
       <Card
         className="user-todos card"
         title={
-          <div className="todos-header">
-            <div className="todos-header__row todos-header__row--title">
-              <div className="todos-header__title">{t("UserTodosSection.title")}</div>
-            </div>
+          <SectionHeader
+            className="todos-header"
+            title={t("UserTodosSection.title")}
+            filters={
+              <Segmented
+                value={filter}
+                onChange={setFilter}
+                className="todos-header__segmented"
+                options={[
+                  { label: t("UserTodosSection.filters.all"), value: FILTERS.all },
+                  { label: t("UserTodosSection.filters.active"), value: FILTERS.active },
+                  { label: t("UserTodosSection.filters.completed"), value: FILTERS.completed },
+                ]}
+              />
+            }
+            search={
+              <Input
+                placeholder={t("UserTodosSection.searchPlaceholder")}
+                value={q}
+                onChange={(e) => setQ(e.target.value)}
+                allowClear
+                prefix={<FiSearch className="ui-icon ui-icon--muted" />}
+              />
+            }
+            actions={
+              <Space size={10} className="todos-header__actions">
+                <Button
+                  type="primary"
+                  onClick={openCreate}
+                  className="btn-blue"
+                  icon={<FiPlus className="ui-icon" />}
+                >
+                  {t("UserTodosSection.actions.newTodo")}
+                </Button>
 
-            <div className="todos-header__row todos-header__row--controls">
-              <div className="todos-header__right">
-                <Segmented
-                  value={filter}
-                  onChange={setFilter}
-                  className="todos-header__segmented"
-                  options={[
-                    { label: t("UserTodosSection.filters.all"), value: FILTERS.all },
-                    { label: t("UserTodosSection.filters.active"), value: FILTERS.active },
-                    { label: t("UserTodosSection.filters.completed"), value: FILTERS.completed },
-                  ]}
-                />
-
-                <Input
-                  className="todos-header__search"
-                  placeholder={t("UserTodosSection.searchPlaceholder")}
-                  value={q}
-                  onChange={(e) => setQ(e.target.value)}
-                  allowClear
-                  prefix={<FiSearch className="ui-icon ui-icon--muted" />}
-                />
-
-                <div className="todos-header__actions">
-                  <Button
-                    type="primary"
-                    onClick={openCreate}
-                    className="btn-blue"
-                    icon={<FiPlus className="ui-icon" />}
-                  >
-                    {t("UserTodosSection.actions.newTodo")}
-                  </Button>
-
-                  <Button
-                    disabled={!counts.completed}
-                    onClick={clearCompleted}
-                    className="btn-blue"
-                    icon={<FiCheckCircle className="ui-icon" />}
-                  >
-                    {t("UserTodosSection.actions.clearCompleted")}
-                  </Button>
-                </div>
-              </div>
-            </div>
-          </div>
+                <Button
+                  disabled={!counts.completed}
+                  onClick={clearCompleted}
+                  className="btn-blue"
+                  icon={<FiCheckCircle className="ui-icon" />}
+                >
+                  {t("UserTodosSection.actions.clearCompleted")}
+                </Button>
+              </Space>
+            }
+          />
         }
       >
         <Table
@@ -374,12 +400,18 @@ export default function UserTodosSection({ userId }) {
 
       <Modal
         rootClassName="todos-modal--scoped"
-        title={editing ? t("UserTodosSection.modal.editTitle") : t("UserTodosSection.modal.newTitle")}
+        title={
+          editing
+            ? t("UserTodosSection.modal.editTitle")
+            : t("UserTodosSection.modal.newTitle")
+        }
         open={open}
         onCancel={closeModal}
         onOk={onSubmit}
         confirmLoading={saving}
-        okText={editing ? t("UserTodosSection.modal.save") : t("UserTodosSection.modal.add")}
+        okText={
+          editing ? t("UserTodosSection.modal.save") : t("UserTodosSection.modal.add")
+        }
         cancelText={t("Common.cancel")}
         destroyOnClose
       >
