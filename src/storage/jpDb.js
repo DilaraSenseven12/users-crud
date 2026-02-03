@@ -73,3 +73,24 @@ export function ensureUsersCreatedAt(users) {
 
   return { normalized, changed };
 }
+
+export function ensureUsersStatus(users) {
+  const list = Array.isArray(users) ? users : [];
+  let changed = false;
+
+  const normalized = list.map((u, idx) => {
+    if (u?.status === "active" || u?.status === "inactive") return u;
+
+    changed = true;
+
+    const seed = Number.isFinite(Number(u?.id)) ? Number(u.id) : idx + 1;
+    const isActive = seed % 4 !== 0; 
+
+    return {
+      ...u,
+      status: isActive ? "active" : "inactive",
+    };
+  });
+
+  return { normalized, changed };
+}

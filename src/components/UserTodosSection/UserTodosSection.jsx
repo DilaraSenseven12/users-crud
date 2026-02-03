@@ -1,19 +1,5 @@
 import { useEffect, useMemo, useState, useCallback } from "react";
-import {
-  Button,
-  Card,
-  Empty,
-  Form,
-  Input,
-  Modal,
-  Popconfirm,
-  Segmented,
-  Space,
-  Table,
-  Tag,
-  message,
-} from "antd";
-
+import {Button,Card,Empty,Form,Input,Modal,Popconfirm,Segmented,Space,Table,Tag,message,} from "antd";
 import { useTranslation } from "react-i18next";
 import { FiCheckCircle, FiPlus, FiSearch } from "react-icons/fi";
 import { BiEditAlt } from "react-icons/bi";
