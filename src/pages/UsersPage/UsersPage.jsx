@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState, useCallback } from "react";
-import {Button,Card,Form,Input,Modal,Space,Table,Pagination,message,Tooltip,Popconfirm,Radio,Row,Col,Dropdown,Tag,} from "antd";
-import {PlusOutlined,UserOutlined,CheckCircleOutlined,CloseCircleOutlined,DownOutlined,} from "@ant-design/icons";
+import { Button, Card, Form, Input, Modal, Space, Table, Pagination, message, Tooltip, Popconfirm, Radio, Row, Col, Dropdown, Tag, } from "antd";
+import { PlusOutlined, UserOutlined, CheckCircleOutlined, CloseCircleOutlined, DownOutlined, } from "@ant-design/icons";
 import { BiCommentDetail, BiEditAlt } from "react-icons/bi";
 import { AiOutlineDelete } from "react-icons/ai";
 import { MdOutlineEmail } from "react-icons/md";
@@ -10,7 +10,7 @@ import dayjs from "dayjs";
 import { usersRepo } from "../../storage/repo/users.repo";
 import "./UserPage.scss";
 import PageHeader from "../../components/PageHeader/PageHeader";
-import {saveUsers,ensureUsersCreatedAt,ensureUsersStatus,} from "../../storage/jpDb";
+import { saveUsers, ensureUsersCreatedAt, ensureUsersStatus, } from "../../storage/jpDb";
 import FiltersBar from "../../components/FiltersBar/FiltersBar";
 
 const PAGE_SIZE = 8;
@@ -33,8 +33,8 @@ export default function UsersPage() {
 
   const [filters, setFilters] = useState({
     q: "",
-    status: "all", 
-    range: null, 
+    status: "all",
+    range: null,
   });
 
   const patchFilters = useCallback((patch) => {
@@ -90,7 +90,7 @@ export default function UsersPage() {
         !start || !end || !u?.createdAt
           ? true
           : dayjs(u.createdAt).isAfter(start.startOf("day")) &&
-            dayjs(u.createdAt).isBefore(end.endOf("day"));
+          dayjs(u.createdAt).isBefore(end.endOf("day"));
 
       return okQ && okStatus && okRange;
     });
@@ -301,9 +301,8 @@ export default function UsersPage() {
           const isActive = (v ?? "active") === "active";
           return (
             <Tag
-              className={`users-status users-status--${
-                isActive ? "active" : "inactive"
-              }`}
+              className={`users-status users-status--${isActive ? "active" : "inactive"
+                }`}
             >
               {isActive
                 ? t("UsersPage.status.active", { defaultValue: "Active" })
@@ -383,20 +382,9 @@ export default function UsersPage() {
   return (
     <div className="users-page app-page">
       {contextHolder}
-
       <PageHeader
         className="page-header--users"
         title={t("UsersPage.title")}
-        actions={
-          <Button
-            type="primary"
-            className="btn-blue"
-            icon={<PlusOutlined />}
-            onClick={openCreate}
-          >
-            {t("UsersPage.actions.newUser")}
-          </Button>
-        }
       />
       <div className="users-stats">
         <Row gutter={[12, 12]}>
@@ -464,6 +452,16 @@ export default function UsersPage() {
           onChange={patchFilters}
           onReset={resetFilters}
           loading={loading}
+          actions={
+            <Button
+              type="primary"
+              className="btn-blue"
+              icon={<PlusOutlined />}
+              onClick={openCreate}
+            >
+              {t("UsersPage.actions.newUser")}
+            </Button>
+          }
         />
       </div>
       <Card className="users-tableCard" bordered={false}>
