@@ -308,3 +308,226 @@
     color: #fff !important;
   }
 }
+.users-page__filters {
+  margin-bottom: 12px;
+}
+
+.users-edit-modal--scoped {
+  :root[data-theme="dark"] & {
+    .ant-form-item-label > label,
+    .ant-radio-wrapper,
+    .ant-radio-wrapper span {
+      color: #fff !important;
+    }
+  }
+}
+.users-status {
+  border: 1px solid var(--border) !important;
+  border-radius: 999px !important;
+  padding: 2px 10px !important;
+  font-weight: 700 !important;
+  font-size: 12px !important;
+  line-height: 18px !important;
+  background: transparent !important;
+  color: var(--text) !important;
+}
+
+.users-status--active {
+  background: rgba(34, 197, 94, 0.14) !important;
+  border-color: rgba(34, 197, 94, 0.35) !important;
+  color: rgba(34, 197, 94, 1) !important;
+}
+
+.users-status--inactive {
+  background: rgba(239, 68, 68, 0.14) !important;
+  border-color: rgba(239, 68, 68, 0.35) !important;
+  color: rgba(239, 68, 68, 1) !important;
+}
+.users-stats {
+  margin-bottom: 12px;
+}
+
+.users-statCard {
+  background: var(--surface) !important;
+  border: 1px solid var(--border) !important;
+  border-radius: 14px !important;
+  box-shadow: var(--shadow-md) !important;
+
+  .ant-statistic-title {
+    color: var(--muted) !important;
+    margin-bottom: 6px;
+  }
+
+  .ant-statistic-content {
+    color: var(--text) !important;
+    font-weight: 800;
+  }
+}
+
+.users-stats {
+  margin-bottom: 14px;
+}
+
+.users-statCard {
+  background: var(--surface) !important;
+  border: 1px solid var(--border) !important;
+  border-radius: 16px !important;
+  box-shadow: var(--shadow-md) !important;
+  padding: 14px !important;
+  transition: all 0.2s ease;
+  cursor: default;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-lg) !important;
+  }
+}
+
+.users-statCard__inner {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.users-statCard__icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  font-size: 22px;
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.users-statCard__meta {
+  flex: 1;
+  min-width: 0;
+}
+
+.users-statCard__title {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--muted);
+  margin-bottom: 4px;
+}
+
+.users-statCard__value {
+  font-size: 24px;
+  font-weight: 800;
+  color: var(--text);
+  line-height: 1.1;
+}
+
+.users-statCard--total {
+  .users-statCard__icon {
+    background: rgba(59, 130, 246, 0.15);
+    color: #3b82f6;
+  }
+}
+
+.users-statCard--active {
+  .users-statCard__icon {
+    background: rgba(34, 197, 94, 0.15);
+    color: #22c55e;
+  }
+}
+
+.users-statCard--inactive {
+  .users-statCard__icon {
+    background: rgba(239, 68, 68, 0.15);
+    color: #ef4444;
+  }
+}
+.users-statusHeader {
+  display: inline-flex;
+  align-items: center;
+  width: 100%;
+  gap: 8px;
+}
+
+.users-statusHeader__title {
+  font-weight: 700;
+  color: var(--text) !important;
+}
+
+.users-statusHeader__iconBtn {
+  margin-left: auto !important; 
+  width: 22px;
+  height: 22px;
+  padding: 0 !important;
+
+  border: 0 !important;       
+  outline: 0 !important;
+  background: transparent !important;
+
+  color: var(--muted) !important;
+  border-radius: 6px;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  cursor: pointer;
+  line-height: 1;
+
+  -webkit-appearance: none;
+  appearance: none;
+
+  svg {
+    width: 12px;
+    height: 12px;
+  }
+
+  &:hover {
+    color: var(--text) !important;
+    background: color-mix(in srgb, var(--text) 10%, transparent) !important;
+  }
+
+  &:active {
+    transform: translateY(0.5px);
+  }
+
+  &:focus,
+  &:focus-visible {
+    box-shadow: none !important;
+  }
+}
+
+.users-statusMenu {
+  .ant-dropdown-menu {
+    background: var(--surface) !important;
+    border: 1px solid var(--border) !important;
+    border-radius: 12px !important;
+    padding: 6px !important;
+    box-shadow: var(--shadow-md) !important;
+  }
+
+  .ant-dropdown-menu-item {
+    color: var(--text) !important;
+    border-radius: 10px !important;
+
+    &:hover {
+      background: color-mix(in srgb, var(--primary) 14%, transparent) !important;
+    }
+  }
+
+  .ant-dropdown-menu-item-selected {
+    background: color-mix(in srgb, var(--primary) 20%, transparent) !important;
+    color: var(--text) !important;
+    font-weight: 650 !important;
+  }
+
+  .ant-dropdown-menu-item-selected .anticon {
+    color: var(--text) !important;
+  }
+}
+
+:root[data-theme="dark"] .users-statusMenu {
+  .ant-dropdown-menu-item,
+  .ant-dropdown-menu-item * {
+    color: #fff !important;
+  }
+}

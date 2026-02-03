@@ -321,3 +321,49 @@
     }
   }
 }
+
+:root[data-theme="dark"] {
+  .ant-popconfirm-buttons {
+    .ant-btn-default {
+      background: transparent !important;
+      border-color: var(--border) !important;
+      color: var(--text) !important;
+
+      &:hover {
+        border-color: var(--primary) !important;
+        background: var(--soft-bg) !important;
+        color: var(--text) !important;
+      }
+    }
+
+    .ant-btn-primary {
+      background: var(--primary) !important;
+      border-color: var(--primary) !important;
+    }
+  }
+}
+
+:root[data-theme="dark"] {
+  .ant-modal-confirm {
+    .ant-modal-confirm-btns {
+      .ant-btn-default {
+        background: transparent !important;
+        border: 1px solid var(--border) !important;
+        color: var(--text) !important;
+        border-radius: var(--radius-sm, 10px) !important;
+
+        &:hover {
+          border-color: var(--primary) !important;
+          background: var(--soft-bg) !important;
+        }
+      }
+
+      .ant-btn-primary.ant-btn-dangerous {
+        background: var(--error) !important;
+        border-color: var(--error) !important;
+        color: #fff !important;
+        border-radius: var(--radius-sm, 10px) !important;
+      }
+    }
+  }
+}

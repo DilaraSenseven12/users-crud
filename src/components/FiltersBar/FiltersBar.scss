@@ -1,0 +1,144 @@
+@use "../../assets/styles/variables" as *;
+
+.crud-filters {
+  background: var(--surface) !important;
+  border: 1px solid var(--border) !important;
+  box-shadow: var(--shadow-md) !important;
+  border-radius: 14px !important;
+
+  .ant-card-body {
+    padding: 12px !important;
+  }
+
+  &__row {
+    display: grid;
+    grid-template-columns: 1.2fr 220px 280px auto;
+    gap: 10px;
+    align-items: center;
+
+    @media (max-width: 980px) {
+      grid-template-columns: 1fr 1fr;
+    }
+    @media (max-width: 560px) {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  &__actions {
+    justify-self: end;
+
+    @media (max-width: 980px) {
+      justify-self: start;
+    }
+  }
+
+  .ant-input-affix-wrapper {
+    background: var(--surface-2) !important;
+    border: 1px solid var(--border) !important;
+    border-radius: 12px !important;
+    color: var(--text) !important;
+
+    .anticon {
+      color: var(--muted) !important;
+    }
+
+    &:hover {
+      border-color: var(--primary) !important;
+    }
+
+    &.ant-input-affix-wrapper-focused,
+    &:focus-within {
+      border-color: var(--primary) !important;
+      box-shadow: none !important;
+      outline: none !important;
+    }
+  }
+  .ant-input {
+    color: var(--text) !important;
+    background: transparent !important;
+  }
+  .ant-select {
+    .ant-select-selector {
+      background: var(--surface-2) !important;
+      border: 1px solid var(--border) !important;
+      border-radius: 12px !important;
+      color: var(--text) !important;
+    }
+
+    .ant-select-selection-item {
+      color: var(--text) !important;
+    }
+
+    .ant-select-arrow,
+    .ant-select-clear {
+      color: var(--muted) !important;
+    }
+
+    &:hover .ant-select-selector {
+      border-color: var(--primary) !important;
+    }
+
+    &.ant-select-focused .ant-select-selector,
+    &:focus-within .ant-select-selector {
+      border-color: var(--primary) !important;
+      box-shadow: none !important;
+      outline: none !important;
+    }
+  }
+  .ant-picker {
+    background: var(--surface-2) !important;
+    border: 1px solid var(--border) !important;
+    border-radius: 12px !important;
+
+    .ant-picker-input > input {
+      color: var(--text) !important;
+    }
+
+    .ant-picker-suffix,
+    .ant-picker-clear {
+      color: var(--muted) !important;
+    }
+
+    &:hover {
+      border-color: var(--primary) !important;
+    }
+
+    &.ant-picker-focused {
+      border-color: var(--primary) !important;
+      box-shadow: none !important;
+      outline: none !important;
+    }
+  }
+}
+
+:root[data-theme="dark"] {
+  .crud-filters {
+    .ant-input::placeholder {
+      color: rgba(255, 255, 255, 0.7) !important;
+      opacity: 1 !important;
+      -webkit-text-fill-color: rgba(255, 255, 255, 0.7) !important;
+    }
+
+    .ant-select-selection-placeholder {
+      color: rgba(255, 255, 255, 0.7) !important;
+      opacity: 1 !important;
+      -webkit-text-fill-color: rgba(255, 255, 255, 0.7) !important;
+    }
+
+    .ant-picker-input > input::placeholder {
+      color: rgba(255, 255, 255, 0.7) !important;
+      opacity: 1 !important;
+      -webkit-text-fill-color: rgba(255, 255, 255, 0.7) !important;
+    }
+
+    .ant-picker-separator {
+      color: rgba(255, 255, 255, 0.75) !important;
+      opacity: 1 !important;
+    }
+
+    .ant-input[disabled]::placeholder,
+    .ant-picker-input > input[disabled]::placeholder {
+      opacity: 0.7 !important;
+    }
+  }
+}

@@ -5,7 +5,13 @@
   "Common": {
     "light": "Light",
     "dark": "Dark",
-    "cancel": "Cancel"
+    "cancel": "Cancel",
+    "sort": {
+      "newest": "Newest",
+      "oldest": "Oldest",
+      "az": "A-Z",
+      "za": "Z-A"
+    }
   },
   "UserPostsSection": {
     "title": "User Posts",
@@ -111,8 +117,7 @@
     }
   },
   "UserTodosSection": {
-    "title" : "User Todos",
-
+    "title": "User Todos",
     "modal": {
       "newTitle": "New Todo",
       "editTitle": "Edit Todo",
@@ -152,7 +157,7 @@
       "done": "Status",
       "title": "Title",
       "actions": "Actions",
-      "createdAt": " Created Date"
+      "createdAt": "Created Date"
     },
     "labels": {
       "done": "Done",
@@ -176,8 +181,9 @@
       "name": "Name",
       "username": "Username",
       "email": "Email",
-      "actions": "Actions",
-      "createdAt": "Created Date"
+      "status": "Status",
+      "createdAt": "Created Date",
+      "actions": "Actions"
     },
     "actions": {
       "detailPosts": "View details",
@@ -200,8 +206,27 @@
       "name": "Name",
       "username": "Username",
       "email": "Email",
+      "status": "Status",
       "required": "This field is required.",
       "emailInvalid": "Please enter a valid email address."
+    },
+    "status": {
+      "active": "Active",
+      "inactive": "Inactive"
+    },
+    "filters": {
+      "searchPlaceholder": "Search: name, username, email…",
+      "statusPlaceholder": "Select status",
+      "status": {
+        "all": "All",
+        "active": "Active",
+        "inactive": "Inactive"
+      },
+      "date": {
+        "start": "Start date",
+        "end": "End date"
+      },
+      "reset": "Reset"
     },
     "success": {
       "userCreated": "User created successfully.",
@@ -210,6 +235,11 @@
     },
     "errors": {
       "fetchUsers": "Unable to load users."
+    },
+    "stats": {
+      "total": "Total Users",
+      "active": "Active",
+      "inactive": "Inactive"
     }
   }
 }

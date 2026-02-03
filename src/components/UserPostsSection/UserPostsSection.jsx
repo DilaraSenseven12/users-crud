@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
-import {Button,Card,Form,Input,Modal,Popconfirm,Space,Table,Tooltip,message,Empty,} from "antd";
+import {Button,Card,Form,Input,Modal,Popconfirm,Space,Table,Tooltip,message,Empty,Select,Pagination,} from "antd";
+import { DownOutlined } from "@ant-design/icons"; 
 import { useTranslation } from "react-i18next";
 import { postsService } from "../../api/jp/posts.service.jp";
 import { loadPosts, savePosts, nextId } from "../../storage/jpDb";
@@ -9,25 +10,38 @@ import { AiOutlineDelete } from "react-icons/ai";
 import SectionHeader from "../SectionHeader/SectionHeader";
 import "./UserPostsSection.scss";
 
+const PAGE_SIZE_OPTIONS = [5, 8, 10, 20];
+
+function useDebouncedValue(value, delay = 250) {
+  const [debounced, setDebounced] = useState(value);
+
+  useEffect(() => {
+    const t = setTimeout(() => setDebounced(value), delay);
+    return () => clearTimeout(t);
+  }, [value, delay]);
+
+  return debounced;
+}
+
 export default function UserPostsSection({ userId }) {
   const { t } = useTranslation();
   const uid = useMemo(() => Number(userId), [userId]);
+
   const [posts, setPosts] = useState([]);
   const [loadingPosts, setLoadingPosts] = useState(true);
+
   const [q, setQ] = useState("");
+  const debouncedQ = useDebouncedValue(q, 250);
+
+  const [sortKey, setSortKey] = useState("newest");
+  const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState(8);
+
   const [open, setOpen] = useState(false);
   const [editing, setEditing] = useState(null);
   const [saving, setSaving] = useState(false);
-  const [form] = Form.useForm();
-  const filteredPosts = useMemo(() => {
-    const tt = (q || "").trim().toLowerCase();
-    if (!tt) return posts;
 
-    return posts.filter((p) => {
-      const s = `${p.title ?? ""} ${p.body ?? ""}`.toLowerCase();
-      return s.includes(tt);
-    });
-  }, [posts, q]);
+  const [form] = Form.useForm();
 
   const persistLocalPostsForUser = useCallback(
     (nextUserPosts) => {
@@ -81,6 +95,46 @@ export default function UserPostsSection({ userId }) {
 
     return () => controller.abort();
   }, [uid, t]);
+
+  const filteredPosts = useMemo(() => {
+    const tt = (debouncedQ || "").trim().toLowerCase();
+
+    const filtered = !tt
+      ? posts
+      : posts.filter((p) => {
+          const s = `${p?.title ?? ""} ${p?.body ?? ""}`.toLowerCase();
+          return s.includes(tt);
+        });
+
+    const sorted = [...filtered];
+
+    if (sortKey === "az") {
+      sorted.sort((a, b) =>
+        String(a?.title || "").localeCompare(String(b?.title || ""))
+      );
+    } else if (sortKey === "za") {
+      sorted.sort((a, b) =>
+        String(b?.title || "").localeCompare(String(a?.title || ""))
+      );
+    } else if (sortKey === "oldest") {
+      sorted.sort((a, b) => Number(a?.id) - Number(b?.id));
+    } else {
+      sorted.sort((a, b) => Number(b?.id) - Number(a?.id));
+    }
+
+    return sorted;
+  }, [posts, debouncedQ, sortKey]);
+
+  useEffect(() => {
+    setPage(1);
+  }, [debouncedQ, sortKey, pageSize]);
+
+  const total = filteredPosts.length;
+
+  const pagedPosts = useMemo(() => {
+    const start = (page - 1) * pageSize;
+    return filteredPosts.slice(start, start + pageSize);
+  }, [filteredPosts, page, pageSize]);
 
   const openCreate = useCallback(() => {
     setEditing(null);
@@ -153,16 +207,7 @@ export default function UserPostsSection({ userId }) {
     } finally {
       setSaving(false);
     }
-  }, [
-    saving,
-    uid,
-    form,
-    editing,
-    posts,
-    persistLocalPostsForUser,
-    t,
-    closeModal,
-  ]);
+  }, [saving, uid, form, editing, posts, persistLocalPostsForUser, t, closeModal]);
 
   const onDelete = useCallback(
     async (postId) => {
@@ -258,14 +303,30 @@ export default function UserPostsSection({ userId }) {
               />
             }
             actions={
-              <Button
-                type="primary"
-                icon={<FiPlus />}
-                className="btn-blue"
-                onClick={openCreate}
-              >
-                {t("UserPostsSection.actions.newPost")}
-              </Button>
+              <Space size={10} wrap>
+                <Select
+                  value={sortKey}
+                  onChange={setSortKey}
+                  className="posts-sort"
+                  dropdownClassName="posts-sort-dropdown"
+                  suffixIcon={<DownOutlined className="posts-sort__arrow" />} 
+                  options={[
+                    { value: "newest", label: t("Common.sort.newest") },
+                    { value: "oldest", label: t("Common.sort.oldest") },
+                    { value: "az", label: t("Common.sort.az") },
+                    { value: "za", label: t("Common.sort.za") },
+                  ]}
+                />
+
+                <Button
+                  type="primary"
+                  icon={<FiPlus />}
+                  className="btn-blue"
+                  onClick={openCreate}
+                >
+                  {t("UserPostsSection.actions.newPost")}
+                </Button>
+              </Space>
             }
           />
         }
@@ -274,12 +335,29 @@ export default function UserPostsSection({ userId }) {
           rowKey="id"
           loading={loadingPosts}
           columns={columns}
-          dataSource={filteredPosts}
-          pagination={{ pageSize: 8, showSizeChanger: false }}
+          dataSource={pagedPosts}
+          pagination={false}
           locale={{
             emptyText: <Empty description={t("UserPostsSection.empty.noPosts")} />,
           }}
         />
+
+        <div className="posts-pagination">
+          <Pagination
+            current={page}
+            pageSize={pageSize}
+            total={total}
+            onChange={(nextPage, nextSize) => {
+              setPage(nextPage);
+              if (typeof nextSize === "number" && nextSize !== pageSize) {
+                setPageSize(nextSize);
+              }
+            }}
+            showSizeChanger
+            pageSizeOptions={PAGE_SIZE_OPTIONS.map(String)}
+             showTotal={false}
+          />
+        </div>
       </Card>
 
       <Modal
@@ -307,17 +385,11 @@ export default function UserPostsSection({ userId }) {
         onCancel={closeModal}
         onOk={onSubmit}
         confirmLoading={saving}
-        okText={
-          editing
-            ? t("UserPostsSection.modal.save")
-            : t("UserPostsSection.modal.add")
-        }
+        okText={editing ? t("UserPostsSection.modal.save") : t("UserPostsSection.modal.add")}
         cancelText={t("Common.cancel")}
         destroyOnClose
         centered
         width={560}
-        okButtonProps={{ className: "post-modal__ok" }}
-        cancelButtonProps={{ className: "post-modal__cancel" }}
       >
         <Form form={form} layout="vertical" className="post-modal__form">
           <Form.Item
@@ -333,10 +405,7 @@ export default function UserPostsSection({ userId }) {
             label={t("UserPostsSection.form.body")}
             rules={[{ required: true, message: t("UserPostsSection.form.required") }]}
           >
-            <Input.TextArea
-              rows={6}
-              placeholder={t("UserPostsSection.form.body")}
-            />
+            <Input.TextArea rows={6} placeholder={t("UserPostsSection.form.body")} />
           </Form.Item>
         </Form>
       </Modal>

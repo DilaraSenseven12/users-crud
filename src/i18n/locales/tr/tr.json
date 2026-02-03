@@ -5,7 +5,13 @@
   "Common": {
     "light": "Açık",
     "dark": "Koyu",
-    "cancel": "İptal"
+    "cancel": "İptal",
+    "sort": {
+      "newest": "En Yeni",
+      "oldest": "En Eski",
+      "az": "A-Z",
+      "za": "Z-A"
+    }
   },
   "UserPostsSection": {
     "title": "Kullanıcı Gönderileri",
@@ -24,7 +30,7 @@
       "delete": "Sil"
     },
     "confirm": {
-      "deleteTitle": "Bu gönderiyi silmek istediğine emin misin?",
+      "deleteTitle": "Bu gönderiyi silmek istediğinize emin misiniz?",
       "ok": "Sil",
       "cancel": "İptal"
     },
@@ -45,9 +51,9 @@
       "deleted": "Gönderi başarıyla silindi."
     },
     "warnings": {
-      "createFailedLocal": "API isteği başarısız oldu. Gönderi local olarak kaydedildi.",
-      "updateFailedLocal": "API isteği başarısız oldu. Gönderi local olarak güncellendi.",
-      "deleteFailedLocal": "API isteği başarısız oldu. Gönderi local olarak silindi."
+      "createFailedLocal": "API isteği başarısız oldu. Gönderi yerel olarak kaydedildi.",
+      "updateFailedLocal": "API isteği başarısız oldu. Gönderi yerel olarak güncellendi.",
+      "deleteFailedLocal": "API isteği başarısız oldu. Gönderi yerel olarak silindi."
     },
     "errors": {
       "fetchPosts": "Gönderiler yüklenemedi."
@@ -76,17 +82,16 @@
       "edit": "Düzenle",
       "delete": "Sil"
     },
-    "userCardTitle": "Kullanıcı Detayları",
+    "userCardTitle": "Kullanıcı Bilgileri",
     "postsCardTitle": "Gönderiler",
     "searchPlaceholder": "Başlığa veya içeriğe göre ara",
     "columns": {
       "title": "Başlık",
       "body": "İçerik",
-      "actions": "İşlemler",
-      "createdAt": "Oluşturulma Tarihi"
+      "actions": "İşlemler"
     },
     "confirm": {
-      "deleteTitle": "Bu gönderiyi silmek istediğine emin misin?",
+      "deleteTitle": "Bu gönderiyi silmek istediğinize emin misiniz?",
       "ok": "Sil",
       "cancel": "İptal"
     },
@@ -102,21 +107,20 @@
       "required": "Bu alan zorunludur."
     },
     "success": {
-      "postCreated": "Gönderi başarıyla oluşturuldu.",
-      "postUpdated": "Gönderi başarıyla güncellendi.",
-      "postDeleted": "Gönderi başarıyla silindi."
+      "postCreated": "Gönderi oluşturuldu.",
+      "postUpdated": "Gönderi güncellendi.",
+      "postDeleted": "Gönderi silindi."
     },
     "errors": {
-      "userFetch": "Kullanıcı detayları yüklenemedi.",
-      "postsFetch": "Gönderiler yüklenemedi."
+      "userFetch": "Kullanıcı bilgileri alınamadı.",
+      "postsFetch": "Gönderiler alınamadı."
     }
   },
   "UserTodosSection": {
-
-  "title": "Kullanıcı Todoları",
+    "title": "Kullanıcı Yapılacakları",
     "modal": {
-      "newTitle": "Yeni Todo",
-      "editTitle": "Todo Düzenle",
+      "newTitle": "Yeni Görev",
+      "editTitle": "Görevi Düzenle",
       "add": "Ekle",
       "save": "Kaydet"
     },
@@ -125,26 +129,26 @@
       "required": "Zorunlu"
     },
     "confirm": {
-      "deleteTitle": "Bu todo silinsin mi?",
+      "deleteTitle": "Bu görevi silmek istiyor musunuz?",
       "ok": "Sil",
       "cancel": "İptal"
     },
     "success": {
-      "created": "Todo oluşturuldu",
-      "updated": "Todo güncellendi",
-      "deleted": "Todo silindi",
-      "clearedCompleted": "Tamamlanan todo'lar temizlendi"
+      "created": "Görev oluşturuldu",
+      "updated": "Görev güncellendi",
+      "deleted": "Görev silindi",
+      "clearedCompleted": "Tamamlanan görevler temizlendi"
     },
     "warnings": {
-      "createLocal": "Oluşturma başarısız, local olarak kaydedildi.",
-      "updateLocal": "Güncelleme başarısız, localde geri alındı.",
-      "deleteLocal": "Silme başarısız, localden kaldırıldı."
+      "createLocal": "Oluşturma başarısız, yerel kaydedildi.",
+      "updateLocal": "Güncelleme başarısız, geri alındı.",
+      "deleteLocal": "Silme başarısız, kaldırıldı."
     },
     "errors": {
-      "fetch": "Todo'lar yüklenemedi."
+      "fetch": "Görevler yüklenemedi."
     },
     "actions": {
-      "newTodo": "Yeni Todo",
+      "newTodo": "Yeni Görev",
       "clearCompleted": "Tamamlananları Temizle",
       "edit": "Düzenle",
       "delete": "Sil"
@@ -152,10 +156,11 @@
     "columns": {
       "done": "Durum",
       "title": "Başlık",
-      "actions": "İşlemler"
+      "actions": "İşlemler",
+      "createdAt": "Oluşturulma Tarihi"
     },
     "labels": {
-      "done": "Tamam",
+      "done": "Yapıldı",
       "active": "Aktif",
       "completed": "Tamamlandı"
     },
@@ -164,29 +169,30 @@
       "active": "Aktif",
       "completed": "Tamamlandı"
     },
-    "searchPlaceholder": "Todo ara…",
+    "searchPlaceholder": "Görev ara…",
     "empty": {
-      "noTodos": "Todo yok"
+      "noTodos": "Görev yok"
     }
   },
   "UsersPage": {
     "title": "Kullanıcılar",
-    "searchPlaceholder": "Ad, kullanıcı adı veya e-postaya göre ara",
+    "searchPlaceholder": "Ad, kullanıcı adı veya e-posta ile ara",
     "columns": {
       "name": "Ad",
       "username": "Kullanıcı Adı",
       "email": "E-posta",
-      "actions": "İşlemler",
-      "createdAt": "Oluşturulma Tarihi"
+      "status": "Durum",
+      "createdAt": "Oluşturulma Tarihi",
+      "actions": "İşlemler"
     },
     "actions": {
-      "detailPosts": "Detayları gör",
+      "detailPosts": "Detayları Gör",
       "edit": "Düzenle",
       "delete": "Sil",
       "newUser": "Yeni Kullanıcı"
     },
     "confirm": {
-      "deleteTitle": "Bu kullanıcıyı silmek istediğine emin misin?",
+      "deleteTitle": "Bu kullanıcıyı silmek istiyor musunuz?",
       "ok": "Sil",
       "cancel": "İptal"
     },
@@ -200,8 +206,27 @@
       "name": "Ad",
       "username": "Kullanıcı Adı",
       "email": "E-posta",
+      "status": "Durum",
       "required": "Bu alan zorunludur.",
-      "emailInvalid": "Lütfen geçerli bir e-posta adresi gir."
+      "emailInvalid": "Geçerli bir e-posta adresi giriniz."
+    },
+    "status": {
+      "active": "Aktif",
+      "inactive": "Pasif"
+    },
+    "filters": {
+      "searchPlaceholder": "Ara: isim, kullanıcı adı, e-posta…",
+      "statusPlaceholder": "Durum seç",
+      "status": {
+        "all": "Tümü",
+        "active": "Aktif",
+        "inactive": "Pasif"
+      },
+      "date": {
+        "start": "Başlangıç",
+        "end": "Bitiş"
+      },
+      "reset": "Sıfırla"
     },
     "success": {
       "userCreated": "Kullanıcı başarıyla oluşturuldu.",
@@ -210,6 +235,11 @@
     },
     "errors": {
       "fetchUsers": "Kullanıcılar yüklenemedi."
+    },
+    "stats": {
+      "total": "Toplam Kullanıcı",
+      "active": "Aktif",
+      "inactive": "Pasif"
     }
   }
 }

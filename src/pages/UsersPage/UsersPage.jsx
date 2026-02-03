@@ -1,27 +1,17 @@
 import { useEffect, useMemo, useState, useCallback } from "react";
-import {
-  Button,
-  Card,
-  Form,
-  Input,
-  Modal,
-  Space,
-  Table,
-  Pagination,
-  message,
-  Tooltip,
-  Popconfirm,
-} from "antd";
-import { PlusOutlined } from "@ant-design/icons";
+import {Button,Card,Form,Input,Modal,Space,Table,Pagination,message,Tooltip,Popconfirm,Radio,Row,Col,Dropdown,Tag,} from "antd";
+import {PlusOutlined,UserOutlined,CheckCircleOutlined,CloseCircleOutlined,DownOutlined,} from "@ant-design/icons";
 import { BiCommentDetail, BiEditAlt } from "react-icons/bi";
 import { AiOutlineDelete } from "react-icons/ai";
 import { MdOutlineEmail } from "react-icons/md";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
+import dayjs from "dayjs";
 import { usersRepo } from "../../storage/repo/users.repo";
 import "./UserPage.scss";
 import PageHeader from "../../components/PageHeader/PageHeader";
-import { saveUsers, ensureUsersCreatedAt } from "../../storage/jpDb";
+import {saveUsers,ensureUsersCreatedAt,ensureUsersStatus,} from "../../storage/jpDb";
+import FiltersBar from "../../components/FiltersBar/FiltersBar";
 
 const PAGE_SIZE = 8;
 
@@ -34,14 +24,28 @@ export default function UsersPage() {
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  const [q, setQ] = useState("");
-
   const [open, setOpen] = useState(false);
   const [editing, setEditing] = useState(null);
   const [saving, setSaving] = useState(false);
   const [form] = Form.useForm();
 
   const [page, setPage] = useState(1);
+
+  const [filters, setFilters] = useState({
+    q: "",
+    status: "all", 
+    range: null, 
+  });
+
+  const patchFilters = useCallback((patch) => {
+    setFilters((p) => ({ ...p, ...patch }));
+    setPage(1);
+  }, []);
+
+  const resetFilters = useCallback(() => {
+    setFilters({ q: "", status: "all", range: null });
+    setPage(1);
+  }, []);
 
   useEffect(() => {
     const controller = new AbortController();
@@ -50,10 +54,15 @@ export default function UsersPage() {
       setLoading(true);
       try {
         const data = await usersRepo.bootstrap({ signal: controller.signal });
-        const { normalized, changed } = ensureUsersCreatedAt(data);
-        if (changed) saveUsers(normalized);
 
-        setUsers(normalized);
+        const r1 = ensureUsersCreatedAt(data);
+        const r2 = ensureUsersStatus(r1.normalized);
+
+        if (r1.changed || r2.changed) {
+          saveUsers(r2.normalized);
+        }
+
+        setUsers(r2.normalized);
       } catch {
         messageApi.error(t("UsersPage.errors.fetchUsers"));
       } finally {
@@ -65,19 +74,46 @@ export default function UsersPage() {
   }, [t, messageApi]);
 
   const filteredUsers = useMemo(() => {
-    const term = q.trim().toLowerCase();
-    if (!term) return users;
+    const term = (filters.q || "").trim().toLowerCase();
+    const [start, end] = filters.range || [];
 
-    return users.filter((u) =>
-      `${u.name} ${u.username} ${u.email}`.toLowerCase().includes(term)
-    );
-  }, [users, q]);
+    return (users || []).filter((u) => {
+      const hay = `${u.name ?? ""} ${u.username ?? ""} ${u.email ?? ""}`.toLowerCase();
+      const okQ = !term || hay.includes(term);
+
+      const okStatus =
+        filters.status === "all"
+          ? true
+          : (u?.status ?? "active") === filters.status;
+
+      const okRange =
+        !start || !end || !u?.createdAt
+          ? true
+          : dayjs(u.createdAt).isAfter(start.startOf("day")) &&
+            dayjs(u.createdAt).isBefore(end.endOf("day"));
+
+      return okQ && okStatus && okRange;
+    });
+  }, [users, filters]);
+
+  const stats = useMemo(() => {
+    const list = Array.isArray(filteredUsers) ? filteredUsers : [];
+    let active = 0;
+    let inactive = 0;
+
+    list.forEach((u) => {
+      const s = u?.status ?? "active";
+      if (s === "inactive") inactive += 1;
+      else active += 1;
+    });
+
+    return { total: list.length, active, inactive };
+  }, [filteredUsers]);
 
   useEffect(() => {
     const maxPage = Math.max(1, Math.ceil(filteredUsers.length / PAGE_SIZE));
     if (page > maxPage) setPage(1);
-
-  }, [filteredUsers.length]);
+  }, [filteredUsers.length, page]);
 
   const pagedUsers = useMemo(() => {
     const start = (page - 1) * PAGE_SIZE;
@@ -91,6 +127,7 @@ export default function UsersPage() {
         name: record?.name ?? "",
         username: record?.username ?? "",
         email: record?.email ?? "",
+        status: record?.status ?? "active",
       });
       setOpen(true);
     },
@@ -100,6 +137,7 @@ export default function UsersPage() {
   const openCreate = useCallback(() => {
     setEditing(null);
     form.resetFields();
+    form.setFieldsValue({ status: "active" });
     setOpen(true);
   }, [form]);
 
@@ -129,13 +167,20 @@ export default function UsersPage() {
     try {
       setSaving(true);
       const values = await form.validateFields();
+      const status = values?.status === "inactive" ? "inactive" : "active";
 
       if (!editing) {
-        const next = await usersRepo.create(users, values);
+        const payload = {
+          ...values,
+          status,
+          createdAt: new Date().toISOString(),
+        };
+        const next = await usersRepo.create(users, payload);
         setUsers(next);
         messageApi.success(t("UsersPage.success.userCreated"));
       } else {
-        const next = await usersRepo.update(users, editing.id, values);
+        const payload = { ...editing, ...values, status };
+        const next = await usersRepo.update(users, editing.id, payload);
         setUsers(next);
         messageApi.success(t("UsersPage.success.userUpdated"));
       }
@@ -160,6 +205,62 @@ export default function UsersPage() {
       minute: "2-digit",
     }).format(dt);
   }, []);
+
+  const statusMenuItems = useMemo(
+    () => [
+      { key: "all", label: t("UsersPage.filters.all", { defaultValue: "All" }) },
+      {
+        key: "active",
+        label: t("UsersPage.status.active", { defaultValue: "Active" }),
+      },
+      {
+        key: "inactive",
+        label: t("UsersPage.status.inactive", { defaultValue: "Inactive" }),
+      },
+    ],
+    [t]
+  );
+
+  const statusTooltip = useMemo(() => {
+    if (filters.status === "active")
+      return t("UsersPage.status.active", { defaultValue: "Active" });
+    if (filters.status === "inactive")
+      return t("UsersPage.status.inactive", { defaultValue: "Inactive" });
+    return t("UsersPage.filters.all", { defaultValue: "All" });
+  }, [filters.status, t]);
+
+  const StatusHeader = useMemo(
+    () => (
+      <div className="users-statusHeader">
+        <span className="users-statusHeader__title">
+          {t("UsersPage.columns.status", { defaultValue: "Status" })}
+        </span>
+
+        <Dropdown
+          trigger={["click"]}
+          placement="bottomRight"
+          overlayClassName="users-statusMenu"
+          menu={{
+            items: statusMenuItems,
+            selectable: true,
+            selectedKeys: [filters.status],
+            onClick: ({ key }) => patchFilters({ status: key }),
+          }}
+        >
+          <Tooltip title={statusTooltip} placement="top">
+            <button
+              type="button"
+              className="users-statusHeader__iconBtn"
+              aria-label="status filter"
+            >
+              <DownOutlined />
+            </button>
+          </Tooltip>
+        </Dropdown>
+      </div>
+    ),
+    [t, statusMenuItems, filters.status, patchFilters, statusTooltip]
+  );
 
   const columns = useMemo(
     () => [
@@ -191,6 +292,27 @@ export default function UsersPage() {
           </a>
         ),
       },
+      {
+        title: StatusHeader,
+        dataIndex: "status",
+        key: "status",
+        width: 180,
+        render: (v) => {
+          const isActive = (v ?? "active") === "active";
+          return (
+            <Tag
+              className={`users-status users-status--${
+                isActive ? "active" : "inactive"
+              }`}
+            >
+              {isActive
+                ? t("UsersPage.status.active", { defaultValue: "Active" })
+                : t("UsersPage.status.inactive", { defaultValue: "Inactive" })}
+            </Tag>
+          );
+        },
+      },
+
       {
         title: t("UsersPage.columns.createdAt"),
         dataIndex: "createdAt",
@@ -255,7 +377,7 @@ export default function UsersPage() {
         ),
       },
     ],
-    [t, nav, openEdit, onDelete, fmtDateTime]
+    [t, nav, openEdit, onDelete, fmtDateTime, StatusHeader]
   );
 
   return (
@@ -265,17 +387,6 @@ export default function UsersPage() {
       <PageHeader
         className="page-header--users"
         title={t("UsersPage.title")}
-        search={
-          <Input
-            placeholder={t("UsersPage.searchPlaceholder")}
-            value={q}
-            onChange={(e) => {
-              setQ(e.target.value);
-              setPage(1);  
-            }}
-            allowClear
-          />
-        }
         actions={
           <Button
             type="primary"
@@ -287,6 +398,74 @@ export default function UsersPage() {
           </Button>
         }
       />
+      <div className="users-stats">
+        <Row gutter={[12, 12]}>
+          <Col xs={24} sm={8}>
+            <Card
+              className="users-statCard users-statCard--total"
+              bordered={false}
+            >
+              <div className="users-statCard__inner">
+                <div className="users-statCard__icon">
+                  <UserOutlined />
+                </div>
+                <div className="users-statCard__meta">
+                  <div className="users-statCard__title">
+                    {t("UsersPage.stats.total")}
+                  </div>
+                  <div className="users-statCard__value">{stats.total}</div>
+                </div>
+              </div>
+            </Card>
+          </Col>
+
+          <Col xs={24} sm={8}>
+            <Card
+              className="users-statCard users-statCard--active"
+              bordered={false}
+            >
+              <div className="users-statCard__inner">
+                <div className="users-statCard__icon">
+                  <CheckCircleOutlined />
+                </div>
+                <div className="users-statCard__meta">
+                  <div className="users-statCard__title">
+                    {t("UsersPage.stats.active")}
+                  </div>
+                  <div className="users-statCard__value">{stats.active}</div>
+                </div>
+              </div>
+            </Card>
+          </Col>
+
+          <Col xs={24} sm={8}>
+            <Card
+              className="users-statCard users-statCard--inactive"
+              bordered={false}
+            >
+              <div className="users-statCard__inner">
+                <div className="users-statCard__icon">
+                  <CloseCircleOutlined />
+                </div>
+                <div className="users-statCard__meta">
+                  <div className="users-statCard__title">
+                    {t("UsersPage.stats.inactive")}
+                  </div>
+                  <div className="users-statCard__value">{stats.inactive}</div>
+                </div>
+              </div>
+            </Card>
+          </Col>
+        </Row>
+      </div>
+      <div className="users-page__filters">
+        <FiltersBar
+          filters={filters}
+          onChange={patchFilters}
+          onReset={resetFilters}
+          loading={loading}
+        />
+      </div>
       <Card className="users-tableCard" bordered={false}>
         <div className="users-tableCard__table">
           <Table
@@ -310,7 +489,6 @@ export default function UsersPage() {
           />
         </div>
       </Card>
-
       <Modal
         rootClassName="users-edit-modal--scoped"
         title={
@@ -350,6 +528,17 @@ export default function UsersPage() {
             ]}
           >
             <Input />
+          </Form.Item>
+
+          <Form.Item
+            name="status"
+            label={t("UsersPage.form.status")}
+            rules={[{ required: true, message: t("UsersPage.form.required") }]}
+          >
+            <Radio.Group>
+              <Radio value="active">{t("UsersPage.status.active")}</Radio>
+              <Radio value="inactive">{t("UsersPage.status.inactive")}</Radio>
+            </Radio.Group>
           </Form.Item>
         </Form>
       </Modal>
