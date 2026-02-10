@@ -1,18 +1,41 @@
-import { Card, Input, DatePicker } from "antd";
+import { Card, Input, DatePicker, message } from "antd";
 import { SearchOutlined } from "@ant-design/icons";
 import { useTranslation } from "react-i18next";
 import "./FiltersBar.scss";
 
 const { RangePicker } = DatePicker;
+const INVALID_RANGE_KEY = "invalidRange";
 
 export default function FiltersBar({
   filters,
   onChange,
   onReset,
   loading,
-  actions, 
+  actions,
 }) {
   const { t } = useTranslation();
+
+  const handleRangeChange = (v) => {
+    if (!v || (!v?.[0] && !v?.[1])) {
+      onChange({ range: v });
+      return;
+    }
+
+    const start = v?.[0];
+    const end = v?.[1];
+
+    if (start && end && start.isAfter(end, "day")) {
+      message.open({
+        type: "error",
+        content: t("UsersPage.filters.date.invalidRange"),
+        key: INVALID_RANGE_KEY, 
+        duration: 2,
+      });
+      return; 
+    }
+
+    onChange({ range: v });
+  };
 
   return (
     <Card className="crud-filters" size="small">
@@ -28,9 +51,11 @@ export default function FiltersBar({
         />
 
         <RangePicker
+          order={false}
           value={filters.range}
-          onChange={(v) => onChange({ range: v })}
+          onChange={handleRangeChange}
           className="crud-filters__date"
+          popupClassName="crud-date-dropdown"
           allowEmpty={[true, true]}
           disabled={loading}
           placeholder={[
@@ -38,9 +63,8 @@ export default function FiltersBar({
             t("UsersPage.filters.date.end"),
           ]}
         />
-        <div className="crud-filters__right">
-          {actions}
-        </div>
+
+        <div className="crud-filters__actions">{actions}</div>
       </div>
     </Card>
   );

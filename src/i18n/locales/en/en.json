@@ -11,6 +11,11 @@
       "oldest": "Oldest",
       "az": "A-Z",
       "za": "Z-A"
+    },
+     "errors": {
+      "generic": "Something went wrong",
+      "canceled": "Operation canceled.",
+      "formRequired": "Please fill in the required fields"
     }
   },
   "UserPostsSection": {
@@ -185,6 +190,16 @@
       "createdAt": "Created Date",
       "actions": "Actions"
     },
+    "table": {
+      "phone": "Phone",
+      "address": "Address",
+      "company": "Company"
+    },
+    "columnsPicker": {
+      "title": "Extra columns",
+      "sub": "Customize your view (max 2 selections)",
+      "max2": "You can select up to 2 columns."
+    },
     "actions": {
       "detailPosts": "View details",
       "edit": "Edit",
@@ -224,7 +239,8 @@
       },
       "date": {
         "start": "Start date",
-        "end": "End date"
+        "end": "End date",
+        "invalidRange": "Start date cannot be after end date."
       },
       "reset": "Reset"
     },

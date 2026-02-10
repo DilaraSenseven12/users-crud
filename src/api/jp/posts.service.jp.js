@@ -1,59 +1,37 @@
-import requestJP, { ApiError } from "./request.jp";
-import * as paths from "./paths.jp";
+import requestJP from "./request.jp.js";
+import * as paths from "./paths.jp.js";
 
-class postsService {
-  
-  static getPostsByUserId = async (userId, options = {}) => {
-    try {
-      const res = await requestJP.get(
-        paths.posts,
-        { userId },
-        {},
-        "",
-        options.signal
-      );
-      return res.data;
-    } catch (err) {
-      
-      if (err instanceof ApiError && err.code === "ERR_CANCELED") throw err;
+const toNum = (v) => (typeof v === "number" ? v : Number(v));
 
-      throw err; 
-    }
-  };
+export class postsService {
+  static async getPostsByUserId(userId, options = {}) {
+    const { signal, meta } = options;
+    const uid = toNum(userId);
 
-  static createPost = async (payload, options = {}) => {
-    try {
-      const res = await requestJP.post(paths.posts, payload, {}, {}, "json", options.signal);
-      return res.data;
-    } catch (err) {
-      throw err;
-    }
-  };
+    const res = await requestJP.get(paths.posts, { userId: uid }, {}, "", signal, meta);
+    return res.data;
+  }
 
-  static updatePost = async (id, payload, options = {}) => {
-    try {
-      const res = await requestJP.patch(
-        `${paths.posts}/${id}`,
-        payload,
-        {},
-        {},
-        "json",
-        options.signal
-      );
-      return res.data;
-    } catch (err) {
-      throw err;
-    }
-  };
+  static async createPost(payload, options = {}) {
+    const { signal, meta } = options;
+    const res = await requestJP.post(paths.posts, payload, {}, {}, "json", signal, meta);
+    return res.data;
+  }
 
-  static deletePost = async (id, options = {}) => {
-    try {
-      const res = await requestJP.delete(`${paths.posts}/${id}`, {}, {}, options.signal);
-      return res.data;
-    } catch (err) {
-      throw err;
-    }
-  };
+  static async updatePost(id, payload, options = {}) {
+    const { signal, meta } = options;
+    const pid = toNum(id);
+
+    const res = await requestJP.patch(`${paths.posts}/${pid}`, payload, {}, {}, "json", signal, meta);
+    return res.data;
+  }
+
+  static async deletePost(id, options = {}) {
+    const { signal, meta } = options;
+    const pid = toNum(id);
+
+    // requestJP.delete(url, data={}, headers={}, signal, meta)
+    const res = await requestJP.delete(`${paths.posts}/${pid}`, {}, {}, signal, meta);
+    return res.data;
+  }
 }
-
-export { postsService };

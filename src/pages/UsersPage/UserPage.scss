@@ -5,17 +5,20 @@
 .users-page {
   color: var(--text);
 
+  /* =========================
+     Basics
+  ========================= */
+  &__filters {
+    margin-bottom: var(--users-filters-mb);
+  }
+
   &__tableActions {
     display: inline-flex !important;
     align-items: center;
     justify-content: flex-start !important;
-    width: 100%;
-    gap: 10px !important;
+    gap: var(--users-actions-gap) !important;
     flex-wrap: nowrap !important;
-
-    @media (max-width: 520px) {
-      justify-content: flex-start !important;
-    }
+    width: auto !important; /* ✅ taşma/scroll bug’larına karşı */
   }
 
   .ant-table-cell {
@@ -27,78 +30,201 @@
   }
 
   &__email {
-    color: var(--warning, #fbbf24) !important;
+    color: var(--warning) !important;
     text-decoration: none;
     max-width: 100%;
     display: inline-block;
 
     &:hover {
-      color: var(--warning-hover, #f59e0b) !important;
+      color: var(--warning-hover, var(--warning)) !important;
       text-decoration: underline;
     }
   }
 
+  &__emailWrap {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    min-width: 0;
+    max-width: 100%;
+  }
+
   &__emailText {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
     color: inherit !important;
   }
 
   &__emailIcon {
-    color: inherit !important;
-    width: 16px;
-    height: 16px;
-    flex: 0 0 16px;
+    width: var(--size-16);
+    height: var(--size-16);
+    flex: 0 0 var(--size-16);
     display: block;
+    color: inherit !important;
     opacity: 0.9;
     transform: translateY(1px);
   }
 
+  &__createdAt {
+    display: block;
+    min-width: 0;
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  /* =========================
+     PageHeader actions (language chips)
+  ========================= */
+  &__headerActions {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2-5);
+  }
+
+  .users-langSwitch {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+  }
+
+  .users-langSwitch__chip {
+    height: var(--btn-h, 34px);
+    padding: 0 var(--space-3);
+    border-radius: 999px;
+    border: 1px solid var(--border);
+    background: var(--surface);
+    color: var(--text);
+    font-weight: 800;
+    font-size: var(--fs-xs);
+    letter-spacing: 0.2px;
+    cursor: pointer;
+    transition: transform var(--dur-fast) ease, background var(--dur-fast) ease,
+      border-color var(--dur-fast) ease;
+
+    &:hover {
+      transform: translateY(-0.5px);
+      background: color-mix(in srgb, var(--text) 6%, var(--surface)) !important;
+      border-color: color-mix(in srgb, var(--text) 18%, var(--border)) !important;
+    }
+
+    &:active {
+      transform: translateY(0px);
+    }
+
+    &.is-active {
+      background: color-mix(in srgb, var(--primary) 16%, var(--surface)) !important;
+      border-color: color-mix(in srgb, var(--primary) 55%, var(--border)) !important;
+    }
+  }
+
+  /* =========================
+     Card wrapper
+  ========================= */
   .users-tableCard {
     background: var(--surface) !important;
     color: var(--text) !important;
-
     border: 1px solid var(--border) !important;
-    border-radius: 18px !important;
+    border-radius: var(--users-table-radius) !important;
     box-shadow: var(--shadow-md) !important;
+    overflow: hidden !important;
 
     .ant-card-body {
       padding: 0 !important;
-      background: var(--surface) !important; 
+      background: var(--surface) !important;
       color: var(--text) !important;
-      border-radius: 18px !important;
+      border-radius: var(--users-table-radius) !important;
     }
-  }
 
-  .users-tableCard__table {
-    padding: 0 !important;
-  }
-
-  .users-table {
-    .ant-table {
-      background: transparent !important;
-      color: var(--text) !important;
-      border-radius: 18px !important;
+    &__table {
       overflow: hidden !important;
     }
 
+    /* ✅ sadece scroll modunda scrollbar kırpılmasın */
+    &__table--scroll {
+      overflow: visible !important;
+    }
+
+    &__footer {
+      display: flex !important;
+      justify-content: flex-end !important;
+      align-items: center !important;
+      padding: var(--users-footer-pad-y) var(--users-footer-pad-x) var(--space-4) !important;
+      border-top: 1px solid var(--border) !important;
+      background: transparent !important;
+
+      .ant-pagination {
+        margin: 0 !important;
+        background: transparent !important;
+        border-top: 0 !important;
+        display: flex !important;
+        justify-content: flex-end !important;
+        width: auto !important;
+        color: var(--text) !important;
+
+        .ant-pagination-item a,
+        .ant-pagination-prev .ant-pagination-item-link,
+        .ant-pagination-next .ant-pagination-item-link {
+          color: var(--text) !important;
+        }
+
+        .ant-pagination-disabled .ant-pagination-item-link {
+          color: var(--users-pagination-disabled) !important;
+        }
+      }
+    }
+  }
+
+  /* =========================
+     Table
+  ========================= */
+  .users-table {
+    /* split line için tek kaynak */
+    --users-th-split: var(--users-actions-divider, var(--divider));
+    --users-th-split-w: calc(var(--divider-w, 2px) - 1px); /* 2px -> 1px */
+    --users-th-split-h: calc(var(--size-22, 22px) - 4px);  /* 22 -> 18 */
+
+    .ant-table,
     .ant-table-container,
-    .ant-table-content,
-    .ant-table-body,
     .ant-table table {
       background: transparent !important;
       color: inherit !important;
     }
 
-    .ant-table-thead > tr > th {
+    .ant-table {
+      border-radius: var(--users-table-radius) !important;
+      overflow: hidden !important;
+    }
+
+    .ant-table-container {
+      position: relative;
+      overflow: hidden !important;
+      border-radius: var(--users-table-radius) !important;
+    }
+
+    .ant-table-header {
+      overflow: hidden !important;
+    }
+
+    .ant-table-content {
       background: transparent !important;
+      color: inherit !important;
+    }
+
+    .ant-table-thead > tr > th {
+      background: var(--surface) !important;
       color: var(--text) !important;
       border-bottom: 1px solid var(--divider) !important;
       font-weight: 700 !important;
-
       position: relative;
+      z-index: 3;
     }
 
     .ant-table-tbody > tr > td {
-      background: transparent !important;
+      background: var(--surface) !important;
       color: var(--text) !important;
       border-bottom: 1px solid var(--border) !important;
     }
@@ -106,116 +232,458 @@
     .ant-table-tbody > tr:hover > td {
       background: var(--soft-bg) !important;
     }
-  }
 
-  .users-table .ant-table-thead > tr > th.col-actions::before {
-    content: "";
-    position: absolute;
-    left: 0;
-    top: 50%;
-    transform: translateY(-50%);
-    width: 1px;
-    height: 18px; 
-    background: var(--divider);
-    opacity: 0.9;
-  }
+    .ant-table-tbody > tr:last-child > td {
+      border-bottom: none !important;
+    }
 
-  .users-table .ant-table-thead > tr > th.col-actions {
-    padding-left: 18px !important;
-  }
+    /* =========================
+       ✅ Header split FIX (tek çizgi + kaybolmaz)
+       AntD'nin split pseudo'sunu tek yerden override ediyoruz.
+       Böylece: iki çizgi olmaz + sort seçilince kaybolmaz.
+    ========================= */
+    .ant-table-thead > tr > th::before {
+      /* AntD default split'i unify */
+      content: "" !important;
+      position: absolute !important;
+      right: 0 !important;
+      top: 50% !important;
+      transform: translateY(-50%) !important;
+      width: var(--users-th-split-w) !important;
+      height: var(--users-th-split-h) !important;
+      background: var(--users-th-split) !important;
+      pointer-events: none !important;
+      z-index: 60 !important;
+    }
 
-  .users-table .ant-table-tbody > tr > td.col-actions {
-    border-left: 0 !important;
-    padding-left: 18px !important; 
-  }
+    /* last th split olmasın */
+    .ant-table-thead > tr > th:last-child::before {
+      content: none !important;
+      display: none !important;
+    }
 
-  :root[data-theme="dark"] & {
-    .users-table .ant-table-thead > tr > th.col-actions::before {
-      background: rgba(255, 255, 255, 0.22);
-      opacity: 1;
+    /* Actions column paddings */
+    .ant-table-thead > tr > th.col-actions,
+    .ant-table-tbody > tr > td.col-actions {
+      padding-left: var(--users-actions-pad-left) !important;
+    }
+
+    .ant-table-tbody > tr > td.col-actions {
+      border-left: 0 !important;
+      border-inline-start: 0 !important;
+      overflow: hidden !important;
+      white-space: nowrap !important;
+
+      /* ✅ body’de dikey split çizgisi olmasın */
+      &::before,
+      &::after {
+        content: none !important;
+        display: none !important;
+      }
+
+      .users-page__tableActions {
+        width: auto !important;
+      }
+    }
+
+    .ant-table-tbody > tr > td.col-createdAt {
+      overflow: hidden !important;
+    }
+
+    /* =========================
+       Scroll mode (users-table--scroll)
+    ========================= */
+    &--scroll {
+      --users-createdAt-w: 150px;
+      --users-actions-w: 180px;
+      --users-fixed-right-w: calc(var(--users-createdAt-w) + var(--users-actions-w) + var(--space-4));
+
+      .ant-table-content {
+        overflow-x: auto !important;
+        overflow-y: hidden !important;
+        padding-inline-end: var(--users-fixed-right-w);
+        scrollbar-gutter: stable;
+      }
+
+      .ant-table-body {
+        overflow-x: auto !important;
+        overflow-y: hidden !important;
+        padding-inline-end: var(--users-fixed-right-w);
+        box-sizing: content-box;
+      }
+
+      .ant-table-cell-fix-right,
+      .ant-table-cell-fix-left {
+        background: var(--surface) !important;
+        background-clip: padding-box;
+      }
+
+      .ant-table-thead > tr > th.ant-table-cell-fix-right,
+      .ant-table-thead > tr > th.ant-table-cell-fix-left {
+        z-index: 12 !important;
+      }
+
+      .ant-table-tbody > tr > td.ant-table-cell-fix-right,
+      .ant-table-tbody > tr > td.ant-table-cell-fix-left {
+        z-index: 11 !important;
+      }
+
+      .ant-table-tbody > tr:hover > td.ant-table-cell-fix-right,
+      .ant-table-tbody > tr:hover > td.ant-table-cell-fix-left {
+        background: var(--soft-bg) !important;
+      }
+
+      /* scroll alanı ile fixed-right arası separator (tek çizgi) */
+      .ant-table-thead > tr > th.ant-table-cell-fix-right-first {
+        box-shadow: -1px 0 0 var(--users-th-split) !important;
+      }
+
+      .ant-table-tbody > tr > td.ant-table-cell-fix-right-first {
+        box-shadow: -1px 0 0 var(--border) !important;
+      }
     }
   }
-  .users-tableCard__footer {
-    display: flex !important;
-    justify-content: flex-end !important;
-    align-items: center !important;
 
-    padding: 12px 16px 16px !important;
-    border-top: 1px solid var(--divider) !important;
-    background: transparent !important;
+  /* =========================
+     Optional columns picker (scoped)  ✅ users-table dışına alındı!
+  ========================= */
+  .users-colsPick {
+    margin-bottom: var(--space-3);
+    padding: var(--space-3) var(--space-3) calc(var(--space-3) - 2px) !important;
+
+    background: var(--surface) !important;
+    border: 1px solid var(--border) !important;
+    border-radius: var(--radius-xl) !important;
+    box-shadow: var(--shadow-md) !important;
+
+    &__head {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: var(--space-3);
+    }
+
+    &__titleRow {
+      display: flex;
+      align-items: center;
+      gap: var(--space-2-5);
+      min-width: 0;
+    }
+
+    &__icon {
+      width: var(--pc-btn-h, 34px);
+      height: var(--pc-btn-h, 34px);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: var(--radius-md);
+
+      background: var(--surface-2) !important;
+      border: 1px solid var(--border) !important;
+      color: var(--text) !important;
+      flex: 0 0 var(--pc-btn-h, 34px);
+
+      svg {
+        width: var(--fs-icon);
+        height: var(--fs-icon);
+      }
+    }
+
+    &__titles {
+      min-width: 0;
+    }
+
+    &__title {
+      font-weight: 800;
+      letter-spacing: 0.2px;
+      color: var(--text) !important;
+      line-height: 1.1;
+    }
+
+    &__sub {
+      margin-top: 3px;
+      font-size: var(--fs-xs);
+      color: var(--muted) !important;
+      line-height: 1.2;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 520px;
+
+      @media (max-width: 560px) {
+        max-width: 260px;
+      }
+    }
+
+    &__right {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--space-2-5);
+      flex: 0 0 auto;
+    }
+
+    &__count {
+      font-size: var(--fs-xs);
+      font-weight: 750;
+      padding: 3px var(--space-2-5);
+      border-radius: 999px;
+      border: 1px solid var(--border) !important;
+      background: var(--surface-2) !important;
+      color: var(--text) !important;
+      line-height: 18px;
+    }
+
+    &__reset {
+      color: var(--muted) !important;
+      border-radius: var(--radius-sm) !important;
+      height: calc(var(--pc-btn-h, 34px) - 4px) !important;
+      padding-inline: var(--space-2-5) !important;
+
+      &:hover {
+        color: var(--text) !important;
+        background: color-mix(in srgb, var(--text) 8%, transparent) !important;
+      }
+
+      &:disabled {
+        opacity: 0.6;
+      }
+    }
+
+    &__items {
+      margin-top: var(--space-2-5);
+      padding-top: var(--space-2-5);
+      border-top: 1px solid var(--divider) !important;
+
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--space-2-5);
+    }
+
+    /* ✅ Ultra-minimal checkbox chips (kutusuz) */
+    &__chip.ant-checkbox-wrapper {
+      margin-inline-start: 0 !important;
+      display: inline-flex;
+      align-items: center;
+
+      padding: calc(var(--space-2) - 2px) var(--space-2-5) !important; /* 6px 10px */
+      border-radius: 999px;
+      border: 1px solid color-mix(in srgb, var(--text) 14%, var(--border)) !important;
+      background: transparent !important;
+      color: var(--text) !important;
+
+      font-weight: 650;
+      font-size: var(--fs-xs);
+      line-height: 1;
+      user-select: none;
+
+      transition: background var(--dur-fast) ease, border-color var(--dur-fast) ease,
+        transform var(--dur-fast) ease;
+    }
+
+    /* AntD checkbox kutusunu gizle */
+    &__chip.ant-checkbox-wrapper > .ant-checkbox {
+      display: none !important;
+    }
+
+    /* Label text span */
+    &__chip.ant-checkbox-wrapper > span:not(.ant-checkbox) {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--space-2);
+      min-width: 0;
+    }
+
+    /* Soldaki dot */
+    &__chip.ant-checkbox-wrapper > span:not(.ant-checkbox)::before {
+      content: "";
+      width: calc(var(--size-12) - 4px);  /* 8px */
+      height: calc(var(--size-12) - 4px); /* 8px */
+      border-radius: 999px;
+      background: color-mix(in srgb, var(--text) 20%, transparent);
+      box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--text) 18%, var(--border));
+      flex: 0 0 calc(var(--size-12) - 4px);
+    }
+
+    &__chip.ant-checkbox-wrapper:hover {
+      transform: translateY(-0.5px);
+      background: color-mix(in srgb, var(--text) 5%, transparent) !important;
+      border-color: color-mix(in srgb, var(--text) 24%, var(--border)) !important;
+    }
+
+    &__chip.ant-checkbox-wrapper-checked {
+      background: color-mix(in srgb, var(--primary) 10%, transparent) !important;
+      border-color: color-mix(in srgb, var(--primary) 45%, var(--border)) !important;
+    }
+
+    /* Checked: dot -> check */
+    &__chip.ant-checkbox-wrapper-checked > span:not(.ant-checkbox)::before {
+      content: "✓";
+      width: calc(var(--size-16) - 2px);  /* 14px */
+      height: calc(var(--size-16) - 2px); /* 14px */
+      border-radius: 6px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+
+      font-size: 11px;
+      font-weight: 900;
+      line-height: 1;
+
+      color: var(--text);
+      background: color-mix(in srgb, var(--primary) 18%, transparent);
+      box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--primary) 55%, var(--border));
+      flex: 0 0 calc(var(--size-16) - 2px);
+    }
+
+    &__chip.ant-checkbox-wrapper:focus-within {
+      box-shadow: var(--focus-ring) !important;
+    }
+
+    &__chip.ant-checkbox-wrapper-disabled {
+      opacity: 0.55;
+      cursor: not-allowed;
+      transform: none !important;
+    }
   }
 
-  .users-tableCard__footer .ant-pagination {
-    margin: 0 !important;
+  /* =========================
+     Status (table içi)
+  ========================= */
+  .users-status {
+    border: 1px solid var(--border) !important;
+    border-radius: 999px !important;
+    padding: 2px var(--space-2-5) !important;
+    font-weight: 700 !important;
+    font-size: var(--fs-xs) !important;
+    line-height: 18px !important;
     background: transparent !important;
-    border-top: 0 !important;
-
-    display: flex !important;
-    justify-content: flex-end !important;
-    width: auto !important;
     color: var(--text) !important;
   }
 
-  .users-tableCard__footer .ant-pagination .ant-pagination-item a,
-  .users-tableCard__footer
-    .ant-pagination
-    .ant-pagination-prev
-    .ant-pagination-item-link,
-  .users-tableCard__footer
-    .ant-pagination
-    .ant-pagination-next
-    .ant-pagination-item-link {
-    color: var(--text) !important;
+  .users-status--active {
+    background: var(--users-status-active-bg) !important;
+    border-color: var(--users-status-active-border) !important;
+    color: var(--success) !important;
   }
 
+  .users-status--inactive {
+    background: var(--users-status-inactive-bg) !important;
+    border-color: var(--users-status-inactive-border) !important;
+    color: var(--error) !important;
+  }
+
+  .users-statusHeader {
+    display: inline-flex;
+    align-items: center;
+    width: 100%;
+    gap: var(--space-2);
+
+    &__title {
+      font-weight: 700;
+      color: var(--text) !important;
+    }
+
+    &__iconBtn {
+      margin-left: auto !important;
+      width: var(--size-22);
+      height: var(--size-22);
+      padding: 0 !important;
+      border: 0 !important;
+      outline: 0 !important;
+      background: transparent !important;
+      color: var(--muted) !important;
+      border-radius: var(--radius-sm);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      line-height: 1;
+      -webkit-appearance: none;
+      appearance: none;
+
+      svg {
+        width: var(--size-12);
+        height: var(--size-12);
+      }
+
+      &:hover {
+        color: var(--text) !important;
+        background: color-mix(in srgb, var(--text) 10%, transparent) !important;
+      }
+
+      &:active {
+        transform: translateY(0.5px);
+      }
+
+      &:focus,
+      &:focus-visible {
+        box-shadow: none !important;
+      }
+    }
+  }
+
+  /* Dark mode sorter icons */
   :root[data-theme="dark"] & {
-    .users-tableCard__footer .ant-pagination .ant-pagination-item a,
-    .users-tableCard__footer
-      .ant-pagination
-      .ant-pagination-prev
-      .ant-pagination-item-link,
-    .users-tableCard__footer
-      .ant-pagination
-      .ant-pagination-next
-      .ant-pagination-item-link {
-      color: #fff !important;
+    .ant-table-wrapper.users-table {
+      --ant-table-header-icon-color: var(--users-table-header-icon) !important;
+      --ant-table-header-icon-hover-color: var(--text) !important;
+      --ant-table-header-icon-active-color: var(--text) !important;
     }
 
-    .users-tableCard__footer
-      .ant-pagination
-      .ant-pagination-disabled
-      .ant-pagination-item-link {
-      color: rgba(255, 255, 255, 0.55) !important;
+    .ant-table-wrapper.users-table .ant-table-column-sorter,
+    .ant-table-wrapper.users-table .ant-table-column-sorter-up,
+    .ant-table-wrapper.users-table .ant-table-column-sorter-down {
+      color: var(--text) !important;
+    }
+
+    .ant-table-wrapper.users-table .ant-table-column-sorter svg {
+      fill: currentColor !important;
     }
   }
 
-  @include p.pagination-sm(10px, 28px, 12px);
+  @include p.pagination-sm(var(--pg-gap-sm), var(--pg-item-h-sm), var(--pg-font-sm));
 }
 
+/* =========================
+   Modal (portal)
+========================= */
 .users-edit-modal--scoped {
   .ant-modal-content {
     background: var(--surface) !important;
     color: var(--text) !important;
     border: 1px solid var(--border) !important;
-    border-radius: 16px !important;
+    border-radius: var(--radius-xl) !important;
     overflow: hidden;
   }
 
   .ant-modal-header {
     background: var(--surface) !important;
-    border-bottom: 1px solid var(--border) !important;
+    border-bottom: 0 !important;
     margin: 0 !important;
+    padding: var(--space-3) var(--space-4) calc(var(--space-2) - 2px) !important;
+
+    &::after {
+      display: none !important;
+    }
   }
 
   .ant-modal-title {
     color: var(--text) !important;
     font-weight: 800 !important;
     letter-spacing: 0.2px;
+    margin: 0 !important;
+    line-height: 1.2 !important;
+  }
+
+  .ant-modal-close {
+    top: calc(var(--space-3) - 2px) !important;
+    right: var(--space-3) !important;
   }
 
   .ant-modal-body {
     background: var(--surface) !important;
     color: var(--text) !important;
+    padding: calc(var(--space-3) - 2px) var(--space-4) var(--space-4) !important;
   }
 
   .ant-modal-footer {
@@ -242,10 +710,10 @@
   .ant-input,
   .ant-input-affix-wrapper,
   textarea.ant-input {
-    background: var(--surface-2, rgba(0, 0, 0, 0.03)) !important;
+    background: var(--surface-2) !important;
     color: var(--text) !important;
     border-color: var(--border) !important;
-    border-radius: 12px !important;
+    border-radius: var(--radius-md) !important;
   }
 
   .ant-input::placeholder,
@@ -253,261 +721,86 @@
     color: var(--muted) !important;
     opacity: 0.7;
   }
+
+  :root[data-theme="dark"] & {
+    .ant-form-item-label > label,
+    .ant-radio-wrapper,
+    .ant-radio-wrapper span {
+      color: var(--text) !important;
+    }
+  }
 }
 
+/* =========================
+   Popconfirm (portal)
+========================= */
 .users-popconfirm {
-  --ant-color-bg-elevated: var(--surface) !important;
-  --ant-color-border: var(--border) !important;
-  --ant-box-shadow-secondary: var(
-    --shadow-md,
-    0 18px 60px rgba(0, 0, 0, 0.35)
-  ) !important;
+  --ant-color-bg-elevated: var(--pc-bg) !important;
+  --ant-color-border: var(--pc-border) !important;
+  --ant-box-shadow-secondary: var(--pc-shadow) !important;
 
   .ant-popover-container,
   .ant-popover-inner {
-    background: var(--surface) !important;
+    background: var(--pc-bg) !important;
   }
 
   .ant-popover-inner {
-    border: 1px solid var(--border) !important;
-    border-radius: 14px !important;
+    border: 1px solid var(--pc-border) !important;
+    border-radius: var(--pc-radius, var(--radius-lg)) !important;
   }
 
   .ant-popover-arrow::before {
-    background: var(--surface) !important;
+    background: var(--pc-bg) !important;
   }
 
   .ant-popconfirm-message-icon {
-    color: var(--warning, #fbbf24) !important;
+    color: var(--warning) !important;
   }
 
   .ant-popconfirm-buttons .ant-btn {
-    border-radius: 10px !important;
+    border-radius: var(--pc-btn-radius, var(--radius-md)) !important;
   }
 
   .ant-popconfirm-buttons .ant-btn-default {
-    background: var(--surface) !important;
+    background: var(--pc-bg) !important;
     color: var(--text) !important;
-    border-color: var(--border) !important;
+    border-color: var(--pc-border) !important;
   }
 
   .ant-popconfirm-buttons .ant-btn-primary {
-    background: var(--primary) !important;
-    border-color: var(--primary) !important;
+    background: var(--pc-ok-bg) !important;
+    border-color: var(--pc-ok-bg) !important;
+    color: var(--pc-ok-text) !important;
   }
 }
 
 :root[data-theme="dark"] .users-popconfirm {
-  --ant-color-text-heading: #fff !important;
-  --ant-color-text: #fff !important;
+  --ant-color-text-heading: var(--text) !important;
+  --ant-color-text: var(--text) !important;
 
   .ant-popconfirm-title,
   .ant-popover-inner-content,
   .ant-popconfirm-title *,
   .ant-popover-inner-content * {
-    color: #fff !important;
-  }
-}
-.users-page__filters {
-  margin-bottom: 12px;
-}
-
-.users-edit-modal--scoped {
-  :root[data-theme="dark"] & {
-    .ant-form-item-label > label,
-    .ant-radio-wrapper,
-    .ant-radio-wrapper span {
-      color: #fff !important;
-    }
-  }
-}
-.users-status {
-  border: 1px solid var(--border) !important;
-  border-radius: 999px !important;
-  padding: 2px 10px !important;
-  font-weight: 700 !important;
-  font-size: 12px !important;
-  line-height: 18px !important;
-  background: transparent !important;
-  color: var(--text) !important;
-}
-
-.users-status--active {
-  background: rgba(34, 197, 94, 0.14) !important;
-  border-color: rgba(34, 197, 94, 0.35) !important;
-  color: rgba(34, 197, 94, 1) !important;
-}
-
-.users-status--inactive {
-  background: rgba(239, 68, 68, 0.14) !important;
-  border-color: rgba(239, 68, 68, 0.35) !important;
-  color: rgba(239, 68, 68, 1) !important;
-}
-.users-stats {
-  margin-bottom: 12px;
-}
-
-.users-statCard {
-  background: var(--surface) !important;
-  border: 1px solid var(--border) !important;
-  border-radius: 14px !important;
-  box-shadow: var(--shadow-md) !important;
-
-  .ant-statistic-title {
-    color: var(--muted) !important;
-    margin-bottom: 6px;
-  }
-
-  .ant-statistic-content {
     color: var(--text) !important;
-    font-weight: 800;
   }
 }
 
-.users-stats {
-  margin-bottom: 14px;
-}
-
-.users-statCard {
-  background: var(--surface) !important;
-  border: 1px solid var(--border) !important;
-  border-radius: 16px !important;
-  box-shadow: var(--shadow-md) !important;
-  padding: 14px !important;
-  transition: all 0.2s ease;
-  cursor: default;
-
-  &:hover {
-    transform: translateY(-2px);
-    box-shadow: var(--shadow-lg) !important;
-  }
-}
-
-.users-statCard__inner {
-  display: flex;
-  align-items: center;
-  gap: 14px;
-}
-
-.users-statCard__icon {
-  width: 44px;
-  height: 44px;
-  border-radius: 12px;
-
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  font-size: 22px;
-  background: rgba(255, 255, 255, 0.06);
-}
-
-.users-statCard__meta {
-  flex: 1;
-  min-width: 0;
-}
-
-.users-statCard__title {
-  font-size: 13px;
-  font-weight: 600;
-  color: var(--muted);
-  margin-bottom: 4px;
-}
-
-.users-statCard__value {
-  font-size: 24px;
-  font-weight: 800;
-  color: var(--text);
-  line-height: 1.1;
-}
-
-.users-statCard--total {
-  .users-statCard__icon {
-    background: rgba(59, 130, 246, 0.15);
-    color: #3b82f6;
-  }
-}
-
-.users-statCard--active {
-  .users-statCard__icon {
-    background: rgba(34, 197, 94, 0.15);
-    color: #22c55e;
-  }
-}
-
-.users-statCard--inactive {
-  .users-statCard__icon {
-    background: rgba(239, 68, 68, 0.15);
-    color: #ef4444;
-  }
-}
-.users-statusHeader {
-  display: inline-flex;
-  align-items: center;
-  width: 100%;
-  gap: 8px;
-}
-
-.users-statusHeader__title {
-  font-weight: 700;
-  color: var(--text) !important;
-}
-
-.users-statusHeader__iconBtn {
-  margin-left: auto !important; 
-  width: 22px;
-  height: 22px;
-  padding: 0 !important;
-
-  border: 0 !important;       
-  outline: 0 !important;
-  background: transparent !important;
-
-  color: var(--muted) !important;
-  border-radius: 6px;
-
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-
-  cursor: pointer;
-  line-height: 1;
-
-  -webkit-appearance: none;
-  appearance: none;
-
-  svg {
-    width: 12px;
-    height: 12px;
-  }
-
-  &:hover {
-    color: var(--text) !important;
-    background: color-mix(in srgb, var(--text) 10%, transparent) !important;
-  }
-
-  &:active {
-    transform: translateY(0.5px);
-  }
-
-  &:focus,
-  &:focus-visible {
-    box-shadow: none !important;
-  }
-}
-
+/* =========================
+   Status menu (dropdown portal)
+========================= */
 .users-statusMenu {
   .ant-dropdown-menu {
     background: var(--surface) !important;
     border: 1px solid var(--border) !important;
-    border-radius: 12px !important;
-    padding: 6px !important;
+    border-radius: var(--radius-md) !important;
+    padding: calc(var(--space-2) - 2px) !important;
     box-shadow: var(--shadow-md) !important;
   }
 
   .ant-dropdown-menu-item {
     color: var(--text) !important;
-    border-radius: 10px !important;
+    border-radius: var(--radius-sm) !important;
 
     &:hover {
       background: color-mix(in srgb, var(--primary) 14%, transparent) !important;
@@ -528,6 +821,6 @@
 :root[data-theme="dark"] .users-statusMenu {
   .ant-dropdown-menu-item,
   .ant-dropdown-menu-item * {
-    color: #fff !important;
+    color: var(--text) !important;
   }
 }

@@ -27,7 +27,7 @@
 
     .ant-input-affix-wrapper,
     .ant-input {
-      border-radius: 12px !important;
+      border-radius: var(--control-radius) !important;
     }
 
     @media (max-width: 700px) {
@@ -41,7 +41,7 @@
     min-width: 140px;
 
     .ant-select-selector {
-      border-radius: 12px !important;
+      border-radius: var(--control-radius) !important;
     }
 
     @media (max-width: 700px) {
@@ -51,11 +51,12 @@
   }
 
   .posts-pagination {
-    margin-top: 12px;
+    margin-top: var(--space-3);
     display: flex;
     justify-content: flex-end;
 
-    @include p.pagination-sm(10px, 28px, 12px);
+    /* token'lı defaults */
+    @include p.pagination-sm(var(--pg-gap-sm), var(--pg-item-h-sm), var(--pg-font-sm));
 
     @media (max-width: 700px) {
       justify-content: flex-start;
@@ -65,97 +66,122 @@
     }
   }
 }
+
+/* ✅ Posts Popconfirm -> ortak pc tokenları */
 .posts-popconfirm {
-  --ant-color-bg-elevated: var(--surface) !important;
-  --ant-color-border: var(--border) !important;
-  --ant-box-shadow-secondary: var(
-    --shadow-md,
-    0 18px 60px rgba(0, 0, 0, 0.35)
-  ) !important;
+  --ant-color-bg-elevated: var(--pc-bg) !important;
+  --ant-color-border: var(--pc-border) !important;
+  --ant-box-shadow-secondary: var(--pc-shadow) !important;
+
+  /* bazı AntD sürümlerinde text token da lazım oluyor */
+  --ant-color-text: var(--text) !important;
+  --ant-color-text-heading: var(--text) !important;
 
   .ant-popover-inner {
-    background: var(--surface) !important;
-    border: 1px solid var(--border) !important;
-    border-radius: 14px !important;
+    background: var(--pc-bg) !important;
+    border: 1px solid var(--pc-border) !important;
+    border-radius: var(--pc-radius) !important;
   }
 
   .ant-popover-arrow::before {
-    background: var(--surface) !important;
+    background: var(--pc-bg) !important;
   }
 
   .ant-popconfirm-message-icon {
-    color: var(--warning, #fbbf24) !important;
+    color: var(--warning) !important;
   }
 
+  /* yazılar normal ağırlık */
   .ant-popconfirm-title,
   .ant-popover-inner-content,
   .ant-popconfirm-title *,
   .ant-popover-inner-content * {
     color: var(--text) !important;
+    font-weight: var(--pc-title-weight) !important;
+  }
+
+  .ant-popconfirm-buttons {
+    display: flex;
+    gap: var(--pc-btn-gap);
   }
 
   .ant-popconfirm-buttons .ant-btn {
-    border-radius: 10px !important;
+    height: var(--pc-btn-h) !important;
+    border-radius: var(--pc-btn-radius) !important;
+    font-weight: var(--pc-btn-weight) !important;
+    opacity: 1 !important;
   }
 
+  /* Cancel */
   .ant-popconfirm-buttons .ant-btn-default {
-    background: var(--surface) !important;
+    background: var(--pc-bg) !important;
     color: var(--text) !important;
-    border-color: var(--border) !important;
+    border-color: var(--pc-border) !important;
   }
 
-  .ant-popconfirm-buttons .ant-btn-primary {
-    background: var(--primary) !important;
-    border-color: var(--primary) !important;
+  /* OK/Delete -> her zaman mavi */
+  .ant-popconfirm-buttons .ant-btn-primary,
+  .ant-popconfirm-buttons .ant-btn-dangerous,
+  .ant-popconfirm-buttons .ant-btn-primary.ant-btn-dangerous {
+    background: var(--pc-ok-bg) !important;
+    border-color: var(--pc-ok-bg) !important;
+    color: var(--pc-ok-text) !important;
+  }
+
+  .ant-popconfirm-buttons .ant-btn-primary:hover,
+  .ant-popconfirm-buttons .ant-btn-dangerous:hover,
+  .ant-popconfirm-buttons .ant-btn-primary.ant-btn-dangerous:hover {
+    background: var(--pc-ok-bg-hover) !important;
+    border-color: var(--pc-ok-bg-hover) !important;
   }
 }
 
-
+/* ✅ Post Modal -> modal tokenları */
 .post-modal--scoped {
-  :root[data-theme="dark"] & {
-    .ant-modal-title,
-    .ant-form-item-label > label {
-      color: #fff !important;
-    }
-
-    .ant-input,
-    .ant-input-affix-wrapper,
-    .ant-input-textarea-affix-wrapper,
-    textarea.ant-input {
-      background: var(--surface) !important;
-      border-color: var(--border) !important;
-      color: var(--text) !important;
-    }
+  .ant-modal {
+    width: var(--post-modal-w) !important;
+    max-width: var(--modal-max-w) !important;
   }
 
-  :root:not([data-theme="dark"]) & {
-    .ant-input,
-    .ant-input-affix-wrapper,
-    .ant-input-textarea-affix-wrapper,
-    textarea.ant-input {
-      background: #fff !important;
-      border-color: rgba(0, 0, 0, 0.18) !important;
-    }
+  .ant-modal-title,
+  .ant-form-item-label > label {
+    color: var(--text) !important;
+  }
 
-    .ant-input:hover,
-    .ant-input-affix-wrapper:hover,
-    textarea.ant-input:hover {
-      border-color: rgba(0, 0, 0, 0.28) !important;
-    }
+  .ant-input,
+  .ant-input-affix-wrapper,
+  .ant-input-textarea-affix-wrapper,
+  textarea.ant-input {
+    background: var(--surface-2, var(--surface)) !important;
+    border-color: var(--border) !important;
+    color: var(--text) !important;
+    border-radius: var(--control-radius) !important;
+  }
 
-    .ant-input:focus,
-    .ant-input-affix-wrapper-focused,
-    textarea.ant-input:focus {
-      border-color: var(--primary) !important;
-      box-shadow: 0 0 0 3px rgba(79, 107, 255, 0.18) !important;
-    }
+  .ant-input:hover,
+  .ant-input-affix-wrapper:hover,
+  textarea.ant-input:hover {
+    border-color: var(--border) !important;
+  }
+
+  .ant-input:focus,
+  .ant-input-affix-wrapper-focused,
+  textarea.ant-input:focus {
+    border-color: var(--primary) !important;
+    box-shadow: var(--focus-ring) !important;
+  }
+
+  .ant-form-item-explain,
+  .ant-form-item-explain-error,
+  .ant-form-item-explain-connected {
+    display: none !important;
   }
 
   .post-modal__titleRow {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 10px;
+    gap: var(--space-2);
     min-width: 0;
   }
 

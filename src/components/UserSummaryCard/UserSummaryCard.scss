@@ -1,6 +1,331 @@
 .user-summary-card {
+  background: var(--surface) !important;
+  border: 1px solid var(--border) !important;
+  border-radius: 16px !important;
+  box-shadow: var(--shadow-md) !important;
+  overflow: hidden;
+
+  .ant-card-body {
+    padding: 14px 16px !important;
+  }
+
+  &__wrap {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    min-width: 0;
+  }
+
+  &__header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-width: 0;
+  }
+
+  &__avatar {
+    width: 42px;
+    height: 42px;
+    border-radius: 999px;
+    display: grid;
+    place-items: center;
+    flex: 0 0 auto;
+
+    font-weight: 800;
+    letter-spacing: 0.6px;
+    color: var(--text);
+
+    --h: 220;
+
+    background:
+      radial-gradient(
+        80% 80% at 30% 25%,
+        hsl(var(--h) 90% 65% / 0.38),
+        transparent 60%
+      ),
+      linear-gradient(
+        135deg,
+        hsl(var(--h) 85% 55% / 0.22),
+        hsl(calc(var(--h) + 22) 85% 55% / 0.14)
+      ),
+      var(--surface-2);
+
+    border: 1px solid var(--border);
+    box-shadow:
+      0 0 0 1px rgb(from var(--text) r g b / 0.06) inset,
+      0 10px 18px rgba(0, 0, 0, 0.18);
+  }
+
+  &__title {
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  &__name {
+    color: var(--text);
+    font-weight: 700;
+    line-height: 1.1;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  &__meta {
+    color: var(--muted);
+    font-size: 12px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
   &__desc {
     width: 100%;
     min-width: 0;
+
+    .ant-descriptions-view {
+      border-color: var(--border) !important;
+      border-radius: 12px;
+      overflow: hidden;
+      background: transparent;
+    }
+
+    .ant-descriptions-view table {
+      width: 100%;
+      table-layout: fixed;
+    }
+
+    .ant-descriptions-item-label,
+    .ant-descriptions-item-content {
+      padding: 10px 12px !important;
+      border-color: var(--border) !important;
+    }
+
+    .ant-descriptions-item-label {
+      width: 56px;
+      padding: 10px 8px !important;
+      text-align: center;
+      color: var(--muted) !important;
+      background: var(--surface-2) !important;
+      font-weight: 600;
+      white-space: nowrap;
+      border-right: 0 !important;
+      vertical-align: middle;
+    }
+
+    .ant-descriptions-item-content {
+      color: var(--text) !important;
+      min-width: 0;
+      vertical-align: middle;
+      border-left: 0 !important;
+      background: transparent;
+    }
+
+    .ant-descriptions-row:hover > th,
+    .ant-descriptions-row:hover > td {
+      background: var(--soft-bg, var(--surface-2));
+    }
+  }
+
+  &__label {
+    width: 34px;
+    height: 34px;
+    border-radius: 10px;
+    margin: 0 auto;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 0;
+    cursor: help;
+
+    --icon-color: var(--muted);
+    --icon-bg: var(--surface-2);
+    --icon-border: var(--border);
+
+    background: var(--icon-bg);
+    border: 1px solid var(--icon-border);
+
+    transition:
+      transform var(--dur-fast, 140ms) ease,
+      filter var(--dur-fast, 140ms) ease,
+      background var(--dur-fast, 140ms) ease,
+      border-color var(--dur-fast, 140ms) ease;
+
+    svg {
+      width: 18px;
+      height: 18px;
+      flex: 0 0 auto;
+      color: var(--icon-color) !important;
+      transition: color var(--dur-fast, 140ms) ease;
+    }
+
+    &:hover {
+      transform: translateY(-1px);
+      filter: brightness(1.06);
+    }
+  }
+
+  &__label.is-email {
+    --icon-color: var(--primary);
+    --icon-bg: var(--a-primary-12, var(--surface-2));
+    --icon-border: var(--a-primary-35, var(--border));
+  }
+
+  &__label.is-phone {
+    --icon-color: var(--success);
+    --icon-bg: var(--a-success-16, var(--surface-2));
+    --icon-border: var(--a-success-45, var(--border));
+  }
+
+  &__label.is-web {
+    --icon-color: var(--primary);
+    --icon-bg: var(--a-primary-10, var(--surface-2));
+    --icon-border: var(--a-primary-22, var(--border));
+  }
+
+  &__label.is-address {
+    --icon-color: var(--warning);
+    --icon-bg: var(--a-warning-16, var(--a-primary-10, var(--surface-2)));
+    --icon-border: var(--a-warning-45, var(--a-primary-22, var(--border)));
+  }
+
+  &__label.is-company {
+    --icon-color: var(--purple);
+    --icon-bg: var(--a-purple-16, var(--a-primary-10, var(--surface-2)));
+    --icon-border: var(--a-purple-45, var(--a-primary-22, var(--border)));
+  }
+
+  &__inline {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    min-width: 0;
+
+    &:hover .ant-typography-copy,
+    &:focus-within .ant-typography-copy {
+      opacity: 1;
+      transform: translateY(0);
+      pointer-events: auto;
+    }
+  }
+
+  &__link {
+    flex: 1;
+    min-width: 0;
+    max-width: 100%;
+    color: var(--text) !important;
+    text-decoration: none;
+
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+
+    &:hover {
+      text-decoration: underline;
+      color: var(--primary) !important;
+    }
+  }
+
+  &__copy {
+    flex: 0 0 auto;
+    display: inline-flex;
+    align-items: center;
+
+    .ant-typography-copy {
+      color: var(--muted) !important;
+      opacity: 0;
+      transform: translateY(1px);
+      transition: opacity 0.15s ease, transform 0.15s ease;
+      pointer-events: none;
+
+      &:hover {
+        color: var(--text) !important;
+      }
+    }
+  }
+
+  &__clamp {
+    display: block;
+    overflow: hidden;
+    line-height: 1.35;
+    max-height: calc(1.35em * 2);
+    word-break: break-word;
+
+    @supports (-webkit-line-clamp: 2) {
+      max-height: none;
+      display: -webkit-box;
+      -webkit-box-orient: vertical;
+      -webkit-line-clamp: 2;
+    }
+  }
+
+  @media (max-width: 520px) {
+    &__desc {
+      .ant-descriptions-item-label {
+        width: 52px;
+        padding: 10px 6px !important;
+      }
+    }
+
+    &__label {
+      width: 32px;
+      height: 32px;
+
+      svg {
+        width: 17px;
+        height: 17px;
+      }
+    }
+  }
+}
+
+:root[data-theme="dark"] {
+  .user-summary-card {
+    &__avatar {
+      box-shadow:
+        0 0 0 1px rgb(from var(--text) r g b / 0.07) inset,
+        0 14px 26px rgba(0, 0, 0, 0.35);
+      filter: saturate(1.06) brightness(1.02);
+    }
+
+    &__label {
+      filter: saturate(1.12);
+      box-shadow:
+        0 0 0 1px rgb(from var(--text) r g b / 0.06) inset,
+        0 10px 18px rgba(0, 0, 0, 0.30);
+    }
+
+    &__label.is-email {
+      --icon-bg: rgb(from var(--primary) r g b / 0.22);
+      --icon-border: rgb(from var(--primary) r g b / 0.46);
+    }
+
+    &__label.is-phone {
+      --icon-bg: rgb(from var(--success) r g b / 0.22);
+      --icon-border: rgb(from var(--success) r g b / 0.46);
+    }
+
+    &__label.is-web {
+      --icon-bg: rgb(from var(--primary) r g b / 0.20);
+      --icon-border: rgb(from var(--primary) r g b / 0.42);
+    }
+
+    &__label.is-address {
+      --icon-bg: rgb(from var(--warning) r g b / 0.22);
+      --icon-border: rgb(from var(--warning) r g b / 0.46);
+    }
+
+    &__label.is-company {
+      --icon-bg: rgb(from var(--purple) r g b / 0.22);
+      --icon-border: rgb(from var(--purple) r g b / 0.46);
+    }
+
+    &__label:hover {
+      filter: saturate(1.18) brightness(1.06);
+    }
   }
 }

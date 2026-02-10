@@ -1,41 +1,147 @@
-import { useEffect, useMemo, useState, useCallback } from "react";
-import { Button, Card, Form, Input, Modal, Space, Table, Pagination, message, Tooltip, Popconfirm, Radio, Row, Col, Dropdown, Tag, } from "antd";
-import { PlusOutlined, UserOutlined, CheckCircleOutlined, CloseCircleOutlined, DownOutlined, } from "@ant-design/icons";
-import { BiCommentDetail, BiEditAlt } from "react-icons/bi";
-import { AiOutlineDelete } from "react-icons/ai";
-import { MdOutlineEmail } from "react-icons/md";
+import { useCallback, useMemo, useState, useEffect } from "react";
+import {
+  Card,
+  Form,
+  Modal,
+  Table,
+  Pagination,
+  message,
+  Checkbox,
+  Grid,
+  Button,
+} from "antd";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import dayjs from "dayjs";
-import { usersRepo } from "../../storage/repo/users.repo";
-import "./UserPage.scss";
+import { SettingOutlined, ReloadOutlined } from "@ant-design/icons";
+
+import UsersStatsCards from "../../components/UsersStatsCards/UsersStatsCards";
 import PageHeader from "../../components/PageHeader/PageHeader";
-import { saveUsers, ensureUsersCreatedAt, ensureUsersStatus, } from "../../storage/jpDb";
-import FiltersBar from "../../components/FiltersBar/FiltersBar";
+import NewUserModal from "../../components/NewUserModal/NewUserModal";
+import UserFormFields from "../../components/UserFormFields/UserFormFields";
+import UsersToolbar from "./components/UsersToolbar/UsersToolbar";
+
+import { useUsersBootstrap } from "./hooks/useUsersBootstrap";
+import { useUsersDerived } from "./hooks/useUsersDerived";
+import { useUsersColumns } from "./hooks/useUsersColumns";
+
+import "./UserPage.scss";
 
 const PAGE_SIZE = 8;
 
-export default function UsersPage() {
-  const { t } = useTranslation();
-  const nav = useNavigate();
+const COL_W = {
+  name: 160,
+  username: 150,
+  email: 190,
+  status: 110,
+  phone: 150,
+  address: 170,
+  company: 160,
+  createdAt: 150,
+  actions: 180,
+};
 
+const SCROLL_X_ALL = Object.values(COL_W).reduce((sum, w) => sum + w, 0);
+
+const EMPTY_USER_FORM = {
+  name: "",
+  username: "",
+  email: "",
+  status: "active",
+  phone: "",
+  website: "",
+  address: { street: "" },
+  company: { name: "" },
+};
+
+const normalizeAddress = (addr) => ({ street: addr?.street ?? "" });
+const normalizeCompany = (c) => ({ name: c?.name ?? "" });
+
+const OPTIONAL_KEYS = ["phone", "address", "company", "createdAt"];
+const LS_KEY = "users:optionalCols:v1";
+
+export default function UsersPage() {
+  const { t, i18n } = useTranslation();
+  const nav = useNavigate();
   const [messageApi, contextHolder] = message.useMessage();
 
-  const [users, setUsers] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const screens = Grid.useBreakpoint();
+  const isNarrow = !screens.xl; 
+  const hasScrollX = isNarrow; 
 
-  const [open, setOpen] = useState(false);
+  const [optionalCols, setOptionalCols] = useState(["phone", "company"]);
+
+  useEffect(() => {
+    try {
+      const raw = localStorage.getItem(LS_KEY);
+      if (!raw) return;
+      const arr = JSON.parse(raw);
+      if (!Array.isArray(arr)) return;
+
+      const cleaned = arr.filter((k) => OPTIONAL_KEYS.includes(k)).slice(0, 2);
+      if (cleaned.length) setOptionalCols(cleaned);
+    } catch {
+    
+    }
+  }, []);
+
+  useEffect(() => {
+    try {
+      localStorage.setItem(LS_KEY, JSON.stringify(optionalCols));
+    } catch {
+      
+    }
+  }, [optionalCols]);
+
+  const effectiveOptionalCols = isNarrow ? OPTIONAL_KEYS : optionalCols;
+
+  const toggleOptional = useCallback(
+    (key) => {
+      setOptionalCols((prev) => {
+        const exists = prev.includes(key);
+        if (exists) return prev.filter((x) => x !== key);
+
+        if (prev.length >= 2) {
+          messageApi.warning(
+            t("UsersPage.columnsPicker.max2", {
+              defaultValue: "You can select up to 2 columns.",
+            })
+          );
+          return prev;
+        }
+        return [...prev, key];
+      });
+    },
+    [messageApi, t]
+  );
+
+  const optionalOptions = useMemo(
+    () => [
+      { key: "phone", label: t("UsersPage.table.phone", { defaultValue: "Phone" }) },
+      {
+        key: "address",
+        label: t("UsersPage.table.address", { defaultValue: "Address" }),
+      },
+      {
+        key: "company",
+        label: t("UsersPage.table.company", { defaultValue: "Company" }),
+      },
+      {
+        key: "createdAt",
+        label: t("UsersPage.columns.createdAt", { defaultValue: "Created Date" }),
+      },
+    ],
+    [t]
+  );
+
+  const [openNew, setOpenNew] = useState(false);
+  const [openEditModal, setOpenEditModal] = useState(false);
   const [editing, setEditing] = useState(null);
+
   const [saving, setSaving] = useState(false);
   const [form] = Form.useForm();
 
   const [page, setPage] = useState(1);
-
-  const [filters, setFilters] = useState({
-    q: "",
-    status: "all",
-    range: null,
-  });
+  const [filters, setFilters] = useState({ q: "", status: "all", range: null });
 
   const patchFilters = useCallback((patch) => {
     setFilters((p) => ({ ...p, ...patch }));
@@ -47,102 +153,74 @@ export default function UsersPage() {
     setPage(1);
   }, []);
 
-  useEffect(() => {
-    const controller = new AbortController();
+  const onFetchError = useCallback(() => {
+    messageApi.error(t("UsersPage.errors.fetchUsers", { defaultValue: "Unable to load users." }));
+  }, [messageApi, t]);
 
-    (async () => {
-      setLoading(true);
-      try {
-        const data = await usersRepo.bootstrap({ signal: controller.signal });
+  const { users, setUsers, loading } = useUsersBootstrap({ onError: onFetchError });
 
-        const r1 = ensureUsersCreatedAt(data);
-        const r2 = ensureUsersStatus(r1.normalized);
+  const { filteredUsers, pagedUsers, stats } = useUsersDerived({
+    users,
+    filters,
+    page,
+    setPage,
+    pageSize: PAGE_SIZE,
+  });
 
-        if (r1.changed || r2.changed) {
-          saveUsers(r2.normalized);
-        }
+  const fmtDate = useCallback(
+    (iso) => {
+      if (!iso) return "-";
+      const ms = Date.parse(iso);
+      if (!Number.isFinite(ms)) return "-";
 
-        setUsers(r2.normalized);
-      } catch {
-        messageApi.error(t("UsersPage.errors.fetchUsers"));
-      } finally {
-        if (!controller.signal.aborted) setLoading(false);
-      }
-    })();
+      const lng = (i18n.resolvedLanguage || i18n.language || "en").toLowerCase();
+      const locale = lng.startsWith("tr") ? "tr-TR" : "en-US";
 
-    return () => controller.abort();
-  }, [t, messageApi]);
-
-  const filteredUsers = useMemo(() => {
-    const term = (filters.q || "").trim().toLowerCase();
-    const [start, end] = filters.range || [];
-
-    return (users || []).filter((u) => {
-      const hay = `${u.name ?? ""} ${u.username ?? ""} ${u.email ?? ""}`.toLowerCase();
-      const okQ = !term || hay.includes(term);
-
-      const okStatus =
-        filters.status === "all"
-          ? true
-          : (u?.status ?? "active") === filters.status;
-
-      const okRange =
-        !start || !end || !u?.createdAt
-          ? true
-          : dayjs(u.createdAt).isAfter(start.startOf("day")) &&
-          dayjs(u.createdAt).isBefore(end.endOf("day"));
-
-      return okQ && okStatus && okRange;
-    });
-  }, [users, filters]);
-
-  const stats = useMemo(() => {
-    const list = Array.isArray(filteredUsers) ? filteredUsers : [];
-    let active = 0;
-    let inactive = 0;
-
-    list.forEach((u) => {
-      const s = u?.status ?? "active";
-      if (s === "inactive") inactive += 1;
-      else active += 1;
-    });
-
-    return { total: list.length, active, inactive };
-  }, [filteredUsers]);
-
-  useEffect(() => {
-    const maxPage = Math.max(1, Math.ceil(filteredUsers.length / PAGE_SIZE));
-    if (page > maxPage) setPage(1);
-  }, [filteredUsers.length, page]);
-
-  const pagedUsers = useMemo(() => {
-    const start = (page - 1) * PAGE_SIZE;
-    return filteredUsers.slice(start, start + PAGE_SIZE);
-  }, [filteredUsers, page]);
-
-  const openEdit = useCallback(
-    (record) => {
-      setEditing(record);
-      form.setFieldsValue({
-        name: record?.name ?? "",
-        username: record?.username ?? "",
-        email: record?.email ?? "",
-        status: record?.status ?? "active",
-      });
-      setOpen(true);
+      return new Intl.DateTimeFormat(locale, {
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit",
+      }).format(new Date(ms));
     },
-    [form]
+    [i18n.language, i18n.resolvedLanguage]
   );
 
   const openCreate = useCallback(() => {
     setEditing(null);
+    setOpenEditModal(false);
     form.resetFields();
-    form.setFieldsValue({ status: "active" });
-    setOpen(true);
+    form.setFieldsValue(EMPTY_USER_FORM);
+    setOpenNew(true);
   }, [form]);
 
-  const closeModal = useCallback(() => {
-    setOpen(false);
+  const handleOpenEdit = useCallback(
+    (record) => {
+      setOpenNew(false);
+      setEditing(record);
+
+      form.resetFields();
+
+      const initial = {
+        ...EMPTY_USER_FORM,
+        ...record,
+        status: record?.status ?? "active",
+        address: normalizeAddress(record?.address),
+        company: normalizeCompany(record?.company),
+      };
+
+      form.setFieldsValue(initial);
+      setOpenEditModal(true);
+    },
+    [form]
+  );
+
+  const closeNewModal = useCallback(() => {
+    setOpenNew(false);
+    form.resetFields();
+  }, [form]);
+
+  const closeEditModal = useCallback(() => {
+    setOpenEditModal(false);
     setEditing(null);
     form.resetFields();
   }, [form]);
@@ -151,14 +229,20 @@ export default function UsersPage() {
     async (id) => {
       try {
         const normalizedId = Number(id);
-        const nextUsers = await usersRepo.remove(users, normalizedId);
+        const nextUsers = await (
+          await import("../../storage/repo/users.repo")
+        ).usersRepo.remove(users, normalizedId);
+
         setUsers(nextUsers);
-        messageApi.success(t("UsersPage.success.userDeleted"));
+
+        messageApi.success(
+          t("UsersPage.success.userDeleted", { defaultValue: "User deleted successfully." })
+        );
       } catch {
-        messageApi.error(t("UsersPage.errors.fetchUsers"));
+        messageApi.error(t("UsersPage.errors.fetchUsers", { defaultValue: "Unable to load users." }));
       }
     },
-    [users, t, messageApi]
+    [users, setUsers, messageApi, t]
   );
 
   const onSubmit = useCallback(async () => {
@@ -166,314 +250,180 @@ export default function UsersPage() {
 
     try {
       setSaving(true);
+
       const values = await form.validateFields();
       const status = values?.status === "inactive" ? "inactive" : "active";
 
-      if (!editing) {
-        const payload = {
-          ...values,
-          status,
-          createdAt: new Date().toISOString(),
-        };
-        const next = await usersRepo.create(users, payload);
-        setUsers(next);
-        messageApi.success(t("UsersPage.success.userCreated"));
-      } else {
-        const payload = { ...editing, ...values, status };
-        const next = await usersRepo.update(users, editing.id, payload);
-        setUsers(next);
-        messageApi.success(t("UsersPage.success.userUpdated"));
-      }
+      const repo = (await import("../../storage/repo/users.repo")).usersRepo;
 
-      closeModal();
+      const normalizedValues = {
+        ...values,
+        status,
+        address: normalizeAddress(values?.address),
+        company: normalizeCompany(values?.company),
+      };
+
+      if (!editing) {
+        const payload = { ...normalizedValues, createdAt: new Date().toISOString() };
+        const next = await repo.create(users, payload);
+        setUsers(next);
+
+        messageApi.success(
+          t("UsersPage.success.userCreated", { defaultValue: "User created successfully." })
+        );
+        closeNewModal();
+      } else {
+        const payload = { ...editing, ...normalizedValues };
+        const next = await repo.update(users, editing.id, payload);
+        setUsers(next);
+
+        messageApi.success(
+          t("UsersPage.success.userUpdated", { defaultValue: "User updated successfully." })
+        );
+        closeEditModal();
+      }
     } finally {
       setSaving(false);
     }
-  }, [saving, form, editing, users, t, closeModal, messageApi]);
+  }, [saving, form, editing, users, setUsers, messageApi, t, closeNewModal, closeEditModal]);
 
-  const fmtDateTime = useCallback((iso) => {
-    if (!iso) return "-";
-    const dt = new Date(iso);
-    const ms = dt.getTime();
-    if (!Number.isFinite(ms)) return "-";
+  const { columns } = useUsersColumns({
+    t,
+    colWidth: COL_W,
+    hasScrollX,
+    visibleOptionalCols: effectiveOptionalCols,
+    statusValue: filters.status,
+    onStatusChange: (key) => patchFilters({ status: key }),
+    fmtDate,
+    onDetail: (record) => nav(`/users/${record.id}`),
+    onEdit: handleOpenEdit,
+    onDelete,
+  });
 
-    return new Intl.DateTimeFormat("tr-TR", {
-      year: "numeric",
-      month: "2-digit",
-      day: "2-digit",
-      hour: "2-digit",
-      minute: "2-digit",
-    }).format(dt);
-  }, []);
+  const newUserTexts = useMemo(
+    () => ({
+      title: t("UsersPage.modal.newTitle", { defaultValue: "New User" }),
+      add: t("UsersPage.modal.add", { defaultValue: "Add" }),
+      cancel: t("UsersPage.confirm.cancel", { defaultValue: "Cancel" }),
 
-  const statusMenuItems = useMemo(
-    () => [
-      { key: "all", label: t("UsersPage.filters.all", { defaultValue: "All" }) },
-      {
-        key: "active",
-        label: t("UsersPage.status.active", { defaultValue: "Active" }),
-      },
-      {
-        key: "inactive",
-        label: t("UsersPage.status.inactive", { defaultValue: "Inactive" }),
-      },
-    ],
+      name: t("UsersPage.form.name", { defaultValue: "Name" }),
+      username: t("UsersPage.form.username", { defaultValue: "Username" }),
+      email: t("UsersPage.form.email", { defaultValue: "Email" }),
+      status: t("UsersPage.form.status", { defaultValue: "Status" }),
+
+      phone: t("UsersPage.table.phone", { defaultValue: "Phone" }),
+      address: t("UsersPage.table.address", { defaultValue: "Address" }),
+      companyName: t("UsersPage.table.company", { defaultValue: "Company" }),
+
+      required: t("UsersPage.form.required", { defaultValue: "Required" }),
+      emailInvalid: t("UsersPage.form.emailInvalid", { defaultValue: "Invalid email" }),
+
+      active: t("UsersPage.status.active", { defaultValue: "Active" }),
+      inactive: t("UsersPage.status.inactive", { defaultValue: "Inactive" }),
+    }),
     [t]
   );
 
-  const statusTooltip = useMemo(() => {
-    if (filters.status === "active")
-      return t("UsersPage.status.active", { defaultValue: "Active" });
-    if (filters.status === "inactive")
-      return t("UsersPage.status.inactive", { defaultValue: "Inactive" });
-    return t("UsersPage.filters.all", { defaultValue: "All" });
-  }, [filters.status, t]);
-
-  const StatusHeader = useMemo(
-    () => (
-      <div className="users-statusHeader">
-        <span className="users-statusHeader__title">
-          {t("UsersPage.columns.status", { defaultValue: "Status" })}
-        </span>
-
-        <Dropdown
-          trigger={["click"]}
-          placement="bottomRight"
-          overlayClassName="users-statusMenu"
-          menu={{
-            items: statusMenuItems,
-            selectable: true,
-            selectedKeys: [filters.status],
-            onClick: ({ key }) => patchFilters({ status: key }),
-          }}
-        >
-          <Tooltip title={statusTooltip} placement="top">
-            <button
-              type="button"
-              className="users-statusHeader__iconBtn"
-              aria-label="status filter"
-            >
-              <DownOutlined />
-            </button>
-          </Tooltip>
-        </Dropdown>
-      </div>
-    ),
-    [t, statusMenuItems, filters.status, patchFilters, statusTooltip]
-  );
-
-  const columns = useMemo(
-    () => [
-      {
-        title: t("UsersPage.columns.name"),
-        dataIndex: "name",
-        width: 260,
-        ellipsis: true,
-      },
-      {
-        title: t("UsersPage.columns.username"),
-        dataIndex: "username",
-        width: 220,
-        ellipsis: true,
-        render: (v) => <span className="users-page__username">@{v}</span>,
-      },
-      {
-        title: t("UsersPage.columns.email"),
-        dataIndex: "email",
-        render: (value) => (
-          <a className="users-page__email" href={`mailto:${value}`}>
-            <span className="users-page__emailWrap">
-              <span className="users-page__emailText">{value}</span>
-              <MdOutlineEmail
-                className="users-page__emailIcon"
-                aria-hidden="true"
-              />
-            </span>
-          </a>
-        ),
-      },
-      {
-        title: StatusHeader,
-        dataIndex: "status",
-        key: "status",
-        width: 180,
-        render: (v) => {
-          const isActive = (v ?? "active") === "active";
-          return (
-            <Tag
-              className={`users-status users-status--${isActive ? "active" : "inactive"
-                }`}
-            >
-              {isActive
-                ? t("UsersPage.status.active", { defaultValue: "Active" })
-                : t("UsersPage.status.inactive", { defaultValue: "Inactive" })}
-            </Tag>
-          );
-        },
-      },
-
-      {
-        title: t("UsersPage.columns.createdAt"),
-        dataIndex: "createdAt",
-        key: "createdAt",
-        width: 190,
-        ellipsis: true,
-        render: (v) => (
-          <span className="users-page__createdAt">{fmtDateTime(v)}</span>
-        ),
-        sorter: (a, b) =>
-          new Date(a?.createdAt || 0).getTime() -
-          new Date(b?.createdAt || 0).getTime(),
-        sortDirections: ["descend", "ascend"],
-        defaultSortOrder: "descend",
-      },
-      {
-        title: t("UsersPage.columns.actions"),
-        key: "actions",
-        width: 180,
-        align: "left",
-        className: "col-actions",
-        render: (_, record) => (
-          <Space className="users-page__tableActions" size={10}>
-            <Tooltip title={t("UsersPage.actions.detailPosts")} placement="top">
-              <Button
-                className="icon-btn icon-btn--primary"
-                type="text"
-                icon={<BiCommentDetail />}
-                onClick={() => nav(`/users/${record.id}`)}
-                aria-label={t("UsersPage.actions.detailPosts")}
-              />
-            </Tooltip>
-
-            <Tooltip title={t("UsersPage.actions.edit")} placement="top">
-              <Button
-                className="icon-btn icon-btn--purple"
-                type="text"
-                icon={<BiEditAlt />}
-                onClick={() => openEdit(record)}
-                aria-label={t("UsersPage.actions.edit")}
-              />
-            </Tooltip>
-
-            <Popconfirm
-              overlayClassName="users-popconfirm"
-              title={t("UsersPage.confirm.deleteTitle")}
-              okText={t("UsersPage.confirm.ok")}
-              cancelText={t("UsersPage.confirm.cancel")}
-              okButtonProps={{ danger: true }}
-              onConfirm={() => onDelete(record.id)}
-            >
-              <Tooltip title={t("UsersPage.actions.delete")} placement="top">
-                <Button
-                  className="icon-btn icon-btn--danger"
-                  type="text"
-                  icon={<AiOutlineDelete />}
-                  aria-label={t("UsersPage.actions.delete")}
-                />
-              </Tooltip>
-            </Popconfirm>
-          </Space>
-        ),
-      },
-    ],
-    [t, nav, openEdit, onDelete, fmtDateTime, StatusHeader]
-  );
-
   return (
-    <div className="users-page app-page">
+    <div className="users-page users-page--wide app-page">
       {contextHolder}
+
       <PageHeader
         className="page-header--users"
-        title={t("UsersPage.title")}
+        title={t("UsersPage.title", { defaultValue: "Users" })}
       />
-      <div className="users-stats">
-        <Row gutter={[12, 12]}>
-          <Col xs={24} sm={8}>
-            <Card
-              className="users-statCard users-statCard--total"
-              bordered={false}
-            >
-              <div className="users-statCard__inner">
-                <div className="users-statCard__icon">
-                  <UserOutlined />
-                </div>
-                <div className="users-statCard__meta">
-                  <div className="users-statCard__title">
-                    {t("UsersPage.stats.total")}
-                  </div>
-                  <div className="users-statCard__value">{stats.total}</div>
-                </div>
-              </div>
-            </Card>
-          </Col>
 
-          <Col xs={24} sm={8}>
-            <Card
-              className="users-statCard users-statCard--active"
-              bordered={false}
-            >
-              <div className="users-statCard__inner">
-                <div className="users-statCard__icon">
-                  <CheckCircleOutlined />
-                </div>
-                <div className="users-statCard__meta">
-                  <div className="users-statCard__title">
-                    {t("UsersPage.stats.active")}
-                  </div>
-                  <div className="users-statCard__value">{stats.active}</div>
-                </div>
-              </div>
-            </Card>
-          </Col>
+      <UsersStatsCards
+        stats={stats}
+        loading={loading}
+        selectedKey={filters.status}
+        onSelect={(key) => patchFilters({ status: key })}
+      />
 
-          <Col xs={24} sm={8}>
-            <Card
-              className="users-statCard users-statCard--inactive"
-              bordered={false}
-            >
-              <div className="users-statCard__inner">
-                <div className="users-statCard__icon">
-                  <CloseCircleOutlined />
+      <UsersToolbar
+        t={t}
+        filters={filters}
+        onChange={patchFilters}
+        onReset={resetFilters}
+        loading={loading}
+        onNewUser={openCreate}
+      />
+
+      {!isNarrow && (
+        <div className="users-colsPick">
+          <div className="users-colsPick__head">
+            <div className="users-colsPick__titleRow">
+              <span className="users-colsPick__icon" aria-hidden="true">
+                <SettingOutlined />
+              </span>
+
+              <div className="users-colsPick__titles">
+                <div className="users-colsPick__title">
+                  {t("UsersPage.columnsPicker.title", { defaultValue: "Extra columns" })}
                 </div>
-                <div className="users-statCard__meta">
-                  <div className="users-statCard__title">
-                    {t("UsersPage.stats.inactive")}
-                  </div>
-                  <div className="users-statCard__value">{stats.inactive}</div>
+                <div className="users-colsPick__sub">
+                  {t("UsersPage.columnsPicker.sub", {
+                    defaultValue: "Customize your view (max 2 selections)",
+                  })}
                 </div>
               </div>
-            </Card>
-          </Col>
-        </Row>
-      </div>
-      <div className="users-page__filters">
-        <FiltersBar
-          filters={filters}
-          onChange={patchFilters}
-          onReset={resetFilters}
-          loading={loading}
-          actions={
-            <Button
-              type="primary"
-              className="btn-blue"
-              icon={<PlusOutlined />}
-              onClick={openCreate}
-            >
-              {t("UsersPage.actions.newUser")}
-            </Button>
+            </div>
+
+            <div className="users-colsPick__right">
+              <span className="users-colsPick__count" aria-label="selected-count">
+                {optionalCols.length}/2
+              </span>
+
+              <Button
+                type="text"
+                size="small"
+                icon={<ReloadOutlined />}
+                className="users-colsPick__reset"
+                onClick={() => setOptionalCols([])}
+                disabled={optionalCols.length === 0}
+              >
+                {t("UsersPage.filters.reset", { defaultValue: "Reset" })}
+              </Button>
+            </div>
+          </div>
+
+          <div className="users-colsPick__items">
+            {optionalOptions.map((opt) => {
+              const checked = optionalCols.includes(opt.key);
+              const disabled = !checked && optionalCols.length >= 2;
+
+              return (
+                <Checkbox
+                  key={opt.key}
+                  checked={checked}
+                  disabled={disabled}
+                  onChange={() => toggleOptional(opt.key)}
+                  className="users-colsPick__chip"
+                >
+                  {opt.label}
+                </Checkbox>
+              );
+            })}
+          </div>
+        </div>
+      )}
+
+      <Card className="users-tableCard" variant="borderless">
+        <div
+          className={
+            "users-tableCard__table" + (hasScrollX ? " users-tableCard__table--scroll" : "")
           }
-        />
-      </div>
-      <Card className="users-tableCard" bordered={false}>
-        <div className="users-tableCard__table">
+        >
           <Table
-            className="users-table"
+            className={"users-table" + (hasScrollX ? " users-table--scroll" : "")}
             rowKey="id"
             loading={loading}
             columns={columns}
             dataSource={pagedUsers}
-            size="middle"
+            size="small"
             pagination={false}
+            tableLayout="fixed"
+            scroll={hasScrollX ? { x: SCROLL_X_ALL } : undefined}
           />
         </div>
 
@@ -487,57 +437,33 @@ export default function UsersPage() {
           />
         </div>
       </Card>
+
+      <NewUserModal
+        open={openNew}
+        saving={saving}
+        form={form}
+        onCancel={closeNewModal}
+        onOk={onSubmit}
+        t={t}
+        texts={newUserTexts}
+        title={newUserTexts.title}
+        okText={newUserTexts.add}
+        cancelText={newUserTexts.cancel}
+      />
+
       <Modal
         rootClassName="users-edit-modal--scoped"
-        title={
-          editing ? t("UsersPage.modal.editTitle") : t("UsersPage.modal.newTitle")
-        }
-        open={open}
-        onCancel={closeModal}
+        title={t("UsersPage.modal.editTitle", { defaultValue: "Edit User" })}
+        open={openEditModal}
+        onCancel={closeEditModal}
         onOk={onSubmit}
         confirmLoading={saving}
-        okText={editing ? t("UsersPage.modal.save") : t("UsersPage.modal.add")}
-        cancelText={t("UsersPage.confirm.cancel")}
-        destroyOnClose
+        okText={t("UsersPage.modal.save", { defaultValue: "Save" })}
+        cancelText={t("UsersPage.confirm.cancel", { defaultValue: "Cancel" })}
+        destroyOnHidden
       >
         <Form form={form} layout="vertical">
-          <Form.Item
-            name="name"
-            label={t("UsersPage.form.name")}
-            rules={[{ required: true, message: t("UsersPage.form.required") }]}
-          >
-            <Input />
-          </Form.Item>
-
-          <Form.Item
-            name="username"
-            label={t("UsersPage.form.username")}
-            rules={[{ required: true, message: t("UsersPage.form.required") }]}
-          >
-            <Input />
-          </Form.Item>
-
-          <Form.Item
-            name="email"
-            label={t("UsersPage.form.email")}
-            rules={[
-              { required: true, message: t("UsersPage.form.required") },
-              { type: "email", message: t("UsersPage.form.emailInvalid") },
-            ]}
-          >
-            <Input />
-          </Form.Item>
-
-          <Form.Item
-            name="status"
-            label={t("UsersPage.form.status")}
-            rules={[{ required: true, message: t("UsersPage.form.required") }]}
-          >
-            <Radio.Group>
-              <Radio value="active">{t("UsersPage.status.active")}</Radio>
-              <Radio value="inactive">{t("UsersPage.status.inactive")}</Radio>
-            </Radio.Group>
-          </Form.Item>
+          <UserFormFields t={t} texts={newUserTexts} />
         </Form>
       </Modal>
     </div>

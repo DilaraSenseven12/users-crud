@@ -1,6 +1,8 @@
+
 import { useEffect, useMemo, useRef, useState } from "react";
 import { usersService } from "../api/jp/users.service";
 import { loadUsers } from "../storage/jpDb";
+import { isAbortError } from "../api/utils/isAbortError";
 
 const makeErrorKey = (type, userId, raw) => {
   const code = raw?.code || raw?.name || "";
@@ -10,10 +12,14 @@ const makeErrorKey = (type, userId, raw) => {
 
 export function useUserDetail(userId, options = {}) {
   const { enabled = true } = options;
-  const isValidId = useMemo(() => Number.isFinite(userId) && userId > 0, [userId]);
+
+  const uid = useMemo(() => Number(userId), [userId]);
+  const isValidId = useMemo(() => Number.isFinite(uid) && uid > 0, [uid]);
+
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+
   const lastReqRef = useRef(0);
 
   useEffect(() => {
@@ -41,23 +47,22 @@ export function useUserDetail(userId, options = {}) {
       setError(null);
 
       try {
-   
+      
         const localUsers = loadUsers();
-        const found = localUsers?.find((u) => Number(u?.id) === Number(userId));
+        const found = localUsers?.find((u) => Number(u?.id) === uid);
 
         if (found) {
           if (controller.signal.aborted || reqId !== lastReqRef.current) return;
           setUser(found);
           return;
         }
-
-    
-        const u = await usersService.getUserById(userId, { signal: controller.signal });
+        const u = await usersService.getUserById(uid, { signal: controller.signal });
 
         if (controller.signal.aborted || reqId !== lastReqRef.current) return;
         setUser(u ?? null);
       } catch (err) {
-        if (err?.code === "ERR_CANCELED") return;
+    
+        if (isAbortError(err)) return;
         if (controller.signal.aborted || reqId !== lastReqRef.current) return;
 
         setUser(null);
@@ -74,7 +79,7 @@ export function useUserDetail(userId, options = {}) {
 
     run();
     return () => controller.abort();
-  }, [userId, isValidId, enabled]);
+  }, [uid, userId, isValidId, enabled]);
 
   return { user, loading, error, isValidId };
 }

@@ -1,12 +1,13 @@
+
 import { useEffect, useMemo, useState, useCallback } from "react";
-import {Button,Card,Empty,Form,Input,Modal,Popconfirm,Segmented,Space,Table,Tag,message,} from "antd";
+import {Button,Card,Empty,Form,Input,Modal,Popconfirm,Segmented,Space,Table,Tag,} from "antd";
 import { useTranslation } from "react-i18next";
 import { FiCheckCircle, FiPlus, FiSearch } from "react-icons/fi";
 import { BiEditAlt } from "react-icons/bi";
 import { AiOutlineDelete } from "react-icons/ai";
 import { todosService } from "../../api/jp/todos.service.jp.js";
 import { loadTodos, saveTodos, nextId } from "../../storage/jpDb";
-import SectionHeader from "../SectionHeader/SectionHeader";
+import { createToastChannel } from "../../ui/toastCenter";
 import "./UserTodosSection.scss";
 
 const FILTERS = {
@@ -17,9 +18,9 @@ const FILTERS = {
 
 export default function UserTodosSection({ userId }) {
   const { t } = useTranslation();
-  const [messageApi, contextHolder] = message.useMessage();
-
   const uid = useMemo(() => Number(userId), [userId]);
+
+  const toastCh = useMemo(() => createToastChannel("user-todos"), []);
 
   const [todos, setTodos] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -76,15 +77,15 @@ export default function UserTodosSection({ userId }) {
         }
         saveTodos(merged);
       } catch (err) {
-        if (err?.code === "ERR_CANCELED") return;
-        messageApi.error(err?.message || t("UserTodosSection.errors.fetch"));
+        if (controller.signal.aborted) return;
+        toastCh.apiError(err, t("UserTodosSection.errors.fetch"));
       } finally {
         if (!controller.signal.aborted) setLoading(false);
       }
     })();
 
     return () => controller.abort();
-  }, [uid, t, messageApi]);
+  }, [uid, t, toastCh]);
 
   const counts = useMemo(() => {
     const total = todos.length;
@@ -128,22 +129,31 @@ export default function UserTodosSection({ userId }) {
 
   const onSubmit = useCallback(async () => {
     if (saving) return;
+    if (!Number.isFinite(uid)) return;
 
     try {
       setSaving(true);
 
-      const values = await form.validateFields();
+      let values;
+      try {
+        values = await form.validateFields();
+      } catch (e) {
+        toastCh.formFirstError(e, t("UserTodosSection.form.required"));
+        return;
+      }
+
       const title = `${values.title}`.trim();
 
       if (!editing) {
         try {
           await todosService.createTodo({ userId: uid, title, completed: false });
         } catch (err) {
-          messageApi.warning(err?.message || t("UserTodosSection.warnings.createLocal"));
+          toastCh.warning(err?.message || t("UserTodosSection.warnings.createLocal"));
         }
 
+        const all = loadTodos() || [];
         const newTodo = {
-          id: nextId(todos),
+          id: nextId(all),
           userId: uid,
           title,
           completed: false,
@@ -153,7 +163,7 @@ export default function UserTodosSection({ userId }) {
         setTodos(nextUserTodos);
         persistLocalTodosForUser(nextUserTodos);
 
-        messageApi.success(t("UserTodosSection.success.created"));
+        toastCh.success(t("UserTodosSection.success.created"));
         closeModal();
         return;
       }
@@ -175,10 +185,10 @@ export default function UserTodosSection({ userId }) {
         setTodos(rolledBack);
         persistLocalTodosForUser(rolledBack);
 
-        messageApi.warning(err?.message || t("UserTodosSection.warnings.updateLocal"));
+        toastCh.warning(err?.message || t("UserTodosSection.warnings.updateLocal"));
       }
 
-      messageApi.success(t("UserTodosSection.success.updated"));
+      toastCh.success(t("UserTodosSection.success.updated"));
       closeModal();
     } finally {
       setSaving(false);
@@ -191,7 +201,7 @@ export default function UserTodosSection({ userId }) {
     todos,
     persistLocalTodosForUser,
     t,
-    messageApi,
+    toastCh,
     closeModal,
   ]);
 
@@ -214,10 +224,10 @@ export default function UserTodosSection({ userId }) {
         setTodos(rolledBack);
         persistLocalTodosForUser(rolledBack);
 
-        messageApi.warning(err?.message || t("UserTodosSection.warnings.updateLocal"));
+        toastCh.warning(err?.message || t("UserTodosSection.warnings.updateLocal"));
       }
     },
-    [todos, persistLocalTodosForUser, t, messageApi]
+    [todos, persistLocalTodosForUser, t, toastCh]
   );
 
   const onDelete = useCallback(
@@ -231,12 +241,12 @@ export default function UserTodosSection({ userId }) {
       try {
         await todosService.deleteTodo(todoId);
       } catch (err) {
-        messageApi.warning(err?.message || t("UserTodosSection.warnings.deleteLocal"));
+        toastCh.warning(err?.message || t("UserTodosSection.warnings.deleteLocal"));
       }
 
-      messageApi.success(t("UserTodosSection.success.deleted"));
+      toastCh.success(t("UserTodosSection.success.deleted"));
     },
-    [todos, persistLocalTodosForUser, t, messageApi]
+    [todos, persistLocalTodosForUser, t, toastCh]
   );
 
   const clearCompleted = useCallback(() => {
@@ -245,8 +255,8 @@ export default function UserTodosSection({ userId }) {
     persistLocalTodosForUser(nextUserTodos);
 
     setFilter(FILTERS.all);
-    messageApi.success(t("UserTodosSection.success.clearedCompleted"));
-  }, [todos, persistLocalTodosForUser, t, messageApi]);
+    toastCh.success(t("UserTodosSection.success.clearedCompleted"));
+  }, [todos, persistLocalTodosForUser, t, toastCh]);
 
   const columns = useMemo(
     () => [
@@ -256,9 +266,8 @@ export default function UserTodosSection({ userId }) {
         width: 120,
         render: (_, record) => (
           <Button
-            className={`todo-status ${
-              record.completed ? "todo-status--done" : "todo-status--active"
-            }`}
+            className={`todo-status ${record.completed ? "todo-status--done" : "todo-status--active"
+              }`}
             type="default"
             onClick={() => onToggleCompleted(record)}
           >
@@ -294,13 +303,13 @@ export default function UserTodosSection({ userId }) {
               aria-label={t("UserTodosSection.actions.edit")}
               onClick={() => openEdit(record)}
             />
-
             <Popconfirm
               overlayClassName="todos-popconfirm"
+              getPopupContainer={() => document.querySelector(".user-todos") || document.body}
               title={t("UserTodosSection.confirm.deleteTitle")}
               okText={t("UserTodosSection.confirm.ok")}
               cancelText={t("UserTodosSection.confirm.cancel")}
-              okButtonProps={{ danger: true }}
+              okType="primary"
               onConfirm={() => onDelete(record.id)}
             >
               <Button
@@ -312,44 +321,65 @@ export default function UserTodosSection({ userId }) {
             </Popconfirm>
           </Space>
         ),
-      },
+      }
     ],
     [t, onToggleCompleted, openEdit, onDelete]
   );
 
   return (
     <>
-      {contextHolder}
-
       <Card
         className="user-todos card"
         title={
-          <SectionHeader
-            className="todos-header"
-            title={t("UserTodosSection.title")}
-            filters={
+          <div className="todos-headbar">
+            <div className="todos-headbar__left">
               <Segmented
                 value={filter}
                 onChange={setFilter}
                 className="todos-header__segmented"
                 options={[
-                  { label: t("UserTodosSection.filters.all"), value: FILTERS.all },
-                  { label: t("UserTodosSection.filters.active"), value: FILTERS.active },
-                  { label: t("UserTodosSection.filters.completed"), value: FILTERS.completed },
+                  {
+                    label: (
+                      <span className="todos-seg">
+                        <span>{t("UserTodosSection.filters.all")}</span>
+                        <span className="todos-seg__count">{counts.total}</span>
+                      </span>
+                    ),
+                    value: FILTERS.all,
+                  },
+                  {
+                    label: (
+                      <span className="todos-seg">
+                        <span>{t("UserTodosSection.filters.active")}</span>
+                        <span className="todos-seg__count">{counts.active}</span>
+                      </span>
+                    ),
+                    value: FILTERS.active,
+                  },
+                  {
+                    label: (
+                      <span className="todos-seg">
+                        <span>{t("UserTodosSection.filters.completed")}</span>
+                        <span className="todos-seg__count">{counts.completed}</span>
+                      </span>
+                    ),
+                    value: FILTERS.completed,
+                  },
                 ]}
               />
-            }
-            search={
+            </div>
+
+            <div className="todos-headbar__right">
               <Input
+                className="todos-headbar__search"
                 placeholder={t("UserTodosSection.searchPlaceholder")}
                 value={q}
                 onChange={(e) => setQ(e.target.value)}
                 allowClear
                 prefix={<FiSearch className="ui-icon ui-icon--muted" />}
               />
-            }
-            actions={
-              <Space size={10} className="todos-header__actions">
+
+              <div className="todos-headbar__actions">
                 <Button
                   type="primary"
                   onClick={openCreate}
@@ -358,8 +388,8 @@ export default function UserTodosSection({ userId }) {
                 >
                   {t("UserTodosSection.actions.newTodo")}
                 </Button>
-
                 <Button
+                  type="default"
                   disabled={!counts.completed}
                   onClick={clearCompleted}
                   className="btn-blue"
@@ -367,9 +397,9 @@ export default function UserTodosSection({ userId }) {
                 >
                   {t("UserTodosSection.actions.clearCompleted")}
                 </Button>
-              </Space>
-            }
-          />
+              </div>
+            </div>
+          </div>
         }
       >
         <Table

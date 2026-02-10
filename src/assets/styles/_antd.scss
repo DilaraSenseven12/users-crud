@@ -6,11 +6,21 @@ body {
   color: var(--text);
 }
 
+$hover-light: rgba(0, 0, 0, 0.04);
+
+$hover-dark: rgba(255, 255, 255, 0.035);
+$selected-dark: rgba(255, 255, 255, 0.045);
+$selected-hover-dark: rgba(255, 255, 255, 0.06);
+$expanded-dark: rgba(255, 255, 255, 0.04);
+
+$dropdown-selected-blue: rgba(59, 130, 246, 0.14);
+
+
 :root {
   --ant-modal-content-bg: var(--surface);
   --ant-modal-header-bg: var(--surface);
 
-  --ant-table-row-hover-bg: rgba(0, 0, 0, 0.04);
+  --ant-table-row-hover-bg: #{$hover-light};
 }
 
 :root[data-theme="dark"] {
@@ -26,72 +36,9 @@ body {
   --ant-popover-bg: var(--surface);
   --ant-color-text-quaternary: rgba(255, 255, 255, 0.9);
 
-  --ant-table-row-hover-bg: rgba(255, 255, 255, 0.035);
+  --ant-table-row-hover-bg: #{$hover-dark};
 }
 
-:root[data-theme="dark"] {
-  .ant-message {
-    color: var(--text) !important;
-  }
-
-  .ant-message-notice-content {
-    background: var(--surface) !important;
-    border: 1px solid var(--border) !important;
-    box-shadow: var(--shadow-md) !important;
-    color: var(--text) !important;
-    border-radius: 12px !important;
-  }
-
-  .ant-message-custom-content {
-    color: var(--text) !important;
-
-    .anticon {
-      color: inherit !important;
-    }
-  }
-
-  .ant-message-success .anticon {
-    color: var(--success, #22c55e) !important;
-  }
-  .ant-message-info .anticon {
-    color: var(--primary) !important;
-  }
-  .ant-message-warning .anticon {
-    color: var(--warning, #f59e0b) !important;
-  }
-  .ant-message-error .anticon {
-    color: var(--error, #ef4444) !important;
-  }
-}
-
-:root[data-theme="dark"] {
-  .ant-popover {
-    .ant-popover-inner {
-      background: var(--surface) !important;
-      border: 1px solid var(--border) !important;
-      box-shadow: var(--shadow-md) !important;
-      color: var(--text) !important;
-      border-radius: 14px !important;
-    }
-
-    .ant-popover-title,
-    .ant-popover-inner-content {
-      color: var(--text) !important;
-    }
-  }
-
-  .ant-popover-arrow:before {
-    background: var(--surface) !important;
-  }
-
-  .ant-popconfirm-message-icon .anticon {
-    color: var(--warning) !important;
-  }
-
-  .ant-popconfirm-message-text {
-    color: var(--text) !important;
-  }
-}
 
 .ant-modal {
   --ant-modal-content-bg: var(--surface) !important;
@@ -104,7 +51,7 @@ body {
   background: var(--ant-modal-content-bg) !important;
   color: var(--text) !important;
   border: 1px solid var(--border) !important;
-  border-radius: 16px !important;
+  border-radius: var(--radius-xl) !important;
   box-shadow: var(--shadow-md) !important;
   overflow: hidden !important;
 }
@@ -138,7 +85,7 @@ body {
       background: var(--surface) !important;
       color: var(--text) !important;
       border: 1px solid var(--border) !important;
-      border-radius: 16px !important;
+      border-radius: var(--radius-xl) !important;
       box-shadow: var(--shadow-md) !important;
     }
 
@@ -155,9 +102,7 @@ body {
       color: var(--warning) !important;
     }
   }
-}
 
-:root[data-theme="dark"] {
   .ant-modal label[for="title"] {
     color: #fff !important;
   }
@@ -167,12 +112,78 @@ body {
   }
 }
 
+
+:root[data-theme="dark"] {
+  .ant-message {
+    color: var(--text) !important;
+  }
+
+  .ant-message-notice-content {
+    background: var(--surface) !important;
+    border: 1px solid var(--border) !important;
+    box-shadow: var(--shadow-md) !important;
+    color: var(--text) !important;
+    border-radius: var(--radius-md) !important;
+  }
+
+  .ant-message-custom-content {
+    color: var(--text) !important;
+
+    .anticon {
+      color: inherit !important;
+    }
+  }
+
+  .ant-message-success .anticon {
+    color: var(--success, #22c55e) !important;
+  }
+  .ant-message-info .anticon {
+    color: var(--primary) !important;
+  }
+  .ant-message-warning .anticon {
+    color: var(--warning, #f59e0b) !important;
+  }
+  .ant-message-error .anticon {
+    color: var(--error, #ef4444) !important;
+  }
+}
+
+
+:root[data-theme="dark"] {
+  .ant-popover {
+    .ant-popover-inner {
+      background: var(--surface) !important;
+      border: 1px solid var(--border) !important;
+      box-shadow: var(--shadow-md) !important;
+      color: var(--text) !important;
+      border-radius: var(--radius-lg) !important;
+    }
+
+    .ant-popover-title,
+    .ant-popover-inner-content {
+      color: var(--text) !important;
+    }
+  }
+
+  .ant-popover-arrow:before {
+    background: var(--surface) !important;
+  }
+
+  .ant-popconfirm-message-icon .anticon {
+    color: var(--warning) !important;
+  }
+
+  .ant-popconfirm-message-text {
+    color: var(--text) !important;
+  }
+}
+
 .ant-input,
 .ant-input-affix-wrapper {
   background: var(--surface) !important;
   color: var(--text) !important;
   border-color: var(--border) !important;
-  border-radius: var(--radius-sm, 10px) !important;
+  border-radius: var(--radius-sm) !important;
 }
 
 .ant-input-affix-wrapper > input.ant-input {
@@ -201,12 +212,13 @@ body {
   color: var(--muted) !important;
 }
 
+
 .ant-select-single:not(.ant-select-customize-input) .ant-select-selector,
 .ant-select-multiple .ant-select-selector {
   background-color: var(--surface) !important;
   color: var(--text) !important;
   border-color: var(--border) !important;
-  border-radius: var(--radius-sm, 10px) !important;
+  border-radius: var(--radius-sm) !important;
 }
 
 .ant-select .ant-select-selection-placeholder {
@@ -338,19 +350,20 @@ body {
   }
 }
 
-
 .ant-switch {
   background: var(--soft-bg-hover) !important;
 }
+
 .ant-switch-checked {
   background: var(--primary) !important;
 }
+
 
 .ant-card {
   background: var(--surface) !important;
   color: var(--text) !important;
   border-color: var(--border) !important;
-  border-radius: var(--radius-md, 12px) !important;
+  border-radius: var(--radius-md) !important;
   box-shadow: var(--shadow-sm) !important;
 }
 
@@ -398,7 +411,7 @@ body {
 .ant-descriptions-bordered .ant-descriptions-view {
   background: var(--surface) !important;
   border: 1px solid var(--border) !important;
-  border-radius: 14px !important;
+  border-radius: var(--radius-lg) !important;
   overflow: hidden !important;
 }
 
@@ -435,7 +448,7 @@ body {
     background: var(--surface) !important;
     border: 1px solid var(--border) !important;
     box-shadow: var(--shadow-md) !important;
-    border-radius: 12px !important;
+    border-radius: var(--radius-md) !important;
     overflow: hidden !important;
 
     &,
@@ -462,7 +475,7 @@ body {
 
     .ant-dropdown-menu-item-selected,
     .ant-dropdown-menu-item-selected:hover {
-      background: rgba(59, 130, 246, 0.14) !important;
+      background: #{$dropdown-selected-blue} !important;
       color: var(--text) !important;
     }
 
@@ -515,7 +528,7 @@ body {
     .ant-table-filter-dropdown-btns .ant-btn-link:hover {
       color: var(--text) !important;
       background: rgba(255, 255, 255, 0.06) !important;
-      border-radius: 10px !important;
+      border-radius: var(--radius-sm) !important;
     }
 
     .ant-table-filter-dropdown-btns .ant-btn-primary {
@@ -532,7 +545,6 @@ body {
 }
 
 :root[data-theme="dark"] .css-var-root.ant-table-css-var {
-
   --ant-table-cell-bg: var(--surface) !important;
   --ant-table-header-bg: var(--surface) !important;
   --ant-table-footer-bg: var(--surface) !important;
@@ -541,14 +553,14 @@ body {
   --ant-table-header-color: var(--text) !important;
   --ant-table-cell-color: var(--text) !important;
 
-  --ant-table-row-hover-bg: rgba(255, 255, 255, 0.035) !important;
-  --ant-table-row-selected-bg: rgba(255, 255, 255, 0.045) !important;
-  --ant-table-row-selected-hover-bg: rgba(255, 255, 255, 0.06) !important;
-  --ant-table-row-expanded-bg: rgba(255, 255, 255, 0.04) !important;
+  --ant-table-row-hover-bg: #{$hover-dark} !important;
+  --ant-table-row-selected-bg: #{$selected-dark} !important;
+  --ant-table-row-selected-hover-bg: #{$selected-hover-dark} !important;
+  --ant-table-row-expanded-bg: #{$expanded-dark} !important;
 
   --ant-table-body-sort-bg: var(--surface) !important;
-  --ant-table-header-sort-active-bg: rgba(255, 255, 255, 0.045) !important;
-  --ant-table-header-sort-hover-bg: rgba(255, 255, 255, 0.06) !important;
+  --ant-table-header-sort-active-bg: #{$selected-dark} !important;
+  --ant-table-header-sort-hover-bg: #{$selected-hover-dark} !important;
 }
 
 :root[data-theme="dark"] {
@@ -573,19 +585,19 @@ body {
 
   .ant-table-tbody > tr.ant-table-row:hover > td,
   .ant-table-tbody > tr > td.ant-table-cell-row-hover {
-    background: rgba(255, 255, 255, 0.035) !important;
-    background-color: rgba(255, 255, 255, 0.035) !important;
+    background: #{$hover-dark} !important;
+    background-color: #{$hover-dark} !important;
   }
 
   .ant-table-tbody > tr.ant-table-row-selected > td,
   .ant-table-tbody > tr.ant-table-row-selected:hover > td {
-    background: rgba(255, 255, 255, 0.045) !important;
-    background-color: rgba(255, 255, 255, 0.045) !important;
+    background: #{$selected-dark} !important;
+    background-color: #{$selected-dark} !important;
   }
 
   .ant-table-tbody > tr.ant-table-expanded-row > td,
   .ant-table-placeholder > td {
-    background: rgba(255, 255, 255, 0.04) !important;
-    background-color: rgba(255, 255, 255, 0.04) !important;
+    background: #{$expanded-dark} !important;
+    background-color: #{$expanded-dark} !important;
   }
 }
