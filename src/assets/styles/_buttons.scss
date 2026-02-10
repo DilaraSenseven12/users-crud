@@ -1,11 +1,5 @@
 @use "./variables" as *;
 
-:root {
-  --btn-radius: 10px;
-  --btn-h: 34px;
-  --btn-h-sm: 30px;
-  --btn-px: 14px;
-}
 
 .ant-btn {
   border-radius: var(--btn-radius) !important;
@@ -22,10 +16,10 @@
 }
 
 .ant-btn.ant-btn-primary {
-  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.10) !important;
+  box-shadow: var(--btn-primary-shadow) !important;
 
   &:hover {
-    box-shadow: 0 10px 22px rgba(0, 0, 0, 0.14) !important;
+    box-shadow: var(--btn-primary-shadow-hover) !important;
   }
 
   &:active {
@@ -71,12 +65,12 @@
 .btn-blue.ant-btn:not(.icon-btn):not(.ant-btn-text):not(.ant-btn-link) {
   background: var(--primary) !important;
   border-color: var(--primary) !important;
-  color: #fff !important;
+  color: var(--on-primary, #fff) !important;
 
   &:hover {
     background: var(--primary-hover) !important;
     border-color: var(--primary-hover) !important;
-    color: #fff !important;
+    color: var(--on-primary, #fff) !important;
   }
 
   &:active {
@@ -96,7 +90,7 @@
 
 .table-actions {
   .ant-btn {
-    height: 32px !important;
+    height: var(--icon-btn-size) !important; 
     padding: 0 10px !important;
     border-radius: var(--btn-radius) !important;
   }
@@ -112,12 +106,12 @@
 }
 
 .icon-btn.ant-btn {
-  width: 32px !important;
-  height: 32px !important;
-  min-width: 32px !important;
+  width: var(--icon-btn-size) !important;
+  height: var(--icon-btn-size) !important;
+  min-width: var(--icon-btn-size) !important;
 
   padding: 0 !important;
-  border-radius: 999px !important;
+  border-radius: var(--icon-btn-radius) !important;
 
   display: inline-flex !important;
   align-items: center !important;
@@ -128,23 +122,19 @@
   background: transparent !important;
   border: 1px solid var(--border) !important;
 
-  box-shadow:
-    0 1px 0 rgba(0, 0, 0, 0.04),
-    0 8px 18px rgba(0, 0, 0, 0.10) !important;
+  box-shadow: var(--icon-btn-shadow) !important;
 
   transition:
-    transform 140ms ease,
-    box-shadow 140ms ease,
-    background 140ms ease,
-    border-color 140ms ease,
-    color 140ms ease;
+    transform var(--icon-btn-dur) ease,
+    box-shadow var(--icon-btn-dur) ease,
+    background var(--icon-btn-dur) ease,
+    border-color var(--icon-btn-dur) ease,
+    color var(--icon-btn-dur) ease;
 
   &:hover {
-    transform: translateY(-1px);
+    transform: translateY(var(--icon-btn-hover-lift));
     background: var(--soft-bg) !important;
-    box-shadow:
-      0 2px 0 rgba(0, 0, 0, 0.04),
-      0 12px 26px rgba(0, 0, 0, 0.14) !important;
+    box-shadow: var(--icon-btn-shadow-hover) !important;
   }
 
   &:active {
@@ -160,8 +150,8 @@
 .icon-btn .ant-btn-icon,
 .icon-btn .anticon,
 .icon-btn svg {
-  width: 15px;
-  height: 15px;
+  width: var(--icon-btn-icon-size);
+  height: var(--icon-btn-icon-size);
   display: block;
   color: currentColor !important;
   fill: currentColor !important;
@@ -195,7 +185,7 @@
   color: var(--error) !important;
 
   &:hover {
-    background: rgba(239, 68, 68, 0.10) !important;
+    background: var(--icon-btn-danger-hover-bg) !important;
   }
 }
 
@@ -220,15 +210,16 @@
   display: block !important;
 }
 
+
 :root[data-theme="dark"] {
   .icon-btn.ant-btn {
     border-width: 1.5px !important;
-    border-color: rgba(255, 255, 255, 0.28) !important;
+    border-color: var(--icon-btn-border-dark) !important;
     box-shadow: none !important;
 
     &:hover {
-      background: rgba(255, 255, 255, 0.06) !important;
-      border-color: rgba(255, 255, 255, 0.42) !important;
+      background: var(--icon-btn-bg-dark-hover) !important;
+      border-color: var(--icon-btn-border-dark-hover) !important;
     }
   }
 
@@ -238,16 +229,19 @@
   }
 
   .icon-btn--primary.ant-btn:hover {
-    background: rgba(59, 130, 246, 0.14) !important;
+    background: var(--icon-btn-hover-primary-bg-dark) !important;
   }
+
   .icon-btn--purple.ant-btn:hover,
   .icon-btn--edit.ant-btn:hover {
-    background: rgba(139, 92, 246, 0.14) !important;
+    background: var(--icon-btn-hover-purple-bg-dark) !important;
   }
+
   .icon-btn--danger.ant-btn:hover {
-    background: rgba(239, 68, 68, 0.16) !important;
+    background: var(--icon-btn-hover-danger-bg-dark) !important;
   }
 }
+
 
 @mixin header-action-buttons($h: 34px, $radius: 12px, $px: 14px) {
   display: inline-flex !important;
@@ -322,6 +316,7 @@
   }
 }
 
+
 :root[data-theme="dark"] {
   .ant-popconfirm-buttons {
     .ant-btn-default {
@@ -341,16 +336,14 @@
       border-color: var(--primary) !important;
     }
   }
-}
 
-:root[data-theme="dark"] {
   .ant-modal-confirm {
     .ant-modal-confirm-btns {
       .ant-btn-default {
         background: transparent !important;
         border: 1px solid var(--border) !important;
         color: var(--text) !important;
-        border-radius: var(--radius-sm, 10px) !important;
+        border-radius: var(--radius-sm) !important;
 
         &:hover {
           border-color: var(--primary) !important;
@@ -362,7 +355,7 @@
         background: var(--error) !important;
         border-color: var(--error) !important;
         color: #fff !important;
-        border-radius: var(--radius-sm, 10px) !important;
+        border-radius: var(--radius-sm) !important;
       }
     }
   }

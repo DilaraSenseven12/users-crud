@@ -1,4 +1,5 @@
 import axios from "axios";
+import { isAbortError } from "../utils/isAbortError";
 
 class ApiError extends Error {
   constructor({ message, status, details, code }) {
@@ -14,6 +15,20 @@ const jpAxios = axios.create({
   baseURL: "https://jsonplaceholder.typicode.com",
   timeout: 30000,
 });
+
+const buildMessage = ({ hasResponse, status, code }) => {
+  if (!hasResponse) {
+    if (code === "ECONNABORTED") return "İstek zaman aşımına uğradı.";
+    return "Bağlantı hatası. İnternetinizi veya sunucuyu kontrol edin.";
+  }
+
+  if (status === 400) return "Geçersiz istek (400).";
+  if (status === 401) return "Yetkisiz istek (401). Giriş gerekli olabilir.";
+  if (status === 403) return "Erişim yasak (403).";
+  if (status === 404) return "Kaynak bulunamadı (404).";
+  if (status >= 500) return "Sunucu hatası (5xx).";
+  return "İstek sırasında hata oluştu.";
+};
 
 jpAxios.interceptors.request.use(
   (config) => {
@@ -34,88 +49,50 @@ jpAxios.interceptors.request.use(
 jpAxios.interceptors.response.use(
   (response) => response,
   (error) => {
-  
-    if (error?.code === "ERR_CANCELED" || error?.name === "CanceledError") {
-      return Promise.reject(
-        new ApiError({
-          message: "Istek iptal edildi.",
-          status: undefined,
-          details: undefined,
-          code: "ERR_CANCELED",
-        })
-      );
+   
+    if (isAbortError(error)) {
+      const meta = error?.config?.meta ?? {};
+      const toastOnCancel = meta.toastOnCancel === true;
+
+      error.__silentToast = !toastOnCancel;
+      error.__cancelToastMessage = meta.cancelMessage || "İşlem iptal edildi.";
+
+      return Promise.reject(error);
     }
 
     const status = error?.response?.status;
     const details = error?.response?.data;
     const code = error?.code;
 
-    let message = "Bir hata olustu.";
+    const message = buildMessage({
+      hasResponse: !!error?.response,
+      status,
+      code,
+    });
 
-    if (!error?.response) {
-      if (code === "ECONNABORTED") message = "Istek zaman asimina ugradi.";
-      else message = "Baglanti hatasi. Internetinizi veya sunucuyu kontrol edin.";
-    } else {
-      if (status === 400) message = "Gecersiz istek (400).";
-      else if (status === 401) message = "Yetkisiz istek (401). Giris gerekli olabilir.";
-      else if (status === 403) message = "Erisim yasak (403).";
-      else if (status === 404) message = "Kaynak bulunamadi (404).";
-      else if (status >= 500) message = "Sunucu hatasi (5xx).";
-      else message = "Istek sirasinda hata olustu.";
-    }
-
-    return Promise.reject(
-      new ApiError({
-        message,
-        status,
-        details,
-        code,
-      })
-    );
+    return Promise.reject(new ApiError({ message, status, details, code }));
   }
 );
 
 class requestJP {
-
-  static get(url = "", params = {}, headers = {}, responseType = "", signal) {
-    return jpAxios.get(url, { params, headers, responseType, signal });
+  static get(url = "", params = {}, headers = {}, responseType = "", signal, meta) {
+    return jpAxios.get(url, { params, headers, responseType, signal, meta });
   }
 
-  static post(
-    url = "",
-    body = {},
-    params = {},
-    headers = {},
-    responseType = "json",
-    signal
-  ) {
-    return jpAxios.post(url, body, { params, headers, responseType, signal });
+  static post(url = "", body = {}, params = {}, headers = {}, responseType = "json", signal, meta) {
+    return jpAxios.post(url, body, { params, headers, responseType, signal, meta });
   }
 
-  static patch(
-    url = "",
-    body = {},
-    params = {},
-    headers = {},
-    responseType = "json",
-    signal
-  ) {
-    return jpAxios.patch(url, body, { params, headers, responseType, signal });
+  static patch(url = "", body = {}, params = {}, headers = {}, responseType = "json", signal, meta) {
+    return jpAxios.patch(url, body, { params, headers, responseType, signal, meta });
   }
 
-  static put(
-    url = "",
-    body = {},
-    params = {},
-    headers = {},
-    responseType = "json",
-    signal
-  ) {
-    return jpAxios.put(url, body, { params, headers, responseType, signal });
+  static put(url = "", body = {}, params = {}, headers = {}, responseType = "json", signal, meta) {
+    return jpAxios.put(url, body, { params, headers, responseType, signal, meta });
   }
 
-  static delete(url = "", data = {}, headers = {}, signal) {
-    return jpAxios.delete(url, { data, headers, signal });
+  static delete(url = "", data = {}, headers = {}, signal, meta) {
+    return jpAxios.delete(url, { data, headers, signal, meta });
   }
 }
 

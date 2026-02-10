@@ -11,6 +11,11 @@
       "oldest": "En Eski",
       "az": "A-Z",
       "za": "Z-A"
+    },
+      "errors": {
+      "generic": "Bir hata oluştu",
+      "canceled": "İşlem iptal edildi.",
+      "formRequired": "Lütfen zorunlu alanları doldurun"
     }
   },
   "UserPostsSection": {
@@ -174,72 +179,86 @@
       "noTodos": "Görev yok"
     }
   },
-  "UsersPage": {
-    "title": "Kullanıcılar",
-    "searchPlaceholder": "Ad, kullanıcı adı veya e-posta ile ara",
-    "columns": {
-      "name": "Ad",
-      "username": "Kullanıcı Adı",
-      "email": "E-posta",
-      "status": "Durum",
-      "createdAt": "Oluşturulma Tarihi",
-      "actions": "İşlemler"
-    },
-    "actions": {
-      "detailPosts": "Detayları Gör",
-      "edit": "Düzenle",
-      "delete": "Sil",
-      "newUser": "Yeni Kullanıcı"
-    },
-    "confirm": {
-      "deleteTitle": "Bu kullanıcıyı silmek istiyor musunuz?",
-      "ok": "Sil",
-      "cancel": "İptal"
-    },
-    "modal": {
-      "newTitle": "Yeni Kullanıcı",
-      "editTitle": "Kullanıcıyı Düzenle",
-      "add": "Ekle",
-      "save": "Kaydet"
-    },
-    "form": {
-      "name": "Ad",
-      "username": "Kullanıcı Adı",
-      "email": "E-posta",
-      "status": "Durum",
-      "required": "Bu alan zorunludur.",
-      "emailInvalid": "Geçerli bir e-posta adresi giriniz."
-    },
+ "UsersPage": {
+  "title": "Kullanıcılar",
+  "searchPlaceholder": "Ad, kullanıcı adı veya e-posta ile ara",
+  "columns": {
+    "name": "Ad",
+    "username": "Kullanıcı Adı",
+    "email": "E-posta",
+    "status": "Durum",
+    "createdAt": "Oluşturulma Tarihi",
+    "actions": "İşlemler"
+  },
+
+  "table": {
+    "phone": "Telefon",
+    "address": "Adres",
+    "company": "Şirket"
+  },
+
+  "columnsPicker": {
+    "title": "Ek sütunlar",
+    "sub": "Görünümü özelleştir (en fazla 2 seçim)",
+    "max2": "En fazla 2 sütun seçebilirsin."
+  },
+
+  "actions": {
+    "detailPosts": "Detayları Gör",
+    "edit": "Düzenle",
+    "delete": "Sil",
+    "newUser": "Yeni Kullanıcı"
+  },
+  "confirm": {
+    "deleteTitle": "Bu kullanıcıyı silmek istiyor musunuz?",
+    "ok": "Sil",
+    "cancel": "İptal"
+  },
+  "modal": {
+    "newTitle": "Yeni Kullanıcı",
+    "editTitle": "Kullanıcıyı Düzenle",
+    "add": "Ekle",
+    "save": "Kaydet"
+  },
+  "form": {
+    "name": "Ad",
+    "username": "Kullanıcı Adı",
+    "email": "E-posta",
+    "status": "Durum",
+    "required": "Bu alan zorunludur.",
+    "emailInvalid": "Geçerli bir e-posta adresi giriniz."
+  },
+  "status": {
+    "active": "Aktif",
+    "inactive": "Pasif"
+  },
+  "filters": {
+    "searchPlaceholder": "Ara: isim, kullanıcı adı, e-posta…",
+    "statusPlaceholder": "Durum seç",
     "status": {
+      "all": "Tümü",
       "active": "Aktif",
       "inactive": "Pasif"
     },
-    "filters": {
-      "searchPlaceholder": "Ara: isim, kullanıcı adı, e-posta…",
-      "statusPlaceholder": "Durum seç",
-      "status": {
-        "all": "Tümü",
-        "active": "Aktif",
-        "inactive": "Pasif"
-      },
-      "date": {
-        "start": "Başlangıç",
-        "end": "Bitiş"
-      },
-      "reset": "Sıfırla"
+    "date": {
+      "start": "Başlangıç",
+      "end": "Bitiş",
+      "invalidRange": "Başlangıç tarihi bitiş tarihinden büyük olamaz"
     },
-    "success": {
-      "userCreated": "Kullanıcı başarıyla oluşturuldu.",
-      "userUpdated": "Kullanıcı başarıyla güncellendi.",
-      "userDeleted": "Kullanıcı başarıyla silindi."
-    },
-    "errors": {
-      "fetchUsers": "Kullanıcılar yüklenemedi."
-    },
-    "stats": {
-      "total": "Toplam Kullanıcı",
-      "active": "Aktif",
-      "inactive": "Pasif"
-    }
+    "reset": "Sıfırla"
+  },
+  "success": {
+    "userCreated": "Kullanıcı başarıyla oluşturuldu.",
+    "userUpdated": "Kullanıcı başarıyla güncellendi.",
+    "userDeleted": "Kullanıcı başarıyla silindi."
+  },
+  "errors": {
+    "fetchUsers": "Kullanıcılar yüklenemedi."
+  },
+  "stats": {
+    "total": "Toplam Kullanıcı",
+    "active": "Aktif",
+    "inactive": "Pasif"
   }
+}
 }

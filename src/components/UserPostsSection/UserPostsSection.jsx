@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
-import {Button,Card,Form,Input,Modal,Popconfirm,Space,Table,Tooltip,message,Empty,Select,Pagination,} from "antd";
-import { DownOutlined } from "@ant-design/icons"; 
+import {Button,Card,Form,Input,Modal,Popconfirm,Space,Table,Tooltip,Empty,Select,Pagination,} from "antd";
+import { DownOutlined } from "@ant-design/icons";
 import { useTranslation } from "react-i18next";
 import { postsService } from "../../api/jp/posts.service.jp";
 import { loadPosts, savePosts, nextId } from "../../storage/jpDb";
@@ -8,6 +8,7 @@ import { FiPlus } from "react-icons/fi";
 import { BiEditAlt } from "react-icons/bi";
 import { AiOutlineDelete } from "react-icons/ai";
 import SectionHeader from "../SectionHeader/SectionHeader";
+import { createToastChannel } from "../../ui/toastCenter";
 import "./UserPostsSection.scss";
 
 const PAGE_SIZE_OPTIONS = [5, 8, 10, 20];
@@ -26,6 +27,8 @@ function useDebouncedValue(value, delay = 250) {
 export default function UserPostsSection({ userId }) {
   const { t } = useTranslation();
   const uid = useMemo(() => Number(userId), [userId]);
+
+  const toastCh = useMemo(() => createToastChannel("user-posts"), []);
 
   const [posts, setPosts] = useState([]);
   const [loadingPosts, setLoadingPosts] = useState(true);
@@ -86,15 +89,15 @@ export default function UserPostsSection({ userId }) {
         }
         savePosts(merged);
       } catch (err) {
-        if (err?.code === "ERR_CANCELED") return;
-        message.error(err?.message || t("UserPostsSection.errors.fetchPosts"));
+        if (controller.signal.aborted) return;
+        toastCh.apiError(err, t("UserPostsSection.errors.fetchPosts"));
       } finally {
         if (!controller.signal.aborted) setLoadingPosts(false);
       }
     })();
 
     return () => controller.abort();
-  }, [uid, t]);
+  }, [uid, t, toastCh]);
 
   const filteredPosts = useMemo(() => {
     const tt = (debouncedQ || "").trim().toLowerCase();
@@ -164,13 +167,20 @@ export default function UserPostsSection({ userId }) {
 
     try {
       setSaving(true);
-      const values = await form.validateFields();
+
+      let values;
+      try {
+        values = await form.validateFields();
+      } catch (e) {
+        toastCh.formFirstError(e, t("UserPostsSection.form.required"));
+        return;
+      }
 
       if (!editing) {
         try {
           await postsService.createPost({ userId: uid, ...values });
         } catch (err) {
-          message.warning(
+          toastCh.warning(
             err?.message || t("UserPostsSection.warnings.createFailedLocal")
           );
         }
@@ -182,7 +192,7 @@ export default function UserPostsSection({ userId }) {
         setPosts(nextUserPosts);
         persistLocalPostsForUser(nextUserPosts);
 
-        message.success(t("UserPostsSection.success.created"));
+        toastCh.success(t("UserPostsSection.success.created"));
         closeModal();
         return;
       }
@@ -190,7 +200,7 @@ export default function UserPostsSection({ userId }) {
       try {
         await postsService.updatePost(editing.id, values);
       } catch (err) {
-        message.warning(
+        toastCh.warning(
           err?.message || t("UserPostsSection.warnings.updateFailedLocal")
         );
       }
@@ -202,19 +212,29 @@ export default function UserPostsSection({ userId }) {
       setPosts(nextUserPosts);
       persistLocalPostsForUser(nextUserPosts);
 
-      message.success(t("UserPostsSection.success.updated"));
+      toastCh.success(t("UserPostsSection.success.updated"));
       closeModal();
     } finally {
       setSaving(false);
     }
-  }, [saving, uid, form, editing, posts, persistLocalPostsForUser, t, closeModal]);
+  }, [
+    saving,
+    uid,
+    form,
+    editing,
+    posts,
+    persistLocalPostsForUser,
+    t,
+    closeModal,
+    toastCh,
+  ]);
 
   const onDelete = useCallback(
     async (postId) => {
       try {
         await postsService.deletePost(postId);
       } catch (err) {
-        message.warning(
+        toastCh.warning(
           err?.message || t("UserPostsSection.warnings.deleteFailedLocal")
         );
       }
@@ -223,9 +243,9 @@ export default function UserPostsSection({ userId }) {
       setPosts(nextUserPosts);
       persistLocalPostsForUser(nextUserPosts);
 
-      message.success(t("UserPostsSection.success.deleted"));
+      toastCh.success(t("UserPostsSection.success.deleted"));
     },
-    [posts, persistLocalPostsForUser, t]
+    [posts, persistLocalPostsForUser, t, toastCh]
   );
 
   const columns = useMemo(
@@ -309,7 +329,7 @@ export default function UserPostsSection({ userId }) {
                   onChange={setSortKey}
                   className="posts-sort"
                   dropdownClassName="posts-sort-dropdown"
-                  suffixIcon={<DownOutlined className="posts-sort__arrow" />} 
+                  suffixIcon={<DownOutlined className="posts-sort__arrow" />}
                   options={[
                     { value: "newest", label: t("Common.sort.newest") },
                     { value: "oldest", label: t("Common.sort.oldest") },
@@ -355,7 +375,7 @@ export default function UserPostsSection({ userId }) {
             }}
             showSizeChanger
             pageSizeOptions={PAGE_SIZE_OPTIONS.map(String)}
-             showTotal={false}
+            showTotal={false}
           />
         </div>
       </Card>
@@ -389,7 +409,6 @@ export default function UserPostsSection({ userId }) {
         cancelText={t("Common.cancel")}
         destroyOnClose
         centered
-        width={560}
       >
         <Form form={form} layout="vertical" className="post-modal__form">
           <Form.Item

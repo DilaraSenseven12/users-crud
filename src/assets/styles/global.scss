@@ -56,3 +56,20 @@ a:hover {
   box-shadow: var(--focus-ring);
   border-radius: var(--radius-sm, 10px);
 }
+
+.app-toast {
+  background: var(--surface) !important;
+  color: var(--text) !important;
+  border: 1px solid var(--border) !important;
+  box-shadow: var(--shadow-md) !important;
+  border-radius: 12px !important;
+
+  padding: 10px 12px !important;
+  font-size: 13px !important;
+  line-height: 1.35 !important;
+}
+
+.app-toast > div {
+  max-width: 360px;
+  word-break: break-word;
+}

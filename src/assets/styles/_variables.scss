@@ -1,11 +1,42 @@
 
 $radius-sm: 10px;
 $radius-md: 12px;
+$radius-lg: 14px;
+$radius-xl: 16px; 
+$radius-2xl: 18px; 
 
 $space-2: 8px;
+$space-2_5: 10px; 
 $space-3: 12px;
+$space-3_5: 14px; 
 $space-4: 16px;
+$space-4_5: 18px; 
 $space-6: 24px;
+
+$fs-xs: 12px;
+$fs-md: 16px;
+$fs-icon: 18px;
+$fs-stat-value: 26px;
+
+$dur-fast: 140ms;
+$dur-med: 200ms;
+$lift-sm: -2px;
+
+$users-stat-icon-box: 42px;
+$users-stat-accent-strip: 3px;
+$users-stat-bar-h: 6px;
+
+$size-12: 12px;
+$size-16: 16px;
+$size-22: 22px;
+$divider-w: 2px;
+
+$bp-xs: 520px;
+
+$pg-gap-sm: 10px;
+$pg-item-h-sm: 28px;
+$pg-font-sm: 12px;
+
 
 $blue-600: #060fd8;
 $blue-700: #1d39c4;
@@ -14,13 +45,13 @@ $blue-500: #4d64d2;
 $purple-600: #8449d7;
 $purple-400: #b38ee6;
 
+
 $green-600: #68b547;
 $orange-500: #ffa940;
 $red-600: #f43c4a;
 
-$white: #ffffff;
-$black: #000000;
 
+$white: #ffffff;
 $text-dark: #111111;
 $text-light: #f1f1f1;
 
@@ -33,12 +64,19 @@ $border-light: rgba(0, 0, 0, 0.05);
 $shadow-sm-light: rgba(0, 0, 0, 0.06) 0px 10px 30px 1px;
 $shadow-md-light: rgba(0, 0, 0, 0.06) 0px 0px 15px 3px;
 
+
+$pc-btn-h: 34px;
+$pc-btn-gap: 10px;
+
+
+
 :root {
   color-scheme: light;
 
+
   --primary: #{$blue-600};
   --primary-hover: #{$blue-700};
-
+  --on-primary: #{$white};
 
   --purple: #{$purple-600};
   --purple-hover: #{$purple-400};
@@ -54,30 +92,183 @@ $shadow-md-light: rgba(0, 0, 0, 0.06) 0px 0px 15px 3px;
   --text: #{$text-dark};
   --muted: rgba(0, 0, 0, 0.65);
 
+
+  --fs-xs: #{$fs-xs};
+  --fs-md: #{$fs-md};
+  --fs-icon: #{$fs-icon};
+  --fs-stat-value: #{$fs-stat-value};
+
+
   --border: #{$border-light};
   --divider: rgba(0, 0, 0, 0.10);
 
   --shadow-sm: #{$shadow-sm-light};
   --shadow-md: #{$shadow-md-light};
-  --focus-ring: 0 0 0 3px rgba(22, 119, 255, 0.20);
+  --shadow-lg: var(--shadow-md);
 
+ 
   --success: #{$green-600};
   --warning: #{$orange-500};
   --error: #{$red-600};
+
+  --danger: var(--error);
+  --danger-hover: #dc2626;
 
   --edit: var(--purple);
   --edit-hover: var(--purple-hover);
 
   --radius-sm: #{$radius-sm};
   --radius-md: #{$radius-md};
+  --radius-lg: #{$radius-lg};
+  --radius-xl: #{$radius-xl};
+  --radius-2xl: #{$radius-2xl};
 
   --space-2: #{$space-2};
+  --space-2-5: #{$space-2_5};
   --space-3: #{$space-3};
+  --space-3-5: #{$space-3_5};
   --space-4: #{$space-4};
+  --space-4-5: #{$space-4_5};
   --space-6: #{$space-6};
+
+  --control-radius: var(--radius-md);
+
+  --dur-fast: #{$dur-fast};
+  --dur-med: #{$dur-med};
+  --lift-sm: #{$lift-sm};
+
+  --size-12: #{$size-12};
+  --size-16: #{$size-16};
+  --size-22: #{$size-22};
+  --divider-w: #{$divider-w};
+
+  --pg-gap-sm: #{$pg-gap-sm};
+  --pg-item-h-sm: #{$pg-item-h-sm};
+  --pg-font-sm: #{$pg-font-sm};
 
   --app-bg: var(--bg);
   --app-surface: var(--surface);
+
+  --a-text-10: rgb(from var(--text) r g b / 0.10);
+  --a-text-06: rgb(from var(--text) r g b / 0.06);
+
+  --a-primary-10: rgb(from var(--primary) r g b / 0.10);
+  --a-primary-12: rgb(from var(--primary) r g b / 0.12);
+  --a-primary-22: rgb(from var(--primary) r g b / 0.22);
+  --a-primary-35: rgb(from var(--primary) r g b / 0.35);
+
+  --a-success-16: rgb(from var(--success) r g b / 0.16);
+  --a-success-18: rgb(from var(--success) r g b / 0.18);
+  --a-success-45: rgb(from var(--success) r g b / 0.45);
+
+  --a-border-70: rgb(from var(--border) r g b / 0.70);
+  --a-muted-85: rgb(from var(--muted) r g b / 0.85);
+
+  --ov-primary-10: linear-gradient(var(--a-primary-10), var(--a-primary-10));
+  --ov-primary-12: linear-gradient(var(--a-primary-12), var(--a-primary-12));
+  --ov-success-16: linear-gradient(var(--a-success-16), var(--a-success-16));
+  --ov-success-18: linear-gradient(var(--a-success-18), var(--a-success-18));
+  --ov-text-06: linear-gradient(var(--a-text-06), var(--a-text-06));
+
+  --focus-ring: 0 0 0 3px var(--a-primary-22);
+
+  --btn-radius: var(--radius-sm); 
+  --btn-h: 34px;
+  --btn-h-sm: 30px;
+  --btn-px: 14px;
+
+  --btn-primary-shadow: 0 8px 18px rgba(0, 0, 0, 0.10);
+  --btn-primary-shadow-hover: 0 10px 22px rgba(0, 0, 0, 0.14);
+
+  --icon-btn-size: 32px;
+  --icon-btn-radius: 999px;
+  --icon-btn-icon-size: 15px;
+
+  --icon-btn-hover-lift: -1px;
+  --icon-btn-dur: var(--dur-fast);
+
+  --icon-btn-shadow:
+    0 1px 0 rgba(0, 0, 0, 0.04),
+    0 8px 18px rgba(0, 0, 0, 0.10);
+
+  --icon-btn-shadow-hover:
+    0 2px 0 rgba(0, 0, 0, 0.04),
+    0 12px 26px rgba(0, 0, 0, 0.14);
+
+  --icon-btn-danger-hover-bg: rgba(239, 68, 68, 0.10);
+
+  --ant-modal-content-bg: var(--surface);
+  --ant-modal-header-bg: var(--surface);
+
+  --table-row-hover-bg: rgba(0, 0, 0, 0.04);
+
+  --ant-table-row-hover-bg: var(--table-row-hover-bg);
+
+  --users-status-active-bg: rgb(from var(--success) r g b / 0.14);
+  --users-status-active-border: rgb(from var(--success) r g b / 0.35);
+
+  --users-status-inactive-bg: rgb(from var(--error) r g b / 0.14);
+  --users-status-inactive-border: rgb(from var(--error) r g b / 0.35);
+
+  --users-stat-total-icon-bg: rgb(from var(--primary) r g b / 0.15);
+  --users-stat-total-icon-fg: var(--primary);
+
+  --users-stat-active-icon-bg: rgb(from var(--success) r g b / 0.15);
+  --users-stat-active-icon-fg: var(--success);
+
+  --users-stat-inactive-icon-bg: rgb(from var(--error) r g b / 0.15);
+  --users-stat-inactive-icon-fg: var(--error);
+
+  --users-actions-divider: var(--divider);
+  --users-table-header-icon: var(--text);
+  --users-pagination-disabled: var(--muted);
+
+  --users-table-radius: var(--radius-2xl);
+  --users-filters-mb: var(--space-3);
+  --users-actions-gap: var(--space-2-5);
+  --users-actions-pad-left: var(--space-4-5);
+  --users-footer-pad-y: var(--space-3);
+  --users-footer-pad-x: var(--space-4);
+
+  --users-stats-mb: var(--space-3-5);
+  --users-statcard-radius: var(--radius-xl);
+  --users-statcard-pad-y: var(--space-3-5);
+  --users-statcard-pad-x: var(--space-4);
+  --users-statcard-gap: var(--space-3);
+
+  --users-statcard-icon-box: #{$users-stat-icon-box};
+  --users-statcard-accent-strip: #{$users-stat-accent-strip};
+  --users-statcard-bar-h: #{$users-stat-bar-h};
+
+  --users-statcard-title-fs: var(--fs-xs);
+  --users-statcard-value-fs: var(--fs-stat-value);
+  --users-statcard-percent-fs: var(--fs-md);
+  --users-statcard-icon-fs: var(--fs-icon);
+
+  --users-statcard-hover-lift: var(--lift-sm);
+  --users-statcard-dur-hover: var(--dur-fast);
+  --users-statcard-dur-bar: var(--dur-med);
+
+  --pc-bg: var(--surface);
+  --pc-border: var(--border);
+  --pc-shadow: var(--shadow-md);
+  --pc-radius: var(--radius-lg);
+
+  --pc-btn-h: #{$pc-btn-h};
+  --pc-btn-gap: #{$pc-btn-gap};
+  --pc-btn-radius: var(--radius-md);
+
+  --pc-title-weight: 400;
+  --pc-btn-weight: 400;
+
+  --pc-ok-bg: var(--primary);
+  --pc-ok-bg-hover: var(--primary-hover);
+  --pc-ok-text: var(--on-primary);
+
+
+  --modal-max-w: calc(100vw - 32px);
+  --post-modal-w: 560px;
+  --todo-modal-w: 520px;
 }
 
 :root[data-theme="dark"] {
@@ -85,9 +276,6 @@ $shadow-md-light: rgba(0, 0, 0, 0.06) 0px 0px 15px 3px;
 
   --primary: #{$blue-600};
   --primary-hover: #{$blue-500};
-
-  --purple: #{$purple-600};
-  --purple-hover: #{$purple-400};
 
   --bg: #{$bg-dark};
   --surface: #{$surface-dark};
@@ -105,16 +293,42 @@ $shadow-md-light: rgba(0, 0, 0, 0.06) 0px 0px 15px 3px;
 
   --shadow-sm: 0 10px 24px rgba(0, 0, 0, 0.28);
   --shadow-md: 0 14px 34px rgba(0, 0, 0, 0.34);
-  --focus-ring: 0 0 0 3px rgba(79, 107, 255, 0.28);
+  --shadow-lg: var(--shadow-md);
 
-  --success: #{$green-600};
-  --warning: #{$orange-500};
-  --error: #{$red-600};
+  --a-primary-22: rgb(from var(--primary) r g b / 0.28);
+  --focus-ring: 0 0 0 3px var(--a-primary-22);
 
-  --edit: var(--purple);
-  --edit-hover: var(--purple-hover);
+  --users-actions-divider: rgb(from var(--text) r g b / 0.22);
+  --users-table-header-icon: rgb(from var(--text) r g b / 0.92);
+  --users-pagination-disabled: rgb(from var(--text) r g b / 0.55);
 
-  --app-bg: var(--bg);
-  --app-surface: var(--surface);
+  --icon-btn-border-dark: rgba(255, 255, 255, 0.28);
+  --icon-btn-border-dark-hover: rgba(255, 255, 255, 0.42);
+  --icon-btn-bg-dark-hover: rgba(255, 255, 255, 0.06);
+
+  --icon-btn-hover-primary-bg-dark: rgba(59, 130, 246, 0.14);
+  --icon-btn-hover-purple-bg-dark: rgba(139, 92, 246, 0.14);
+  --icon-btn-hover-danger-bg-dark: rgba(239, 68, 68, 0.16);
+
+  --ant-modal-content-bg: var(--surface);
+  --ant-modal-header-bg: var(--surface);
+
+  --ant-color-bg-elevated: var(--surface);
+  --ant-color-bg-container: var(--surface);
+  --ant-color-text: var(--text);
+  --ant-color-text-secondary: var(--muted);
+  --ant-color-border: var(--border);
+
+  --ant-popover-bg: var(--surface);
+  --ant-color-text-quaternary: rgba(255, 255, 255, 0.9);
+
+  --table-row-hover-bg: rgba(255, 255, 255, 0.035);
+  --table-row-selected-bg: rgba(255, 255, 255, 0.045);
+  --table-row-selected-hover-bg: rgba(255, 255, 255, 0.06);
+  --table-row-expanded-bg: rgba(255, 255, 255, 0.04);
+
+  --table-header-sort-active-bg: rgba(255, 255, 255, 0.045);
+  --table-header-sort-hover-bg: rgba(255, 255, 255, 0.06);
+
+  --ant-table-row-hover-bg: var(--table-row-hover-bg);
 }
-
